@@ -1,0 +1,82 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'About',
+  description: 'About Apex — independent Formula 1 fan platform.',
+};
+
+export default function AboutPage() {
+  return (
+    <article className="mx-auto w-full max-w-4xl px-4 py-20 md:px-grid-margin md:py-32">
+      <span className="text-data text-telemetry-red">ABOUT</span>
+      <h1 className="mt-3 font-display text-5xl uppercase tracking-tight text-on-background md:text-7xl">
+        Built for the fan, by the fan.
+      </h1>
+      <p className="mt-8 max-w-3xl font-editorial text-xl leading-relaxed text-on-surface-variant md:text-2xl">
+        Apex is an independent, unofficial Formula 1 fan platform. We exist to give you a faster,
+        denser, more cinematic home for the sport than what the official channels offer — without
+        rehosting their video, copying their writing, or pretending to be them.
+      </p>
+
+      <section className="mt-20 grid grid-cols-1 gap-12 md:grid-cols-3">
+        <div>
+          <h2 className="font-headline text-xl uppercase tracking-tight text-on-background">
+            Fastest
+          </h2>
+          <p className="mt-3 text-base text-on-surface-variant">
+            Server-rendered, edge-cached, mobile-first. Race-day surfaces load before lights out.
+          </p>
+        </div>
+        <div>
+          <h2 className="font-headline text-xl uppercase tracking-tight text-on-background">
+            Cinematic
+          </h2>
+          <p className="mt-3 text-base text-on-surface-variant">
+            Design-system grade typography, scroll-pinned reveals, GPU-only motion. No clutter.
+          </p>
+        </div>
+        <div>
+          <h2 className="font-headline text-xl uppercase tracking-tight text-on-background">
+            Honest
+          </h2>
+          <p className="mt-3 text-base text-on-surface-variant">
+            Public data, original editorial, no F1 trademarks in our brand, full disclaimer in
+            every footer.
+          </p>
+        </div>
+      </section>
+
+      <section className="mt-20">
+        <h2 className="text-data text-telemetry-red">DATA SOURCES</h2>
+        <ul className="mt-4 grid grid-cols-1 gap-3 font-editorial text-lg text-on-surface md:grid-cols-2">
+          <li>
+            <strong>Jolpica F1</strong> — historical 1950–present schedule, results, standings,
+            qualifying, pit stops, laps.
+          </li>
+          <li>
+            <strong>OpenF1</strong> — live timing, intervals, race control, weather, telemetry.
+          </li>
+          <li>
+            <strong>Wikidata + Wikimedia Commons</strong> — driver biographies and metadata
+            (CC-BY-SA attributed).
+          </li>
+          <li>
+            <strong>OpenWeatherMap</strong> — race-weekend track-side forecasts.
+          </li>
+        </ul>
+      </section>
+
+      <section className="mt-20">
+        <p className="text-base text-on-surface-variant">
+          Apex is not affiliated with Formula 1, FIA, FOM, Liberty Media, or any team or driver.
+          Read the full{' '}
+          <Link href="/legal/disclaimer" className="text-telemetry-red underline">
+            disclaimer
+          </Link>
+          .
+        </p>
+      </section>
+    </article>
+  );
+}

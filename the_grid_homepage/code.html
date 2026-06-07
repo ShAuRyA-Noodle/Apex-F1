@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Grid | Apex News Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wght@700;800&amp;family=EB+Garamond:wght@300&amp;family=Hanken+Grotesk:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#ffdad6",
+                      "surface-container-low": "#1c1b1b",
+                      "on-tertiary-container": "#7d7c76",
+                      "on-primary-fixed": "#1c1b1b",
+                      "on-secondary": "#680200",
+                      "asphalt-gray": "#262626",
+                      "secondary-fixed-dim": "#ffb4a8",
+                      "primary-fixed-dim": "#c8c6c5",
+                      "on-primary-fixed-variant": "#474646",
+                      "surface-bright": "#3a3939",
+                      "tertiary": "#c9c6c0",
+                      "tertiary-fixed": "#e5e2db",
+                      "tertiary-container": "#0f0f0b",
+                      "surface": "#141313",
+                      "background": "#141313",
+                      "secondary-container": "#e00600",
+                      "secondary": "#ffb4a8",
+                      "surface-tint": "#c8c6c5",
+                      "surface-dim": "#141313",
+                      "on-background": "#e5e2e1",
+                      "telemetry-red": "#E10600",
+                      "error": "#ffb4ab",
+                      "error-container": "#93000a",
+                      "stave-line": "rgba(255, 255, 255, 0.15)",
+                      "surface-container": "#201f1f",
+                      "inverse-surface": "#e5e2e1",
+                      "primary-fixed": "#e5e2e1",
+                      "on-secondary-fixed": "#410100",
+                      "on-surface": "#e5e2e1",
+                      "surface-container-highest": "#353434",
+                      "primary-container": "#0f0f0f",
+                      "on-secondary-fixed-variant": "#930300",
+                      "secondary-fixed": "#ffdad4",
+                      "on-error": "#690005",
+                      "inverse-primary": "#5f5e5e",
+                      "primary": "#c8c6c5",
+                      "on-tertiary-fixed-variant": "#474742",
+                      "outline-variant": "#444748",
+                      "tertiary-fixed-dim": "#c9c6c0",
+                      "on-surface-variant": "#c4c7c7",
+                      "outline": "#8e9192",
+                      "on-tertiary-fixed": "#1c1c18",
+                      "prestige-parchment": "#F4F1EA",
+                      "on-primary": "#313030",
+                      "on-primary-container": "#7d7b7b",
+                      "surface-variant": "#353434",
+                      "surface-container-high": "#2b2a2a",
+                      "on-secondary-container": "#fff1ef",
+                      "carbon-black": "#0F0F0F",
+                      "inverse-on-surface": "#313030",
+                      "on-tertiary": "#31312c",
+                      "surface-container-lowest": "#0e0e0e"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "safe-area": "10vw",
+                      "grid-gutter": "1.5rem",
+                      "stave-gap": "2rem",
+                      "grid-margin": "4rem"
+              },
+              "fontFamily": {
+                      "data-mono": ["JetBrains Mono"],
+                      "display-xl-mobile": ["Anybody"],
+                      "body-md": ["Hanken Grotesk"],
+                      "display-xl": ["Anybody"],
+                      "editorial-serif": ["EB Garamond"],
+                      "headline-lg": ["Anybody"]
+              },
+              "fontSize": {
+                      "data-mono": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                      "display-xl-mobile": ["48px", { "lineHeight": "1.1", "fontWeight": "800" }],
+                      "body-md": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                      "display-xl": ["84px", { "lineHeight": "1.0", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                      "editorial-serif": ["32px", { "lineHeight": "1.4", "fontWeight": "300" }],
+                      "headline-lg": ["42px", { "lineHeight": "1.2", "fontWeight": "700" }]
+              }
+            }
+          }
+        }
+    </script>
+<style>
+        body {
+            background-color: #141313;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
+            color: #e5e2e1;
+        }
+        .chamfer-br { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%); }
+        .chamfer-tl { clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px); }
+        .stave-line-bg {
+            background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+            background-size: 100% 2rem;
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col relative overflow-x-hidden">
+<!-- TopAppBar -->
+<header class="bg-background/90 backdrop-blur-xl docked full-width top-0 sticky z-50 flex justify-between items-center w-full px-4 md:px-grid-margin py-4">
+<div class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg tracking-tighter text-on-surface uppercase">
+            Apex News Hub
+        </div>
+<!-- Desktop Nav -->
+<nav class="hidden md:flex gap-8 items-center font-data-mono text-data-mono">
+<a class="text-telemetry-red font-bold hover:text-telemetry-red transition-colors duration-300 opacity-80 scale-95 transition-all uppercase" href="#">The Grid</a>
+<a class="text-on-surface-variant hover:text-telemetry-red transition-colors duration-300 uppercase" href="#">Archive</a>
+<a class="text-on-surface-variant hover:text-telemetry-red transition-colors duration-300 uppercase" href="#">Race Lab</a>
+<a class="text-on-surface-variant hover:text-telemetry-red transition-colors duration-300 uppercase" href="#">Drivers</a>
+</nav>
+<div class="flex items-center gap-4 text-on-surface">
+<button class="hover:text-telemetry-red transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">search</span>
+</button>
+<button class="hover:text-telemetry-red transition-colors duration-300">
+<span class="material-symbols-outlined text-2xl">account_circle</span>
+</button>
+</div>
+</header>
+<main class="flex-grow flex flex-col relative">
+<!-- Hero Section -->
+<section class="relative w-full h-[819px] md:h-[921px] flex flex-col justify-end pb-12 md:pb-24 px-4 md:px-grid-margin overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Hero Image" class="w-full h-full object-cover opacity-40 grayscale mix-blend-luminosity" data-alt="A cinematic, high-contrast shot of a Formula 1 starting grid moments before the race begins. The atmosphere is tense and dramatic, lit with sharp spotlights cutting through atmospheric smoke. Dark carbon fiber textures dominate the foreground, with striking telemetry red accents on the vehicles. The mood is Engineered Elegance, blending high-speed precision with theatrical intensity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZwUtdtyVuOjjeOmualAlmcDG0HuS4X5DaxVDDPqS-IQ8gGeTnkLxGAbv6S5Xs5eZETDwCbfmE-pblc-bOE64fS9QOuKSNv3DVsvDRHpTEtqmmxJlYeI-O3vC7DyUzMYrZlw42QcfWENU0QZB1QQ1jdMrKq8V95OB3xSPNnJGtczaYWFS-v_L1iQ6HVdtstInRh-tTo1qfEAbgqaJo3bHiRxe9N1262D5Adsv5WIaWTY7lcJ0PiTYxj1PdUUuM-H6tUnY8CJUreqhS"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent"></div>
+</div>
+<div class="relative z-10 w-full max-w-7xl mx-auto flex flex-col gap-6">
+<!-- Telemetry Overlay -->
+<div class="flex flex-wrap gap-6 font-data-mono text-data-mono text-telemetry-red mb-4">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-telemetry-red rounded-full animate-pulse"></span>
+                        SYS.STATUS // ACTIVE
+                    </div>
+<div class="hidden md:flex items-center gap-4 text-on-surface-variant">
+<span>TRACK_TEMP: 34.2°C</span>
+<span class="text-stave-line">|</span>
+<span>WIND: 12KM/H NNW</span>
+<span class="text-stave-line">|</span>
+<span>BPM_AVG: 168</span>
+</div>
+</div>
+<h1 class="font-display-xl-mobile md:font-display-xl text-display-xl-mobile md:text-display-xl text-on-surface uppercase m-0 leading-none">
+                    THE GRID
+                </h1>
+<p class="font-editorial-serif text-editorial-serif text-on-surface-variant max-w-2xl mt-4">
+                    Precision engineering meets human drama. Live updates from the apex of motorsport.
+                </p>
+</div>
+</section>
+<!-- News Stave Layout -->
+<section class="relative w-full px-4 md:px-grid-margin py-12 md:py-24">
+<div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-12 gap-grid-gutter relative">
+<!-- Vertical Stave Line Indicator (Desktop) -->
+<div class="hidden md:block col-span-1 relative border-r border-stave-line">
+<div class="sticky top-32 flex flex-col gap-8 items-end pr-4 font-data-mono text-data-mono text-on-surface-variant">
+<div class="text-telemetry-red">NOW</div>
+<div>-1H</div>
+<div>-3H</div>
+</div>
+</div>
+<!-- Content Area -->
+<div class="col-span-1 md:col-span-11 flex flex-col gap-12 md:gap-24 relative stave-line-bg pt-8">
+<!-- Article Card 1 -->
+<article class="grid grid-cols-1 md:grid-cols-12 gap-6 relative group">
+<div class="col-span-1 md:col-span-5 relative h-64 md:h-96 chamfer-br overflow-hidden bg-surface-container-high border border-stave-line group-hover:border-telemetry-red transition-colors duration-500">
+<img alt="News Image" class="w-full h-full object-cover opacity-80 mix-blend-luminosity group-hover:mix-blend-normal transition-all duration-700 group-hover:scale-105" data-alt="Close up of a Formula 1 car steering wheel and dashboard, glowing with complex telemetry data in bright red and white against deep carbon black. The lighting is moody and technical, emphasizing the Engineered Elegance aesthetic. The texture of the carbon fiber and precision dials are sharply in focus, evoking a sense of high-stakes control." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw_96WfvN4BWd6GpAzPUPNa60nN34VUgZ5-6xyeQdyBex2EnHrtRILE3WR2EwIcydWsT5wHYB5sWAzY9cvc1bgOOTR66omk41m1giEmZJQ_QR-ZqZs3cqG9XcQiPxZxCwv3_Rwu7enbNG4gLkAwga7bLZI3phozgkJ0gqvrnR4c8TcRWv568kO36sDFTeDoQZTq2n2s7tplUjVe_vZILLbQUwa5fK6HJeI3CXrEs5DTvoppsFrBKXWIdcGHodwBL0Zs_sLL2CNx5ZZ"/>
+<div class="absolute bottom-4 left-4 font-data-mono text-data-mono text-on-surface bg-carbon-black/80 px-2 py-1 border-l-2 border-telemetry-red">
+                                SEC_1: PURPLE
+                            </div>
+</div>
+<div class="col-span-1 md:col-span-7 flex flex-col justify-center py-4">
+<div class="font-data-mono text-data-mono text-telemetry-red mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                                TECHNICAL DIRECTIVE
+                            </div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-6 leading-tight">
+                                Aero Package Updates Push the Limits of the Ground Effect Era
+                            </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-xl">
+                                Detailed analysis of the latest wind tunnel data suggests a radical departure in sidepod philosophy for the upcoming European leg.
+                            </p>
+<button class="self-start px-6 py-3 bg-carbon-black border-r-2 border-telemetry-red font-data-mono text-data-mono text-on-surface hover:bg-surface-container-high transition-colors">
+                                READ_ANALYSIS
+                            </button>
+</div>
+</article>
+<hr class="border-stave-line w-full"/>
+<!-- Article Card 2 -->
+<article class="grid grid-cols-1 md:grid-cols-12 gap-6 relative group">
+<div class="col-span-1 md:col-span-7 flex flex-col justify-center py-4 order-2 md:order-1">
+<div class="font-data-mono text-data-mono text-on-surface-variant mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-telemetry-red">warning</span>
+                                RACE CONTROL
+                            </div>
+<h2 class="font-headline-lg-mobile md:font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-6 leading-tight">
+                                Steward Inquiry: Turn 4 Incident Review
+                            </h2>
+<p class="font-body-md text-body-md text-on-surface-variant mb-8 max-w-xl">
+                                Examining the telemetry data and onboard footage that led to the controversial penalty during the closing laps of the Grand Prix.
+                            </p>
+<button class="self-start px-6 py-3 bg-transparent border border-stave-line hover:border-telemetry-red font-data-mono text-data-mono text-on-surface transition-colors">
+                                VIEW_TELEMETRY
+                            </button>
+</div>
+<div class="col-span-1 md:col-span-5 relative h-64 md:h-96 chamfer-tl overflow-hidden bg-surface-container-high border border-stave-line group-hover:border-telemetry-red transition-colors duration-500 order-1 md:order-2">
+<div class="absolute inset-0 bg-asphalt-gray/80 flex items-center justify-center">
+<!-- Abstract Sparkline visualization -->
+<svg class="w-full h-32 px-4 stroke-telemetry-red" fill="none" preserveaspectratio="none" viewbox="0 0 100 30">
+<path class="animate-[pulse_2s_ease-in-out_infinite]" d="M0,15 L10,12 L20,18 L30,5 L40,20 L50,15 L60,25 L70,10 L80,15 L90,8 L100,20" stroke-width="0.5"></path>
+</svg>
+</div>
+<div class="absolute top-4 right-4 font-data-mono text-data-mono text-on-surface bg-carbon-black/80 px-2 py-1">
+                                DELTA: +0.42s
+                            </div>
+</div>
+</article>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden bg-surface-container/95 backdrop-blur-2xl docked full-width bottom-0 fixed z-50 border-t-[0.5px] border-stave-line fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe bg-surface-container-low py-2">
+<a class="flex flex-col items-center justify-center text-telemetry-red border-t-2 border-telemetry-red pt-2 scale-110 duration-200 ease-out font-data-mono text-data-mono uppercase" href="#">
+<span class="material-symbols-outlined text-2xl mb-1" style="font-variation-settings: 'FILL' 1;">grid_view</span>
+<span class="text-[10px]">The Grid</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 hover:text-on-surface transition-all font-data-mono text-data-mono uppercase" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">history_edu</span>
+<span class="text-[10px]">Archive</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 hover:text-on-surface transition-all font-data-mono text-data-mono uppercase" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">query_stats</span>
+<span class="text-[10px]">Race Lab</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 hover:text-on-surface transition-all font-data-mono text-data-mono uppercase" href="#">
+<span class="material-symbols-outlined text-2xl mb-1">person</span>
+<span class="text-[10px]">Drivers</span>
+</a>
+</nav>
+</body></html>

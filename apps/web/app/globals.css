@@ -1,0 +1,171 @@
+@import 'tailwindcss';
+
+/* Apex design tokens — Tailwind v4 @theme block.
+ * Mirrored from packages/ui/src/tokens.css (which mirrors tokens.ts).
+ * Inlined here so PostCSS @import does not need to traverse pnpm symlinks.
+ */
+
+@theme {
+  --color-background: #141313;
+  --color-surface: #141313;
+  --color-surface-dim: #141313;
+  --color-surface-container-lowest: #0e0e0e;
+  --color-surface-container-low: #1c1b1b;
+  --color-surface-container: #201f1f;
+  --color-surface-container-high: #2b2a2a;
+  --color-surface-container-highest: #353434;
+  --color-surface-bright: #3a3939;
+  --color-surface-variant: #353434;
+  --color-surface-tint: #c8c6c5;
+  --color-inverse-surface: #e5e2e1;
+  --color-inverse-on-surface: #313030;
+
+  --color-telemetry-red: #e10600;
+  --color-asphalt-gray: #262626;
+  --color-carbon-black: #0f0f0f;
+  --color-prestige-parchment: #f4f1ea;
+
+  --color-primary: #c8c6c5;
+  --color-primary-container: #0f0f0f;
+  --color-primary-fixed: #e5e2e1;
+  --color-primary-fixed-dim: #c8c6c5;
+  --color-on-primary: #313030;
+  --color-on-primary-container: #7d7b7b;
+  --color-inverse-primary: #5f5e5e;
+
+  --color-secondary: #ffb4a8;
+  --color-secondary-container: #e00600;
+  --color-on-secondary: #680200;
+  --color-on-secondary-container: #fff1ef;
+
+  --color-tertiary: #c9c6c0;
+  --color-on-tertiary: #31312c;
+
+  --color-on-background: #e5e2e1;
+  --color-on-surface: #e5e2e1;
+  --color-on-surface-variant: #c4c7c7;
+  --color-outline: #8e9192;
+  --color-outline-variant: #444748;
+
+  --color-error: #ffb4ab;
+  --color-error-container: #93000a;
+  --color-on-error: #690005;
+  --color-on-error-container: #ffdad6;
+
+  --font-display: 'Anybody', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-headline: 'Anybody', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-body: 'Hanken Grotesk', system-ui, sans-serif;
+  --font-editorial: 'EB Garamond', 'Times New Roman', serif;
+  --font-data: 'JetBrains Mono', 'Menlo', monospace;
+
+  --spacing-safe-area: 10vw;
+  --spacing-grid-gutter: 1.5rem;
+  --spacing-stave-gap: 2rem;
+  --spacing-grid-margin: 4rem;
+
+  --radius-DEFAULT: 0.25rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  --radius-full: 9999px;
+
+  --ease-cinematic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-quint: cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+/* Global chrome */
+html {
+  color-scheme: dark;
+  background-color: var(--color-background);
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  background-image:
+    radial-gradient(ellipse 1200px 600px at 50% -10%, rgba(225, 6, 0, 0.06), transparent 60%),
+    url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: var(--color-telemetry-red);
+  color: var(--color-on-background);
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+/* Custom utility classes used by components */
+.chamfer-br { clip-path: polygon(0 0, 100% 0, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0 100%); }
+.chamfer-tl { clip-path: polygon(20px 0, 100% 0, 100% 100%, 0 100%, 0 20px); }
+.stave-line-bg {
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.15) 1px, transparent 1px);
+  background-size: 100% 2rem;
+}
+
+.text-display {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.text-headline {
+  font-family: var(--font-headline);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.text-editorial {
+  font-family: var(--font-editorial);
+  font-weight: 300;
+  line-height: 1.4;
+}
+.text-data {
+  font-family: var(--font-data);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.font-display { font-family: var(--font-display); }
+.font-headline { font-family: var(--font-headline); }
+.font-editorial { font-family: var(--font-editorial); }
+.font-data { font-family: var(--font-data); }
+
+/* Material Symbols rendering hook */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  font-feature-settings: 'liga';
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-telemetry-red);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  header, footer, nav, aside { display: none !important; }
+}

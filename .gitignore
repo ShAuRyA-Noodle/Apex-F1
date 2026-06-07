@@ -1,0 +1,25 @@
+node_modules/
+.pnpm-store/
+.turbo/
+.next/
+out/
+dist/
+build/
+coverage/
+
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+
+# Local-only claude-mem context (per-folder; not for remote)
+**/CLAUDE.local.md
+
+.vercel
+.cache/
+*.tsbuildinfo
+
+# Keep design oracles
+!screen.png
+!code.html

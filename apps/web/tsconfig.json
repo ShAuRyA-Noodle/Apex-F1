@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "plugins": [{ "name": "next" }],
+    "paths": {
+      "@/*": ["./*"],
+      "@apex/types": ["../../packages/types/src"],
+      "@apex/ui": ["../../packages/ui/src"],
+      "@apex/ui/tokens": ["../../packages/ui/src/tokens.ts"]
+    },
+    "noEmit": true,
+    "allowJs": true,
+    "jsx": "preserve"
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules", ".next"]
+}

@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Race Lab - Apex News Hub</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@100,700;100,800&amp;family=EB+Garamond:ital,wght@0,300;1,300&amp;family=Hanken+Grotesk:wght@400&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffdad6",
+                        "surface-container-low": "#1c1b1b",
+                        "on-tertiary-container": "#7d7c76",
+                        "on-primary-fixed": "#1c1b1b",
+                        "on-secondary": "#680200",
+                        "asphalt-gray": "#262626",
+                        "secondary-fixed-dim": "#ffb4a8",
+                        "primary-fixed-dim": "#c8c6c5",
+                        "on-primary-fixed-variant": "#474646",
+                        "surface-bright": "#3a3939",
+                        "tertiary": "#c9c6c0",
+                        "tertiary-fixed": "#e5e2db",
+                        "tertiary-container": "#0f0f0b",
+                        "surface": "#141313",
+                        "background": "#141313",
+                        "secondary-container": "#e00600",
+                        "secondary": "#ffb4a8",
+                        "surface-tint": "#c8c6c5",
+                        "surface-dim": "#141313",
+                        "on-background": "#e5e2e1",
+                        "telemetry-red": "#E10600",
+                        "error": "#ffb4ab",
+                        "error-container": "#93000a",
+                        "stave-line": "rgba(255, 255, 255, 0.15)",
+                        "surface-container": "#201f1f",
+                        "inverse-surface": "#e5e2e1",
+                        "primary-fixed": "#e5e2e1",
+                        "on-secondary-fixed": "#410100",
+                        "on-surface": "#e5e2e1",
+                        "surface-container-highest": "#353434",
+                        "primary-container": "#0f0f0f",
+                        "on-secondary-fixed-variant": "#930300",
+                        "secondary-fixed": "#ffdad4",
+                        "on-error": "#690005",
+                        "inverse-primary": "#5f5e5e",
+                        "primary": "#c8c6c5",
+                        "on-tertiary-fixed-variant": "#474742",
+                        "outline-variant": "#444748",
+                        "tertiary-fixed-dim": "#c9c6c0",
+                        "on-surface-variant": "#c4c7c7",
+                        "outline": "#8e9192",
+                        "on-tertiary-fixed": "#1c1c18",
+                        "prestige-parchment": "#F4F1EA",
+                        "on-primary": "#313030",
+                        "on-primary-container": "#7d7b7b",
+                        "surface-variant": "#353434",
+                        "surface-container-high": "#2b2a2a",
+                        "on-secondary-container": "#fff1ef",
+                        "carbon-black": "#0F0F0F",
+                        "inverse-on-surface": "#313030",
+                        "on-tertiary": "#31312c",
+                        "surface-container-lowest": "#0e0e0e"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "safe-area": "10vw",
+                        "grid-gutter": "1.5rem",
+                        "stave-gap": "2rem",
+                        "grid-margin": "4rem"
+                    },
+                    "fontFamily": {
+                        "data-mono": ["JetBrains Mono", "monospace"],
+                        "display-xl-mobile": ["Anybody", "sans-serif"],
+                        "body-md": ["Hanken Grotesk", "sans-serif"],
+                        "display-xl": ["Anybody", "sans-serif"],
+                        "editorial-serif": ["EB Garamond", "serif"],
+                        "headline-lg": ["Anybody", "sans-serif"]
+                    },
+                    "fontSize": {
+                        "data-mono": ["14px", { "lineHeight": "1.2", "letterSpacing": "0.1em", "fontWeight": "500" }],
+                        "display-xl-mobile": ["48px", { "lineHeight": "1.1", "fontWeight": "800" }],
+                        "body-md": ["18px", { "lineHeight": "1.6", "fontWeight": "400" }],
+                        "display-xl": ["84px", { "lineHeight": "1.0", "letterSpacing": "-0.04em", "fontWeight": "800" }],
+                        "editorial-serif": ["32px", { "lineHeight": "1.4", "fontWeight": "300" }],
+                        "headline-lg": ["42px", { "lineHeight": "1.2", "fontWeight": "700" }]
+                    },
+                    "backgroundImage": {
+                        'noise': 'url("data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noiseFilter%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.65%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noiseFilter)%22 opacity=%220.02%22/%3E%3C/svg%3E")'
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        body {
+            background-color: #141313; /* background */
+            color: #e5e2e1; /* on-background */
+        }
+        .chamfer-tr { clip-path: polygon(0 0, calc(100% - 2rem) 0, 100% 2rem, 100% 100%, 0 100%); }
+        .chamfer-bl { clip-path: polygon(0 0, 100% 0, 100% 100%, 2rem 100%, 0 calc(100% - 2rem)); }
+        
+        /* Hide scrollbar for telemetry strip */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="relative min-h-screen font-body-md text-body-md overflow-x-hidden selection:bg-telemetry-red selection:text-white">
+<!-- TopAppBar -->
+<header class="hidden md:flex justify-between items-center w-full px-grid-margin py-4 bg-background/90 backdrop-blur-xl border-b-[0.5px] border-stave-line docked full-width top-0 sticky z-50">
+<div class="font-headline-lg text-headline-lg tracking-tighter text-on-surface uppercase">
+            Apex News Hub
+        </div>
+<nav class="flex gap-8">
+<a class="font-data-mono text-data-mono uppercase text-on-surface-variant hover:text-telemetry-red transition-colors duration-300" href="#">The Grid</a>
+<a class="font-data-mono text-data-mono uppercase text-on-surface-variant hover:text-telemetry-red transition-colors duration-300" href="#">Archive</a>
+<a class="font-data-mono text-data-mono uppercase text-telemetry-red font-bold hover:text-telemetry-red transition-colors duration-300 opacity-80 scale-95 transition-all" href="#">Race Lab</a>
+<a class="font-data-mono text-data-mono uppercase text-on-surface-variant hover:text-telemetry-red transition-colors duration-300" href="#">Drivers</a>
+</nav>
+<div class="flex items-center gap-4">
+<button class="text-on-surface hover:text-telemetry-red transition-colors duration-300">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+</button>
+</div>
+</header>
+<!-- Mobile Top Header Placeholder (simplified) -->
+<header class="md:hidden flex justify-between items-center w-full px-4 py-4 bg-background/90 backdrop-blur-xl border-b-[0.5px] border-stave-line sticky top-0 z-50">
+<div class="font-headline-lg-mobile text-headline-lg-mobile tracking-tighter text-on-surface uppercase">
+            Apex
+        </div>
+<button class="text-on-surface">
+<span class="material-symbols-outlined">menu</span>
+</button>
+</header>
+<main class="pb-32 md:pb-12 bg-noise">
+<!-- Hero Section -->
+<section class="relative w-full h-[716px] md:h-[870px] overflow-hidden">
+<img alt="F1 Car Engine Detail" class="absolute inset-0 w-full h-full object-cover parallax-img" data-alt="A highly detailed close-up shot of a Formula 1 car's complex engine and aerodynamic carbon fiber components. The lighting is cinematic and moody, emphasizing the metallic textures and precision engineering. The color palette is dominated by deep blacks, dark greys, and metallic silvers, with striking, vibrant red accents highlighting critical mechanical parts. The overall aesthetic is high-tech, aggressive, and modern, reflecting an elite motorsport environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAUY80rjReasm71vGzGMsWh8UKoPQbMlIosRnnH4b9VJSUWVM31GE8V_FKilWETCfxRG9MFf07oW9vByzSSCE4UJeYTm3GRYSvv_gsKa8WUkkVKcbh9aOW8Sx2ckz1TTrQua8GFKRcVJ3mDEgZbB9wpdKij_h_zhRWl6V_Dl8YZu5oU32Acg4KZ-DFvAVudqzRW0-9xW_-Y-jZBIcVlmwEGOYKTJQS03oOz1nk3RyUM7iWpJET_PWanYCn_blqCM3x5rJjWiRfSdarP"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent"></div>
+<div class="absolute bottom-0 left-0 w-full px-4 md:px-grid-margin pb-12 z-10">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+<div class="md:w-2/3">
+<div class="font-data-mono text-data-mono text-telemetry-red mb-4 flex items-center gap-2">
+<span class="w-2 h-2 bg-telemetry-red rounded-full animate-pulse"></span>
+                            TECHNICAL ANALYSIS / POWER UNIT
+                        </div>
+<h1 class="font-display-xl-mobile text-display-xl-mobile md:font-display-xl md:text-display-xl text-on-surface uppercase leading-none mix-blend-difference">
+                            The Anatomy of <br/> Hybrid Thrust
+                        </h1>
+</div>
+<div class="font-data-mono text-data-mono text-on-surface-variant md:text-right border-l-[0.5px] md:border-l-0 md:border-r-[0.5px] border-telemetry-red pl-4 md:pr-4">
+<p>BY: DR. ELENA ROSTOVA</p>
+<p class="text-stave-line">VOL. 42 // SECTOR 3</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Telemetry Strip (Sticky) -->
+<div class="sticky top-0 md:top-[73px] z-40 bg-surface-container/95 backdrop-blur-2xl border-y-[0.5px] border-stave-line overflow-hidden py-3">
+<div class="flex items-center gap-8 overflow-x-auto no-scrollbar px-4 md:px-grid-margin font-data-mono text-data-mono whitespace-nowrap">
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant">ICE RPM:</span>
+<span class="text-telemetry-red font-bold">14,200</span>
+</div>
+<div class="w-px h-4 bg-stave-line"></div>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant">MGU-K:</span>
+<span class="text-on-surface">DEPLOYING (120kW)</span>
+</div>
+<div class="w-px h-4 bg-stave-line"></div>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant">EXHAUST TEMP:</span>
+<span class="text-on-surface">980°C</span>
+</div>
+<div class="w-px h-4 bg-stave-line"></div>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant">DRS:</span>
+<span class="text-on-surface-variant">DISABLED</span>
+</div>
+<div class="w-px h-4 bg-stave-line"></div>
+<div class="flex items-center gap-2">
+<span class="text-on-surface-variant">LATERAL G:</span>
+<span class="text-telemetry-red font-bold">4.2G</span>
+</div>
+</div>
+</div>
+<!-- Article Body -->
+<article class="max-w-7xl mx-auto px-4 md:px-grid-margin mt-16 md:mt-24">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-stave-gap">
+<!-- Main Content -->
+<div class="md:col-span-8 space-y-12">
+<p class="font-editorial-serif text-editorial-serif text-on-surface leading-relaxed">
+                        The modern Formula 1 power unit is a marvel of thermal efficiency, extracting over 50% of the energy from its fuel. But raw power is only half the equation; the delicate interplay between the internal combustion engine (ICE) and the energy recovery systems (ERS) dictates performance in the modern era.
+                    </p>
+<div class="border-t-[0.5px] border-stave-line pt-12">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-on-surface mb-6 uppercase">MGU-H: The Silent Workhorse</h2>
+<p class="mb-6 text-on-surface-variant">
+                            Sitting nestled in the 'V' of the engine block, the Motor Generator Unit - Heat (MGU-H) is arguably the most complex component. It harvests energy from the exhaust gases, spinning at upwards of 100,000 RPM. This energy is then either stored in the Energy Store (battery) or deployed directly to the MGU-K to aid acceleration.
+                        </p>
+<!-- Image with chamfer -->
+<div class="relative w-full h-64 md:h-96 my-8 chamfer-tr overflow-hidden bg-asphalt-gray">
+<img alt="Abstract Technical Diagram" class="w-full h-full object-cover opacity-60 mix-blend-luminosity" data-alt="An abstract, stylized 3D rendering of complex mechanical gears and engine components. The scene is illuminated by harsh, directional studio lighting, casting deep shadows that emphasize the sharp, precise edges of the machinery. The color palette is extremely restricted to dark charcoal greys and matte blacks, accented by a single, thin, glowing red laser line cutting across the composition. The aesthetic is industrial, highly technical, and slightly futuristic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtkusSN3E6GZKaLhlzthaaiChuebRGlBAONlLYNgaIVLkKm_a45_gsamk4Z4DNKqmYPlXfaqnsonYptoQ_NADDOWNv8BKjMIyHCJZT64JevM9pf-U_bdMBnUtLAM4XynOKXebUucfMO6hEv2gRmtF0Z8zRynnKliAE9JwdkaPBD2bKCtItAo7u0Gyo_wEmbL_BNAPsgmt2q7pwjU9UgCKiGmNmzdWvocN-2zJFd3WdQLdBsRs3zGyEg4KpQ2DlEpLtU_tEIH87qUc9"/>
+<div class="absolute bottom-4 left-4 font-data-mono text-data-mono text-telemetry-red bg-surface-container/80 px-2 py-1 backdrop-blur-sm">
+                                FIG 1.0 - HEAT RECOVERY
+                             </div>
+</div>
+</div>
+</div>
+<!-- Sidebar (Technical Notes) -->
+<aside class="md:col-span-4 mt-12 md:mt-0">
+<div class="sticky top-[140px] bg-surface-container-high p-6 border-l-[2px] border-telemetry-red chamfer-bl">
+<h3 class="font-data-mono text-data-mono text-telemetry-red mb-4 uppercase">Technical Specs // W14</h3>
+<ul class="space-y-4 font-data-mono text-data-mono text-on-surface-variant text-sm">
+<li class="flex justify-between border-b-[0.5px] border-stave-line pb-2">
+<span>Displacement</span>
+<span class="text-on-surface">1.6L V6</span>
+</li>
+<li class="flex justify-between border-b-[0.5px] border-stave-line pb-2">
+<span>Rev Limit</span>
+<span class="text-on-surface">15,000 RPM</span>
+</li>
+<li class="flex justify-between border-b-[0.5px] border-stave-line pb-2">
+<span>MGU-K Max Output</span>
+<span class="text-on-surface">120 kW</span>
+</li>
+<li class="flex justify-between pb-2">
+<span>Total Output</span>
+<span class="text-on-surface">&gt; 1000 HP</span>
+</li>
+</ul>
+<button class="mt-8 w-full bg-carbon-black border-r-[2px] border-telemetry-red text-data-mono font-data-mono text-on-surface py-3 hover:bg-surface-bright transition-colors">
+                            DOWNLOAD FULL REPORT
+                        </button>
+</div>
+</aside>
+</div>
+</article>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full flex justify-around items-center px-4 pb-safe bg-surface-container/95 backdrop-blur-2xl border-t-[0.5px] border-stave-line z-50">
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-2" href="#">
+<span class="material-symbols-outlined" data-icon="grid_view">grid_view</span>
+<span class="font-data-mono text-data-mono text-[10px] mt-1 uppercase">The Grid</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-2" href="#">
+<span class="material-symbols-outlined" data-icon="history_edu">history_edu</span>
+<span class="font-data-mono text-data-mono text-[10px] mt-1 uppercase">Archive</span>
+</a>
+<a class="flex flex-col items-center justify-center text-telemetry-red border-t-2 border-telemetry-red pt-2 pb-2 scale-110 duration-200 ease-out" href="#">
+<span class="material-symbols-outlined" data-icon="query_stats" style="font-variation-settings: 'FILL' 1;">query_stats</span>
+<span class="font-data-mono text-data-mono text-[10px] mt-1 uppercase font-bold">Race Lab</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant pt-2 pb-2" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-data-mono text-data-mono text-[10px] mt-1 uppercase">Drivers</span>
+</a>
+</nav>
+<script>
+        // Simple parallax effect for hero image
+        window.addEventListener('scroll', () => {
+            const scrolled = window.scrollY;
+            const parallaxImg = document.querySelector('.parallax-img');
+            if(parallaxImg && scrolled < window.innerHeight) {
+                parallaxImg.style.transform = `translateY(${scrolled * 0.4}px)`;
+            }
+        });
+    </script>
+</body></html>
