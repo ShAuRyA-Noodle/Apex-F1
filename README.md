@@ -1,7 +1,7 @@
 # Apex
 
 > Independent Formula 1 fan platform. Schedule, results, drivers, teams, news, video, live timing.
-> Phase 1 web — Next.js 15 + Turborepo + Tailwind v4 + Lenis + GSAP + Framer Motion.
+> Phase 1 web: Next.js 15 + Turborepo + Tailwind v4 + Lenis + GSAP + Framer Motion.
 
 This is the production codebase for Apex. The PID/PRD lives in [`APEX_F1_PID_PRD.md`](./APEX_F1_PID_PRD.md). Phase 1 plan lives in [`FORMULA1_STARTUP_PHASE1_PID.md`](./FORMULA1_STARTUP_PHASE1_PID.md). System teardown lives in [`FORMULA1_SYSTEM_DESIGN_PLAN.md`](./FORMULA1_SYSTEM_DESIGN_PLAN.md).
 
@@ -43,7 +43,7 @@ F1_Claude/
 ```
 
 Existing top-level folders (`the_grid_homepage/`, `race_lab_*`, `velocity_verse/`, etc.) are
-**design-reference artifacts** — `screen.png` is the design oracle and `code.html` was the static
+**design-reference artifacts**. `screen.png` is the design oracle and `code.html` was the static
 Stitch prototype. They are not part of the build.
 
 ## Quick start
@@ -60,16 +60,16 @@ pnpm build
 
 | Phase | Scope | Status |
 |---|---|---|
-| **A — Cinematic Foundation** | Monorepo, design tokens, AppShell (top util + race ticker + mega nav + footer + cookie consent), smooth scroll, homepage, legal pages, /about, Lighthouse CI | ✅ in progress |
-| **B — Surface Build-Out** | 13 Phase-1 routes wired to Jolpica + OpenF1 + Supabase, ISR/SWR, Meilisearch, admin CMS, full 1950→present historical archive | ⏳ |
-| **C — Production Hardening + Live** | Auth (Supabase), live timing UI on OpenF1 WS, Sentry + PostHog, Resend newsletter, Stripe groundwork, k6 load test, public beta | ⏳ |
+| **A. Cinematic Foundation** | Monorepo, design tokens, AppShell (top util + race ticker + mega nav + footer + cookie consent), smooth scroll, homepage, legal pages, /about, Lighthouse CI | ✅ in progress |
+| **B. Surface Build-Out** | 13 Phase-1 routes wired to Jolpica + OpenF1 + Supabase, ISR/SWR, Meilisearch, admin CMS, full 1950 to present historical archive | ⏳ |
+| **C. Production Hardening + Live** | Auth (Supabase), live timing UI on OpenF1 WS, Sentry + PostHog, Resend newsletter, Stripe groundwork, k6 load test, public beta | ⏳ |
 
 Mobile (Flutter) deferred to PID Phase 3 (months 9-12).
 
 ## Brand & legal
 
 Apex is **independent and unofficial**. Disclaimer is in the footer of every page and on every
-legal route. Brand name is "Apex" — never "F1" or "Formula 1" in domain, logo, or store listing.
+legal route. Brand name is "Apex", never "F1" or "Formula 1" in domain, logo, or store listing.
 Public data only. Original editorial only. Embeds (not rehosts) for video.
 
 ## Environment
