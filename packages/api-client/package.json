@@ -11,7 +11,9 @@
     "./openf1": "./src/openf1/index.ts",
     "./rss": "./src/rss/index.ts",
     "./reddit": "./src/reddit/index.ts",
-    "./youtube": "./src/youtube/index.ts"
+    "./youtube": "./src/youtube/index.ts",
+    "./openf1": "./src/openf1/index.ts",
+    "./wikidata": "./src/wikidata/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

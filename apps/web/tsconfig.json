@@ -11,7 +11,9 @@
       "@apex/api-client/jolpica": ["../../packages/api-client/src/jolpica"],
       "@apex/api-client/rss": ["../../packages/api-client/src/rss"],
       "@apex/api-client/reddit": ["../../packages/api-client/src/reddit"],
-      "@apex/api-client/youtube": ["../../packages/api-client/src/youtube"]
+      "@apex/api-client/youtube": ["../../packages/api-client/src/youtube"],
+      "@apex/api-client/openf1": ["../../packages/api-client/src/openf1"],
+      "@apex/api-client/wikidata": ["../../packages/api-client/src/wikidata"]
     },
     "noEmit": true,
     "allowJs": true,

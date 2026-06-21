@@ -1,0 +1,254 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+import {
+  jolpica,
+  mapRace,
+  mapResult,
+  type UiRace,
+  type UiResult,
+} from '@apex/api-client/jolpica';
+import { countryNameToCode, flagEmoji, teamColorBySlug } from '@/lib/format';
+
+export const revalidate = 300;
+
+type RouteParams = { season: string; race: string };
+
+async function loadRace(season: number, raceSlug: string): Promise<{
+  race: UiRace;
+  results: UiResult[];
+  round: number;
+} | null> {
+  const races = (await jolpica.getSchedule(season, { revalidate: 3600 })).map(mapRace);
+  const race = races.find((r) => r.slug === raceSlug);
+  if (!race) return null;
+  const round = race.round;
+  const raw = await jolpica.getRaceResults(season, round, { revalidate: 300 });
+  const results = raw ? raw.results.map(mapResult) : [];
+  return { race, results, round };
+}
+
+export async function generateMetadata(props: { params: Promise<RouteParams> }): Promise<Metadata> {
+  const { season, race } = await props.params;
+  const data = await loadRace(Number(season), race);
+  if (!data) return { title: 'Race not found' };
+  return {
+    title: `${data.race.name} ${season}`,
+    description: `${data.race.name} ${season} — sessions, results, circuit, weather.`,
+  };
+}
+
+function fmtSessionLabel(kind: string): string {
+  return (
+    {
+      FP1: 'Practice 1',
+      FP2: 'Practice 2',
+      FP3: 'Practice 3',
+      SQ: 'Sprint Qualifying',
+      S: 'Sprint',
+      Q: 'Qualifying',
+      R: 'Race',
+    }[kind] ?? kind
+  );
+}
+
+function fmtSessionDate(iso: string): string {
+  if (!iso) return 'TBD';
+  return new Date(iso).toLocaleString('en-GB', {
+    weekday: 'short',
+    day: 'numeric',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+export default async function RaceDetailPage(props: { params: Promise<RouteParams> }) {
+  const { season, race: raceSlug } = await props.params;
+  const seasonNum = Number(season);
+  const data = await loadRace(seasonNum, raceSlug);
+  if (!data) notFound();
+  const { race, results, round } = data;
+  const cc = countryNameToCode(race.country);
+  const hasResults = results.length > 0;
+  const winner = hasResults ? results[0] : null;
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'SportsEvent',
+    name: `${race.name} ${seasonNum}`,
+    startDate: race.raceStartIso,
+    location: {
+      '@type': 'Place',
+      name: race.circuitName,
+      address: { '@type': 'PostalAddress', addressLocality: race.city, addressCountry: race.country },
+    },
+    sport: 'Formula 1',
+    url: `https://apex.gg/schedule/${seasonNum}/${raceSlug}`,
+  };
+
+  return (
+    <article>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <header className="border-b border-outline-variant/30 bg-surface-container-lowest">
+        <div className="mx-auto w-full max-w-[1600px] px-4 py-16 md:px-grid-margin md:py-24">
+          <Link
+            href={`/schedule/${seasonNum}`}
+            className="text-data inline-flex items-center gap-1 text-outline transition-colors hover:text-on-background"
+          >
+            ← {seasonNum} SCHEDULE
+          </Link>
+          <div className="mt-6 flex items-center gap-3">
+            <span className="text-data text-telemetry-red">
+              ROUND {String(round).padStart(2, '0')}
+            </span>
+            <span className="h-px w-8 bg-outline" />
+            <span className="text-data text-outline">
+              {flagEmoji(cc)} {race.country} · {race.city}
+            </span>
+          </div>
+          <h1 className="mt-3 font-display text-5xl uppercase tracking-tight text-on-background md:text-8xl">
+            {race.name}
+          </h1>
+          <p className="mt-4 max-w-2xl font-editorial text-lg text-on-surface-variant md:text-2xl">
+            {race.circuitName}
+            {winner && (
+              <>
+                {' · '}
+                <span className="text-on-background">
+                  Winner: {winner.driver.fullName}
+                </span>
+              </>
+            )}
+          </p>
+        </div>
+      </header>
+
+      <section className="border-b border-outline-variant/30">
+        <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
+          <h2 className="text-data text-telemetry-red">SESSIONS</h2>
+          <ul className="mt-6 grid grid-cols-1 gap-px overflow-hidden bg-outline-variant/40 md:grid-cols-4">
+            {race.sessions.map((s) => (
+              <li key={s.kind} className="bg-background p-5">
+                <div className="text-data text-outline">{fmtSessionLabel(s.kind)}</div>
+                <div className="mt-2 font-headline text-base text-on-background md:text-lg">
+                  {fmtSessionDate(s.iso)}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {hasResults ? (
+        <section className="border-b border-outline-variant/30">
+          <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
+            <div className="mb-6 flex items-end justify-between gap-4">
+              <h2 className="text-data text-telemetry-red">RACE RESULTS</h2>
+              <span className="text-data text-outline">SOURCE: JOLPICA F1</span>
+            </div>
+            <table className="w-full border-collapse text-left">
+              <thead className="border-b border-outline-variant/40 text-data">
+                <tr>
+                  <th className="px-3 py-3 text-on-surface-variant">POS</th>
+                  <th className="px-3 py-3 text-on-surface-variant" colSpan={2}>
+                    DRIVER
+                  </th>
+                  <th className="hidden px-3 py-3 text-on-surface-variant md:table-cell">TEAM</th>
+                  <th className="hidden px-3 py-3 text-on-surface-variant md:table-cell">
+                    LAPS
+                  </th>
+                  <th className="px-3 py-3 text-right text-on-surface-variant">TIME / GAP</th>
+                  <th className="px-3 py-3 text-right text-on-surface-variant">PTS</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/30">
+                {results.map((r) => {
+                  const color = teamColorBySlug(r.constructor.slug);
+                  return (
+                    <tr key={r.driver.slug} className="group transition-colors hover:bg-surface-container-low">
+                      <td className="px-3 py-3 font-data text-lg text-on-background md:text-xl">
+                        {r.positionText}
+                      </td>
+                      <td className="px-2 py-3">
+                        <span
+                          aria-hidden="true"
+                          className="block h-8 w-1.5"
+                          style={{ backgroundColor: color }}
+                        />
+                      </td>
+                      <td className="px-3 py-3">
+                        <Link
+                          href={`/drivers/${r.driver.slug}`}
+                          className="block transition-colors group-hover:text-telemetry-red"
+                        >
+                          <div className="font-headline text-base text-on-background md:text-lg">
+                            {r.driver.fullName}
+                          </div>
+                          <div className="text-data text-outline">{r.driver.code}</div>
+                        </Link>
+                      </td>
+                      <td className="hidden px-3 py-3 text-sm text-on-surface-variant md:table-cell">
+                        <Link
+                          href={`/teams/${r.constructor.slug}`}
+                          className="transition-colors hover:text-telemetry-red"
+                        >
+                          {r.constructor.name}
+                        </Link>
+                      </td>
+                      <td className="hidden px-3 py-3 font-data text-sm text-on-surface-variant md:table-cell">
+                        {r.laps}
+                      </td>
+                      <td className="px-3 py-3 text-right font-data text-sm text-on-surface-variant">
+                        {r.time ?? r.status}
+                      </td>
+                      <td className="px-3 py-3 text-right font-data text-lg text-on-background md:text-xl">
+                        {r.points}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : (
+        <section className="border-b border-outline-variant/30">
+          <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
+            <div className="border border-outline-variant/40 p-10 text-center">
+              <span className="text-data text-telemetry-red">UPCOMING</span>
+              <p className="mt-4 font-editorial text-xl text-on-surface-variant md:text-2xl">
+                Race hasn&apos;t happened yet. Results land here within minutes of the chequered flag.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <section className="border-b border-outline-variant/30">
+        <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
+          <h2 className="text-data text-telemetry-red">CIRCUIT</h2>
+          <div className="mt-4 grid grid-cols-2 gap-px overflow-hidden bg-outline-variant/40 md:grid-cols-4">
+            <Cell label="CIRCUIT" value={race.circuitName} />
+            <Cell label="LOCATION" value={`${race.city}, ${race.country}`} />
+            <Cell label="ROUND" value={String(race.round)} />
+            <Cell label="SEASON" value={String(race.season)} />
+          </div>
+        </div>
+      </section>
+    </article>
+  );
+}
+
+function Cell({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="bg-background p-5">
+      <div className="text-data text-outline">{label}</div>
+      <div className="mt-2 font-headline text-base text-on-background md:text-lg">{value}</div>
+    </div>
+  );
+}
