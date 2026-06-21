@@ -115,7 +115,17 @@ export default async function DriverProfilePage(props: {
       </section>
 
       <section className="mx-auto w-full max-w-[1600px] px-4 py-16 md:px-grid-margin md:py-24">
-        <h2 className="text-data text-telemetry-red">REFERENCES</h2>
+        <Link
+          href={`/drivers/${d.slug}/career`}
+          className="group inline-flex items-center gap-3 bg-telemetry-red px-6 py-3 font-headline text-sm uppercase tracking-[0.18em] text-on-background transition-opacity hover:opacity-90"
+        >
+          Full career — every race
+          <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">
+            arrow_forward
+          </span>
+        </Link>
+
+        <h2 className="text-data mt-16 text-telemetry-red">REFERENCES</h2>
         <ul className="mt-4 space-y-3 font-editorial text-lg text-on-surface md:text-xl">
           <li>
             <a

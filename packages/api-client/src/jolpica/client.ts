@@ -124,6 +124,44 @@ export const jolpica = {
     return env.MRData.RaceTable.Races;
   },
 
+  /** All race results for a single driver across all seasons. */
+  async getDriverResults(driverId: string, opts: FetchOpts = {}) {
+    const env = await get<JolpicaResultsEnvelope>(`drivers/${driverId}/results.json`, {
+      revalidate: 3600,
+      limit: 1000,
+      ...opts,
+    });
+    return env.MRData.RaceTable.Races;
+  },
+
+  /** All race results for a single driver in a single season. */
+  async getDriverResultsInSeason(driverId: string, season: number, opts: FetchOpts = {}) {
+    const env = await get<JolpicaResultsEnvelope>(`${season}/drivers/${driverId}/results.json`, {
+      revalidate: 3600,
+      limit: 100,
+      ...opts,
+    });
+    return env.MRData.RaceTable.Races;
+  },
+
+  /** All race results for a constructor in a season. */
+  async getConstructorResultsInSeason(constructorId: string, season: number, opts: FetchOpts = {}) {
+    const env = await get<JolpicaResultsEnvelope>(
+      `${season}/constructors/${constructorId}/results.json`,
+      { revalidate: 3600, limit: 100, ...opts },
+    );
+    return env.MRData.RaceTable.Races;
+  },
+
+  /** All seasons a driver participated in (for career timeline). */
+  async getDriverSeasons(driverId: string, opts: FetchOpts = {}) {
+    const env = await get<{ SeasonTable: { Seasons: Array<{ season: string; url: string }> } }>(
+      `drivers/${driverId}/seasons.json`,
+      { revalidate: 86400, limit: 100, ...opts },
+    );
+    return env.MRData.SeasonTable.Seasons.map((s) => Number(s.season)).filter((y) => Number.isFinite(y));
+  },
+
   /** All seasons (1950 → present). */
   async getSeasons(opts: FetchOpts = {}) {
     const env = await get<{ SeasonTable: { Seasons: Array<{ season: string; url: string }> } }>(

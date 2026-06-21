@@ -58,7 +58,17 @@ export default async function TeamProfilePage(props: {
       </header>
 
       <section className="mx-auto w-full max-w-[1600px] px-4 py-16 md:px-grid-margin md:py-24">
-        <h2 className="text-data text-telemetry-red">ABOUT</h2>
+        <Link
+          href={`/teams/${c.slug}/history`}
+          className="group inline-flex items-center gap-3 bg-telemetry-red px-6 py-3 font-headline text-sm uppercase tracking-[0.18em] text-on-background transition-opacity hover:opacity-90"
+        >
+          Full history — 10-season breakdown
+          <span className="material-symbols-outlined text-[18px] transition-transform group-hover:translate-x-1">
+            arrow_forward
+          </span>
+        </Link>
+
+        <h2 className="text-data mt-16 text-telemetry-red">ABOUT</h2>
         <p className="mt-4 max-w-3xl font-editorial text-xl leading-relaxed text-on-surface-variant md:text-2xl">
           Full constructor history (founding year, base, principals, championships, season-by-season
           chart) lands in Phase B with the Wikidata seed + historical results ingest. Reference data
