@@ -8,7 +8,10 @@
       "@apex/ui": ["../../packages/ui/src"],
       "@apex/ui/tokens": ["../../packages/ui/src/tokens.ts"],
       "@apex/api-client": ["../../packages/api-client/src"],
-      "@apex/api-client/jolpica": ["../../packages/api-client/src/jolpica"]
+      "@apex/api-client/jolpica": ["../../packages/api-client/src/jolpica"],
+      "@apex/api-client/rss": ["../../packages/api-client/src/rss"],
+      "@apex/api-client/reddit": ["../../packages/api-client/src/reddit"],
+      "@apex/api-client/youtube": ["../../packages/api-client/src/youtube"]
     },
     "noEmit": true,
     "allowJs": true,

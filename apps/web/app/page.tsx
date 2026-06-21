@@ -9,7 +9,9 @@ import { SocialPulse } from '@/components/home/SocialPulse';
 import { NewsletterCTA } from '@/components/home/NewsletterCTA';
 import { PartnerBar } from '@/components/home/PartnerBar';
 
-export default function HomePage() {
+export const revalidate = 300;
+
+export default async function HomePage() {
   return (
     <>
       <HeroLeadStory />

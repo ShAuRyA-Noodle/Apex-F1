@@ -8,13 +8,17 @@
   "exports": {
     ".": "./src/index.ts",
     "./jolpica": "./src/jolpica/index.ts",
-    "./openf1": "./src/openf1/index.ts"
+    "./openf1": "./src/openf1/index.ts",
+    "./rss": "./src/rss/index.ts",
+    "./reddit": "./src/reddit/index.ts",
+    "./youtube": "./src/youtube/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf .turbo *.tsbuildinfo"
   },
   "dependencies": {
-    "@apex/types": "workspace:*"
+    "@apex/types": "workspace:*",
+    "fast-xml-parser": "^4.5.0"
   }
 }

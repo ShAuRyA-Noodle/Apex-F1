@@ -9,7 +9,6 @@ type MegaSection = {
   label: string;
   href: string;
   groups: { title: string; links: { label: string; href: string; tag?: string }[] }[];
-  preview?: { title: string; href: string; image: string; dek: string };
 };
 
 const NAV: MegaSection[] = [
@@ -18,52 +17,31 @@ const NAV: MegaSection[] = [
     href: '/latest',
     groups: [
       {
-        title: 'Sections',
+        title: 'Sources',
         links: [
           { label: 'All news', href: '/latest' },
-          { label: 'Features', href: '/latest/section/feature' },
-          { label: 'Analysis', href: '/latest/section/analysis' },
-          { label: 'Quizzes', href: '/latest/section/quiz' },
-          { label: 'Galleries', href: '/latest/section/gallery' },
+          { label: 'Motorsport.com', href: '/latest?source=motorsport' },
+          { label: 'Autosport', href: '/latest?source=autosport' },
+          { label: 'RaceFans', href: '/latest?source=racefans' },
+          { label: 'The Race', href: '/latest?source=the-race' },
         ],
       },
       {
-        title: 'Topics',
+        title: 'Community',
         links: [
-          { label: 'Race week', href: '/latest/tag/race-week' },
-          { label: 'Technical', href: '/latest/tag/technical' },
-          { label: 'Strategy', href: '/latest/tag/strategy' },
-          { label: 'Driver market', href: '/latest/tag/driver-market', tag: 'HOT' },
+          { label: 'r/formula1 hot', href: '/latest?source=reddit' },
         ],
       },
     ],
-    preview: {
-      title: 'How Mercedes engineered the W17 floor for Monaco',
-      href: '/latest/article/mercedes-w17-floor',
-      image:
-        'https://images.unsplash.com/photo-1568605114967-8130f3a36994?auto=format&fit=crop&w=1200&q=80',
-      dek: 'Inside the aero choices that put Russell on pole and unlocked Hamilton’s long stint.',
-    },
   },
   {
     label: 'Schedule',
     href: '/schedule',
     groups: [
       {
-        title: '2026 calendar',
+        title: 'Current season',
         links: [
           { label: 'Full schedule', href: '/schedule' },
-          { label: 'Next race', href: '/schedule/2026/spain' },
-          { label: 'Sprint weekends', href: '/schedule#sprints' },
-          { label: 'Test sessions', href: '/schedule#testing' },
-        ],
-      },
-      {
-        title: 'Archive',
-        links: [
-          { label: '2025 season', href: '/schedule/2025' },
-          { label: '2024 season', href: '/schedule/2024' },
-          { label: 'Historic seasons', href: '/schedule/archive' },
         ],
       },
     ],
@@ -77,15 +55,6 @@ const NAV: MegaSection[] = [
         links: [
           { label: 'Drivers', href: '/results/2026/drivers' },
           { label: 'Constructors', href: '/results/2026/teams' },
-          { label: 'Race by race', href: '/results/2026/races' },
-        ],
-      },
-      {
-        title: 'Historical',
-        links: [
-          { label: 'Archive 1950-2025', href: '/results/archive' },
-          { label: 'Hall of Fame', href: '/drivers/hall-of-fame' },
-          { label: 'Records', href: '/results/awards' },
         ],
       },
     ],
@@ -95,20 +64,8 @@ const NAV: MegaSection[] = [
     href: '/drivers',
     groups: [
       {
-        title: '2026 grid',
-        links: [
-          { label: 'Current grid', href: '/drivers' },
-          { label: 'Compare', href: '/drivers?compare=1' },
-          { label: 'By nationality', href: '/drivers?by=nationality' },
-        ],
-      },
-      {
-        title: 'History',
-        links: [
-          { label: 'All-time index', href: '/drivers/all' },
-          { label: 'Hall of Fame', href: '/drivers/hall-of-fame' },
-          { label: 'Champions (1950-2025)', href: '/drivers/champions' },
-        ],
+        title: 'Grid',
+        links: [{ label: 'Current grid', href: '/drivers' }],
       },
     ],
   },
@@ -117,19 +74,8 @@ const NAV: MegaSection[] = [
     href: '/teams',
     groups: [
       {
-        title: '2026 constructors',
-        links: [
-          { label: 'Current teams', href: '/teams' },
-          { label: 'Power units', href: '/teams?by=power-unit' },
-          { label: 'Compare', href: '/teams?compare=1' },
-        ],
-      },
-      {
-        title: 'History',
-        links: [
-          { label: 'All teams', href: '/teams/all' },
-          { label: 'Championship winners', href: '/teams/champions' },
-        ],
+        title: 'Constructors',
+        links: [{ label: 'Current constructors', href: '/teams' }],
       },
     ],
   },
@@ -138,26 +84,13 @@ const NAV: MegaSection[] = [
     href: '/video',
     groups: [
       {
-        title: 'Rails',
+        title: 'Channels',
         links: [
-          { label: 'Race highlights', href: '/video?rail=highlights' },
-          { label: 'Technical', href: '/video?rail=technical' },
-          { label: 'Driver interviews', href: '/video?rail=interviews' },
-          { label: 'Behind the scenes', href: '/video?rail=bts' },
-        ],
-      },
-    ],
-  },
-  {
-    label: 'Live',
-    href: '/live/timing',
-    groups: [
-      {
-        title: 'Race weekend',
-        links: [
-          { label: 'Live timing', href: '/live/timing', tag: 'BETA' },
-          { label: 'Track map', href: '/live/track' },
-          { label: 'Race control', href: '/live/race-control' },
+          { label: 'All recent', href: '/video' },
+          { label: 'FORMULA 1 official', href: '/video?channel=formula1' },
+          { label: 'Chain Bear', href: '/video?channel=chain-bear' },
+          { label: 'Tommo F1', href: '/video?channel=tommo' },
+          { label: 'Driver61', href: '/video?channel=driver61' },
         ],
       },
     ],
@@ -270,30 +203,6 @@ export function MegaNav() {
                   </ul>
                 </div>
               ))}
-              {NAV.find((s) => s.label === open)?.preview && (
-                <Link
-                  href={NAV.find((s) => s.label === open)!.preview!.href}
-                  className="group col-span-6 ml-auto block max-w-md"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-high">
-                    <img
-                      src={NAV.find((s) => s.label === open)!.preview!.image}
-                      alt=""
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-transparent to-transparent" />
-                    <span className="text-data absolute left-4 top-4 text-telemetry-red">
-                      FEATURED
-                    </span>
-                  </div>
-                  <h3 className="mt-4 font-headline text-xl text-on-background">
-                    {NAV.find((s) => s.label === open)!.preview!.title}
-                  </h3>
-                  <p className="mt-2 text-sm text-on-surface-variant">
-                    {NAV.find((s) => s.label === open)!.preview!.dek}
-                  </p>
-                </Link>
-              )}
             </div>
           </motion.div>
         )}
