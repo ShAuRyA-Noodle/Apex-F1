@@ -6,7 +6,9 @@
       "@/*": ["./*"],
       "@apex/types": ["../../packages/types/src"],
       "@apex/ui": ["../../packages/ui/src"],
-      "@apex/ui/tokens": ["../../packages/ui/src/tokens.ts"]
+      "@apex/ui/tokens": ["../../packages/ui/src/tokens.ts"],
+      "@apex/api-client": ["../../packages/api-client/src"],
+      "@apex/api-client/jolpica": ["../../packages/api-client/src/jolpica"]
     },
     "noEmit": true,
     "allowJs": true,

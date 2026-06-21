@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@apex/ui', '@apex/types'],
+  transpilePackages: ['@apex/ui', '@apex/types', '@apex/api-client'],
   turbopack: {
     root: path.resolve(__dirname, '../..'),
   },
