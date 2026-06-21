@@ -15,7 +15,7 @@
     "@apex/api-client": "workspace:*",
     "@apex/db": "workspace:*",
     "@apex/types": "workspace:*",
-    "drizzle-orm": "^0.36.4"
+    "drizzle-orm": "^0.45.2"
   },
   "devDependencies": {
     "@types/node": "^26.0.0",
