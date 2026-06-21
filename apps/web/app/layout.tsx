@@ -6,6 +6,7 @@ import { RaceTickerBar } from '@/components/shell/RaceTickerBar';
 import { MegaNav } from '@/components/shell/MegaNav';
 import { Footer } from '@/components/shell/Footer';
 import { CookieConsent } from '@/components/shell/CookieConsent';
+import { PosthogScript } from '@/components/shell/PosthogScript';
 
 const SITE = 'Apex';
 const DESCRIPTION =
@@ -70,6 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Footer />
           <CookieConsent />
         </LenisProvider>
+        <PosthogScript />
       </body>
     </html>
   );
