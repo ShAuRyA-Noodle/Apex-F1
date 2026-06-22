@@ -48,45 +48,43 @@ export function HeroLeadStoryClient({ leads }: { leads: RssItem[] }) {
 
   return (
     <section
-      className="relative w-full overflow-hidden bg-background"
+      className="relative w-full bg-background"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
       <div className="relative h-[88vh] min-h-[640px] w-full">
-        <AnimatePresence mode="sync">
-          {current.imageUrl && (
-            <motion.img
-              key={`hero-img-${idx}`}
-              src={current.imageUrl}
-              alt=""
-              aria-hidden="true"
-              fetchPriority={idx === 0 ? 'high' : 'low'}
-              loading={idx === 0 ? 'eager' : 'lazy'}
-              decoding="async"
-              width={1920}
-              height={1080}
-              initial={{ opacity: 0, scale: 1.04 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 1.01 }}
-              transition={{
-                opacity: { duration: 1.1, ease: [0.215, 0.61, 0.355, 1] },
-                scale: { duration: CYCLE_MS / 1000 + 1, ease: 'linear' },
-              }}
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-          )}
-        </AnimatePresence>
+        {/* Background layer — clipped so the Ken Burns zoom stays inside the frame. */}
+        <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
+          <AnimatePresence mode="sync">
+            {current.imageUrl && (
+              <motion.img
+                key={`hero-img-${idx}`}
+                src={current.imageUrl}
+                alt=""
+                fetchPriority={idx === 0 ? 'high' : 'low'}
+                loading={idx === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                width={1920}
+                height={1080}
+                initial={{ opacity: 0, scale: 1.04 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.01 }}
+                transition={{
+                  opacity: { duration: 1.1, ease: [0.215, 0.61, 0.355, 1] },
+                  scale: { duration: CYCLE_MS / 1000 + 1, ease: 'linear' },
+                }}
+                className="absolute inset-0 h-full w-full object-cover"
+              />
+            )}
+          </AnimatePresence>
 
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/20 to-background"
-        />
-        <div
-          aria-hidden="true"
-          className="absolute inset-0 stave-line-bg opacity-[0.12] mix-blend-overlay"
-        />
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/20 to-background" />
+          <div className="absolute inset-0 stave-line-bg opacity-[0.12] mix-blend-overlay" />
+        </div>
 
-        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1600px] flex-col justify-end px-4 pb-16 md:px-grid-margin md:pb-24">
+        {/* Copy layer — NOT clipped, with top clearance so a tall headline never
+            slides under the sticky shell / breaking-news strip. */}
+        <div className="relative z-10 mx-auto flex h-full w-full max-w-[1600px] flex-col justify-end px-4 pb-16 pt-24 md:px-grid-margin md:pb-24">
           <AnimatePresence mode="wait">
             <motion.div
               key={`hero-copy-${idx}`}
@@ -106,7 +104,7 @@ export function HeroLeadStoryClient({ leads }: { leads: RssItem[] }) {
                 )}
               </div>
 
-              <h1 className="text-display text-4xl text-on-background sm:text-5xl md:text-7xl lg:text-[84px]">
+              <h1 className="text-display text-4xl text-on-background [text-wrap:balance] line-clamp-3 sm:text-5xl md:text-7xl lg:text-[84px]">
                 {current.title}
               </h1>
 

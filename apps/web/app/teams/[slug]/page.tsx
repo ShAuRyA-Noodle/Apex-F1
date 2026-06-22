@@ -115,13 +115,14 @@ export default async function TeamProfilePage(props: {
           }}
         />
 
-        {/* Vignette */}
+        {/* Vignette — top + bottom scrim so nav text and the name stay legible on
+            light liveries (Haas #FFF, Renault #FFF500, Mercedes #00D2BE, etc). */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 -z-10"
           style={{
             background:
-              'linear-gradient(180deg, transparent 40%, rgba(15,15,15,0.55) 80%, #0f0f0f 100%)',
+              'linear-gradient(180deg, rgba(15,15,15,0.5) 0%, transparent 22%, transparent 55%, rgba(15,15,15,0.6) 82%, #0f0f0f 100%)',
           }}
         />
 

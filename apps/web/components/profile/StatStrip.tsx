@@ -19,14 +19,19 @@ export interface StatItem {
 }
 
 export function StatStrip({ items }: { items: StatItem[] }) {
+  // Literal responsive column classes (Tailwind v4 has no runtime safelist, so
+  // `sm:grid-cols-${n}` would be purged). Picked by stat count so 5-6 career
+  // stats wrap cleanly instead of being crushed into equal columns everywhere.
+  const cols =
+    items.length <= 3
+      ? 'sm:grid-cols-3'
+      : items.length === 4
+        ? 'sm:grid-cols-2 lg:grid-cols-4'
+        : 'sm:grid-cols-3 lg:grid-cols-6';
   return (
     <section className="relative border-y border-outline-variant/30 bg-surface-container-lowest/60 backdrop-blur-xl">
       <div
-        className={`mx-auto grid w-full max-w-[1600px] grid-cols-2 sm:grid-cols-${Math.min(
-          items.length,
-          4,
-        )} md:px-grid-margin`}
-        style={{ gridTemplateColumns: `repeat(${items.length > 4 ? 3 : items.length}, minmax(0, 1fr))` }}
+        className={`mx-auto grid w-full max-w-[1600px] grid-cols-2 ${cols} md:px-grid-margin`}
       >
         {/* Mobile: snap horizontal scroll */}
         <div className="col-span-full overflow-x-auto sm:hidden">

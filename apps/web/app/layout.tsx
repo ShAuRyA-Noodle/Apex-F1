@@ -1,6 +1,39 @@
 import type { Metadata, Viewport } from 'next';
+import { Anybody, Hanken_Grotesk, EB_Garamond, JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 import { LenisProvider } from '@/components/motion/LenisProvider';
+
+/**
+ * Self-hosted via next/font — fonts are bundled + served from our own origin
+ * (no Google Fonts round-trip, no render-blocking <link>, no layout shift).
+ * Each exposes a CSS variable consumed by the --font-* tokens in globals.css.
+ */
+const anybody = Anybody({
+  subsets: ['latin'],
+  weight: ['700', '800'],
+  variable: '--font-anybody',
+  display: 'swap',
+});
+const hankenGrotesk = Hanken_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-hanken',
+  display: 'swap',
+});
+const ebGaramond = EB_Garamond({
+  subsets: ['latin'],
+  weight: ['400'], // Google's EB Garamond has no 300 weight; 400 is the lightest face.
+  variable: '--font-garamond',
+  display: 'swap',
+});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['500'],
+  variable: '--font-jetbrains',
+  display: 'swap',
+});
+
+const fontVars = `${anybody.variable} ${hankenGrotesk.variable} ${ebGaramond.variable} ${jetbrainsMono.variable}`;
 import { TopUtilityBar } from '@/components/shell/TopUtilityBar';
 import { RaceTickerBar } from '@/components/shell/RaceTickerBar';
 import { MegaNavServer } from '@/components/shell/MegaNavServer';
@@ -52,14 +85,13 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en" className={`dark ${fontVars}`}>
       <head>
+        {/* Text fonts are self-hosted via next/font (above). Only the Material
+            Symbols variable icon font still loads from Google — next/font does
+            not support its variable axes, so the CDN stylesheet stays. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Anybody:wght@700;800&family=EB+Garamond:wght@300&family=Hanken+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap"
-        />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"

@@ -61,7 +61,7 @@ export function SkeletonReveal({
 
 export function RaceTickerSkeleton() {
   return (
-    <div className="glass-medium sticky top-16 z-30 md:top-[104px]">
+    <div className="glass-medium relative z-30">
       <div className="apex-container">
         <div className="-mx-4 flex items-stretch gap-3 overflow-hidden px-4 py-3 md:mx-0 md:gap-4 md:px-0 md:py-4">
           {[0, 1, 2, 3].map((i) => (

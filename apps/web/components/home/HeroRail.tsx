@@ -1,4 +1,4 @@
-import { getF1NewsFeed } from '@apex/api-client/rss';
+import { getHomeFeed } from '@/lib/home-feed';
 
 function relTime(ms: number): string {
   const delta = Date.now() - ms;
@@ -9,7 +9,7 @@ function relTime(ms: number): string {
 }
 
 export async function HeroRail() {
-  const all = await getF1NewsFeed({ limit: 6, revalidate: 300 });
+  const all = await getHomeFeed();
   const rail = all.slice(1, 6); // skip lead
   if (rail.length === 0) return null;
 

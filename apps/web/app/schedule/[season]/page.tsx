@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { jolpica, mapRace } from '@apex/api-client/jolpica';
 import { countryNameToCode, flagEmoji, formatDateRange } from '@/lib/format';
 
@@ -20,7 +21,10 @@ export default async function SeasonSchedulePage(props: {
 }) {
   const { season } = await props.params;
   const seasonNum = Number(season);
+  // Reject non-numeric / out-of-range seasons instead of rendering an empty 200.
+  if (!Number.isInteger(seasonNum) || seasonNum < 1950 || seasonNum > 2026) notFound();
   const races = (await jolpica.getSchedule(seasonNum, { revalidate: 3600 })).map(mapRace);
+  if (races.length === 0) notFound();
   const now = Date.now();
   const nextIdx = races.findIndex((r) => new Date(r.raceStartIso).getTime() > now);
 
@@ -28,7 +32,16 @@ export default async function SeasonSchedulePage(props: {
     <article className="mx-auto w-full max-w-[1600px] px-4 py-16 md:px-grid-margin md:py-24">
       <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <span className="text-data text-telemetry-red">{season} SEASON</span>
+          <Link
+            href="/schedule"
+            className="group mb-3 inline-flex items-center gap-2 text-data text-on-surface-variant transition-colors hover:text-on-background"
+          >
+            <span className="material-symbols-outlined text-[16px] transition-transform group-hover:-translate-x-1">
+              arrow_back
+            </span>
+            ALL SEASONS
+          </Link>
+          <span className="block text-data text-telemetry-red">{season} SEASON</span>
           <h1 className="mt-2 font-display text-5xl uppercase tracking-tight text-on-background md:text-7xl">
             Schedule
           </h1>

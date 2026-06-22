@@ -1,10 +1,10 @@
-import { getF1NewsFeed } from '@apex/api-client/rss';
+import { getHomeFeed } from '@/lib/home-feed';
 
 // Wire-aggregated long-reads. Until Apex original editorial CMS lands,
 // this surface fairly-uses public RSS headlines + 2-line preview text
 // from licensed-RSS upstream feeds. Links open at source.
 export async function EditorsPicks() {
-  const items = await getF1NewsFeed({ limit: 30, revalidate: 600 });
+  const items = await getHomeFeed();
   // Skip the items consumed by HeroLeadStory + HeroRail (first 6).
   const picks = items.slice(6, 16);
   if (picks.length === 0) return null;

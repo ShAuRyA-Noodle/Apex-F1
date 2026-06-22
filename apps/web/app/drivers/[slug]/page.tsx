@@ -237,9 +237,9 @@ export default async function DriverProfilePage(props: {
           </div>
 
           <h1
-            className="font-display uppercase leading-[0.82] tracking-[-0.04em] text-on-background"
+            className="font-display uppercase leading-[0.82] tracking-[-0.04em] text-on-background [overflow-wrap:anywhere]"
             style={{
-              fontSize: 'clamp(4.5rem, 18vw, 14rem)',
+              fontSize: 'clamp(2.75rem, 15vw, 14rem)',
               viewTransitionName: `driver-name-${d.slug}`,
             }}
           >

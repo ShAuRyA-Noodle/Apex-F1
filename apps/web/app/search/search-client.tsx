@@ -124,7 +124,7 @@ export function SearchClient({
             press /
           </kbd>
         </div>
-        <div className="flex items-center gap-1 border border-outline-variant/60 p-1">
+        <div className="flex flex-wrap items-center gap-1 border border-outline-variant/60 p-1">
           {KIND_BUCKETS.map((b) => {
             const active = kindFilter === b.key;
             const count = b.key === 'all' ? counts.all : counts[b.key];

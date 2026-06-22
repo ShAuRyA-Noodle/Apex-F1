@@ -256,7 +256,7 @@ export default async function LatestPage(props: {
                       : `inline-flex items-center gap-1.5 ${PILL_INACTIVE}`
                   }
                 >
-                  <SentimentBadge sentiment={s} compact />
+                  {!active && <SentimentBadge sentiment={s} compact />}
                   {SENTIMENT_LABEL[s]}
                 </Link>
               );

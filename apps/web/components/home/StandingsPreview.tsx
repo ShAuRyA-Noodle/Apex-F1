@@ -53,14 +53,14 @@ export async function StandingsPreview() {
 
         <div className="mt-5 grid grid-cols-2 gap-3">
           <Link
-            href="/results/current/drivers"
+            href="/results/2026/drivers"
             className="inline-flex items-center justify-center gap-2 border border-outline-variant px-5 py-3 text-data text-on-surface transition-colors hover:border-telemetry-red"
           >
             FULL DRIVER STANDINGS
             <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
           </Link>
           <Link
-            href="/results/current/teams"
+            href="/results/2026/teams"
             className="inline-flex items-center justify-center gap-2 border border-outline-variant px-5 py-3 text-data text-on-surface transition-colors hover:border-telemetry-red"
           >
             FULL CONSTRUCTOR STANDINGS

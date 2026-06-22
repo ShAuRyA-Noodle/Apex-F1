@@ -1,6 +1,29 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV",
+    "VERCEL",
+    "VERCEL_ENV",
+    "VERCEL_URL",
+    "GROQ_API_KEY",
+    "NEWSAPI_KEY",
+    "GUARDIAN_API_KEY",
+    "NEWSDATA_API_KEY",
+    "GNEWS_API_KEY",
+    "CURRENTS_API_KEY",
+    "YOUTUBE_API_KEY",
+    "UNSPLASH_ACCESS_KEY",
+    "GIPHY_API_KEY",
+    "HUGGINGFACE_TOKEN",
+    "RESEND_API_KEY",
+    "RESEND_AUDIENCE_ID",
+    "RESEND_FROM_EMAIL",
+    "RESEND_FROM_NAME",
+    "CRON_SECRET",
+    "DATABASE_URL",
+    "NEXT_PUBLIC_*"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

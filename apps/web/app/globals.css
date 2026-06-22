@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 /* Apex design tokens · Tailwind v4 @theme block.
  * Mirrored from packages/ui/src/tokens.css (which mirrors tokens.ts).
@@ -52,11 +53,11 @@
   --color-on-error: #690005;
   --color-on-error-container: #ffdad6;
 
-  --font-display: 'Anybody', 'Hanken Grotesk', system-ui, sans-serif;
-  --font-headline: 'Anybody', 'Hanken Grotesk', system-ui, sans-serif;
-  --font-body: 'Hanken Grotesk', system-ui, sans-serif;
-  --font-editorial: 'EB Garamond', 'Times New Roman', serif;
-  --font-data: 'JetBrains Mono', 'Menlo', monospace;
+  --font-display: var(--font-anybody), 'Anybody', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-headline: var(--font-anybody), 'Anybody', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-body: var(--font-hanken), 'Hanken Grotesk', system-ui, sans-serif;
+  --font-editorial: var(--font-garamond), 'EB Garamond', 'Times New Roman', serif;
+  --font-data: var(--font-jetbrains), 'JetBrains Mono', 'Menlo', monospace;
 
   --spacing-safe-area: 10vw;
   --spacing-grid-gutter: 1.5rem;

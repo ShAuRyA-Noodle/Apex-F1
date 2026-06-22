@@ -56,6 +56,7 @@ export function CookieConsent() {
           transition={{ duration: 0.36, ease: [0.215, 0.61, 0.355, 1] }}
           className="glass-panel fixed z-[60] overflow-hidden
                      bottom-0 left-0 right-0 border-x-0 border-b-0 md:bottom-6 md:right-6 md:left-auto md:max-w-md md:border"
+          style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
           role="dialog"
           aria-label="Cookie consent"
         >

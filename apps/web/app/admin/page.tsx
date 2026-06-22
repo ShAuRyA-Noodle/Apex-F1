@@ -52,11 +52,17 @@ export default function AdminHome() {
             title="Articles"
             desc="Write + publish editorial. TipTap editor with race / driver / team tagging."
           />
-          <Tile
-            href="/admin/runs"
-            title="Ingestion runs"
-            desc="Worker run audit log. Re-run any failed job."
-          />
+          <li className="bg-background p-6 opacity-60">
+            <div className="flex items-center gap-2">
+              <h3 className="font-headline text-lg text-on-background">Ingestion runs</h3>
+              <span className="border border-outline-variant/60 px-2 py-0.5 text-data text-[10px] text-outline">
+                COMING SOON
+              </span>
+            </div>
+            <p className="mt-2 text-sm text-on-surface-variant">
+              Worker run audit log. Re-run any failed job. Ships with Phase C Supabase wiring.
+            </p>
+          </li>
         </ul>
       </section>
 

@@ -129,7 +129,7 @@ export function ParallaxHero({
 
       {/* Children — slot inside hero. We deliberately do NOT constrain padding here;
          every page composes its own layout grid inside. */}
-      <div className="relative z-0 flex h-full min-h-inherit w-full flex-col">
+      <div className="relative z-0 flex h-full min-h-[inherit] w-full flex-col">
         {children}
       </div>
 

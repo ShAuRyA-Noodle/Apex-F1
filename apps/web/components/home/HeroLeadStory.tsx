@@ -1,4 +1,4 @@
-import { getF1NewsFeed } from '@apex/api-client/rss';
+import { getHomeFeed } from '@/lib/home-feed';
 import { HeroLeadStoryClient } from './HeroLeadStoryClient';
 
 /**
@@ -8,7 +8,7 @@ import { HeroLeadStoryClient } from './HeroLeadStoryClient';
  * crossfade no-ops and the hero behaves like before.
  */
 export async function HeroLeadStory() {
-  const items = await getF1NewsFeed({ limit: 12, revalidate: 300 });
+  const items = await getHomeFeed();
   const withImage = items.filter((i) => Boolean(i.imageUrl)).slice(0, 5);
   const leads = withImage.length > 0 ? withImage : items.slice(0, 1);
   if (leads.length === 0) return null;

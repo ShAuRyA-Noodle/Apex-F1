@@ -135,17 +135,17 @@ export default async function ChampionsPage() {
                 <li key={c.year}>
                   <Link
                     href={`/results/${c.year}/drivers`}
-                    className="grid grid-cols-[80px_8px_1fr_auto_80px] items-center gap-5 px-2 py-5 transition-colors hover:bg-surface-container-low md:px-6"
+                    className="grid grid-cols-[56px_1fr_auto] items-center gap-3 px-2 py-5 transition-colors hover:bg-surface-container-low md:grid-cols-[80px_8px_1fr_auto_80px] md:gap-5 md:px-6"
                   >
                     <span className="font-data text-2xl text-on-background md:text-3xl">{c.year}</span>
-                    <span className="block h-9 w-2" style={{ backgroundColor: color }} aria-hidden="true" />
+                    <span className="hidden h-9 w-2 md:block" style={{ backgroundColor: color }} aria-hidden="true" />
                     <div className="min-w-0">
                       <div className="truncate font-headline text-base text-on-background md:text-lg">
                         {flagEmoji(cc)} {c.driverName}
                       </div>
                       <div className="text-data text-outline">{c.teamName}</div>
                     </div>
-                    <span className="text-data text-on-surface-variant">{c.wins} WINS</span>
+                    <span className="hidden text-data text-on-surface-variant md:inline">{c.wins} WINS</span>
                     <span className="text-right font-data text-xl text-on-background md:text-2xl">
                       {c.points}
                     </span>

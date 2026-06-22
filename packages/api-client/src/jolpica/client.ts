@@ -20,21 +20,62 @@ type FetchOpts = {
   offset?: number;
 };
 
+const MAX_RETRIES = 3;
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * Universal empty Jolpica envelope. Every public method reads exactly one table
+ * and falls back via `?? []` / `?? null`, so an all-empty envelope degrades any
+ * caller to an empty result instead of throwing. Used when the API is
+ * unreachable or rate-limited (notably build-time prerender bursts hitting 429).
+ */
+function emptyEnvelope<T>(): JolpicaEnvelope<T> {
+  return {
+    MRData: {
+      RaceTable: { Races: [] },
+      StandingsTable: { StandingsLists: [] },
+      DriverTable: { Drivers: [] },
+      ConstructorTable: { Constructors: [] },
+      SeasonTable: { Seasons: [] },
+    },
+  } as unknown as JolpicaEnvelope<T>;
+}
+
 async function get<T>(path: string, opts: FetchOpts = {}): Promise<JolpicaEnvelope<T>> {
   const url = new URL(`${BASE}/${path}`);
   if (opts.limit !== undefined) url.searchParams.set('limit', String(opts.limit));
   if (opts.offset !== undefined) url.searchParams.set('offset', String(opts.offset));
 
   const fetchImpl = opts.fetchImpl ?? fetch;
-  const res = await fetchImpl(url.toString(), {
-    headers: { Accept: 'application/json' },
-    next: opts.revalidate !== undefined ? { revalidate: opts.revalidate } : undefined,
-  } as RequestInit);
 
-  if (!res.ok) {
-    throw new Error(`Jolpica ${res.status} ${res.statusText} for ${url.toString()}`);
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetchImpl(url.toString(), {
+        headers: { Accept: 'application/json' },
+        next: opts.revalidate !== undefined ? { revalidate: opts.revalidate } : undefined,
+      } as RequestInit);
+
+      // 429 / 5xx are transient — back off and retry, then degrade to empty.
+      if (res.status === 429 || res.status >= 500) {
+        if (attempt < MAX_RETRIES) {
+          await sleep(500 * 2 ** attempt + Math.floor(Math.random() * 250));
+          continue;
+        }
+        return emptyEnvelope<T>();
+      }
+      // Other non-2xx (e.g. unknown driver slug) — degrade, never kill the build.
+      if (!res.ok) return emptyEnvelope<T>();
+
+      return (await res.json()) as JolpicaEnvelope<T>;
+    } catch {
+      if (attempt < MAX_RETRIES) {
+        await sleep(500 * 2 ** attempt + Math.floor(Math.random() * 250));
+        continue;
+      }
+      return emptyEnvelope<T>();
+    }
   }
-  return (await res.json()) as JolpicaEnvelope<T>;
+  return emptyEnvelope<T>();
 }
 
 export const jolpica = {
