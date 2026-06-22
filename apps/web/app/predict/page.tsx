@@ -45,8 +45,8 @@ export default async function PredictPage() {
           </h1>
           <p className="mt-6 max-w-3xl font-editorial text-xl leading-relaxed text-on-surface-variant md:text-2xl">
             Make 5 calls before qualifying locks. Score across the weekend. Build a league with
-            your friends. Climb the global leaderboard across the season. Free, no signup
-            required to play · sign in to track streaks.
+            your friends. Climb the global leaderboard across the season. Free, no signup.
+            Streaks live in your browser only.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link

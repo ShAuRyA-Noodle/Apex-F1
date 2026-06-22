@@ -155,8 +155,8 @@ export default async function LiveTrackPage() {
             })}
           </ul>
           <p className="mt-6 text-xs text-outline">
-            Source: OpenF1. SVG track map + per-driver position dots land in Phase C. Free Apex
-            edition. Apex+ adds real-time delta overlays per driver.
+            Source: OpenF1. SVG track map + per-driver position dots land in Phase C.
+            Free, no paywall · the platform stays free forever.
           </p>
         </div>
       </section>

@@ -9,20 +9,17 @@ import { ApexMonogram } from './ApexMonogram';
  * TopUtilityBar v2
  * - 32px slim glass-medium
  * - Apex monogram + INDEPENDENT FORMULA 1 PLATFORM lockup
- * - Utility links + auth, right side
+ * - Utility links only · auth + Apex+ removed because there is no real
+ *   auth backend and no real subscription, so the buttons were dead.
+ *   Tip jar surfaces here instead so the support path is one click away.
  * - Hides on scroll-down past 100vh, reappears on scroll-up
  * - Hidden by default on mobile; reachable from the mega nav 3-dot menu
  */
 const utilityLinks = [
   { label: 'Newsletter', href: '/newsletter' },
   { label: 'Archive', href: '/results/archive' },
-  { label: 'Apex+', href: '/membership', highlight: true },
   { label: 'Search', href: '/search' },
-];
-
-const authLinks = [
-  { label: 'Sign in', href: '/account' },
-  { label: 'Create', href: '/account?signup=1' },
+  { label: 'Support', href: '/support', highlight: true },
 ];
 
 export function TopUtilityBar() {
@@ -65,23 +62,6 @@ export function TopUtilityBar() {
                   className={
                     l.highlight
                       ? 'font-data text-[11px] tracking-[0.16em] text-telemetry-red transition-colors hover:text-on-background'
-                      : 'font-data text-[11px] tracking-[0.16em] text-on-surface-variant transition-colors hover:text-on-background'
-                  }
-                >
-                  {l.label.toUpperCase()}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <span className="h-3 w-px bg-outline-variant/60" aria-hidden />
-          <ul className="flex items-center gap-3">
-            {authLinks.map((l, i) => (
-              <li key={l.href}>
-                <Link
-                  href={l.href}
-                  className={
-                    i === 1
-                      ? 'inline-flex h-5 items-center bg-on-background px-2 font-data text-[10.5px] tracking-[0.14em] text-background transition-opacity hover:opacity-90'
                       : 'font-data text-[11px] tracking-[0.16em] text-on-surface-variant transition-colors hover:text-on-background'
                   }
                 >

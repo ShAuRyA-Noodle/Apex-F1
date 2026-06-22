@@ -37,8 +37,8 @@ const groups: { title: string; links: { label: string; href: string }[] }[] = [
     title: 'Apex',
     links: [
       { label: 'About', href: '/about' },
-      { label: 'Apex+', href: '/membership' },
       { label: 'Predict', href: '/predict' },
+      { label: 'Newsletter', href: '/newsletter' },
       { label: 'Support · tip jar', href: '/support' },
     ],
   },

@@ -572,8 +572,8 @@ function MobileTakeover({
               [
                 { label: 'Newsletter', href: '/newsletter' },
                 { label: 'Archive', href: '/results/archive' },
-                { label: 'Apex+', href: '/membership' },
-                { label: 'Sign in', href: '/account' },
+                { label: 'Support', href: '/support' },
+                { label: 'About', href: '/about' },
               ] as const
             ).map(({ label, href }) => (
               <Link
