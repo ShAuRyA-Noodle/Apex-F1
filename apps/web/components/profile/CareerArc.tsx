@@ -138,7 +138,7 @@ export function CareerArc({
           const data = map.get(hover);
           if (!data) return null;
           return (
-            <CareerTooltip data={data} percent={((hover - startYear) / (resolvedEndYear - startYear)) * 100} />
+            <CareerTooltip data={data} percent={((hover - startYear) / ((resolvedEndYear - startYear) || 1)) * 100} />
           );
         })()}
       </div>

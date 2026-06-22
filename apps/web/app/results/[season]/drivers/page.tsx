@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { jolpica, mapDriverStanding } from '@apex/api-client/jolpica';
 import { nationalityToCountryCode, flagEmoji, teamColorBySlug } from '@/lib/format';
 
@@ -20,9 +21,13 @@ export default async function DriverStandingsPage(props: {
 }) {
   const { season } = await props.params;
   const seasonNum = Number(season);
+  if (!Number.isInteger(seasonNum) || seasonNum < 1950 || seasonNum > new Date().getFullYear()) {
+    notFound();
+  }
   const standings = (await jolpica.getDriverStandings(seasonNum, { revalidate: 300 })).map(
     mapDriverStanding,
   );
+  if (standings.length === 0) notFound();
 
   const max = Math.max(...standings.map((s) => s.points), 1);
 

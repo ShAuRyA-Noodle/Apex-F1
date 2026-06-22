@@ -32,7 +32,10 @@ export async function HighlightsRail() {
               Direct from the FORMULA 1 YouTube channel
             </p>
           </div>
-          <a href="/video?channel=formula1" className="text-data text-on-surface-variant hover:text-on-background">
+          <a
+            href={`/video?channel=${officialChannel.name.toLowerCase().replace(/\s+/g, '-')}`}
+            className="text-data text-on-surface-variant hover:text-on-background"
+          >
             ALL →
           </a>
         </div>

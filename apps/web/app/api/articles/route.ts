@@ -36,13 +36,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: 'invalid slug' }, { status: 400 });
   }
 
-  // Phase C wires Drizzle insert + revalidatePath.
-  // Until then this is dry · but the validation + slug-check work today so
-  // editors can pre-vet copy before DB is live.
+  // Phase C wires the Drizzle insert + revalidatePath. Until then persistence
+  // is a no-op, so we must NOT report success — return 501 so the editor shows
+  // "not saved" instead of a green check that lies. Validation + slug-check
+  // above still run, so editors can pre-vet copy before the DB is live.
   // eslint-disable-next-line no-console
-  console.log(`[articles] draft save: ${slug} (${title.length} chars title)`);
+  console.log(`[articles] draft validated (not persisted): ${slug} (${title.length} chars title)`);
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json(
+    { ok: false, error: 'persistence not implemented yet (Phase C: Drizzle insert)' },
+    { status: 501 },
+  );
 }
 
 export function GET() {

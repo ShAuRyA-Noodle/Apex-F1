@@ -60,8 +60,8 @@ export default function DisclaimerPage() {
         </h2>
         <p>
           To report a copyright or trademark concern, email{' '}
-          <a href="mailto:legal@apex.example" className="text-telemetry-red underline">
-            legal@apex.example
+          <a href="mailto:legal@apex.gg" className="text-telemetry-red underline">
+            legal@apex.gg
           </a>
           . We respond within 48 hours and follow a DMCA workflow.
         </p>

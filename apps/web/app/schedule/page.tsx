@@ -56,7 +56,7 @@ export default async function SchedulePage() {
           return (
             <li
               key={r.slug}
-              id={isNext ? 'next' : undefined}
+              id={isNext || (nextIdx === -1 && i === races.length - 1) ? 'next' : undefined}
               className="bg-background scroll-mt-24"
             >
               <Link

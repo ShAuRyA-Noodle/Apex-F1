@@ -218,8 +218,12 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
   const closeTimer = useRef<number | null>(null);
 
   // Find active section for the red-dot indicator
+  // Match the active section by top-level path segment so deep nav hrefs
+  // (e.g. /live/timing, /results/2026/drivers) still light up on sibling
+  // routes (/live/track, /results/archive, /results/2025/...).
+  const topSeg = (p: string) => '/' + (p.split('/')[1] ?? '');
   const activeLabel =
-    NAV.find((n) => pathname === n.href || pathname.startsWith(n.href + '/'))?.label ?? null;
+    NAV.find((n) => pathname === n.href || topSeg(pathname) === topSeg(n.href))?.label ?? null;
 
   // Inject live previews into the static NAV at render time. This keeps the
   // NAV structure declarative while letting the dropdowns reflect real-time
@@ -264,6 +268,21 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [open, mobile, searchOpen]);
+
+  // Global "/" shortcut opens the search overlay (makes the badge hint real).
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== '/') return;
+      const t = e.target as HTMLElement | null;
+      if (!t) return;
+      const tag = t.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || t.isContentEditable) return;
+      e.preventDefault();
+      setSearchOpen(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // Lock body scroll when mobile menu open
   useEffect(() => {

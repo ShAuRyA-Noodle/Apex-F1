@@ -125,14 +125,8 @@ export function ArticleEditor({ enabled }: { enabled: boolean }) {
         >
           {state === 'saving' ? 'Saving…' : state === 'saved' ? 'Saved ✓' : 'Save draft'}
         </button>
-        <button
-          type="button"
-          disabled
-          title="Publish opens once DB + auth are wired and the article passes a11y + SEO checks."
-          className="cursor-not-allowed border border-outline-variant px-7 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-outline"
-        >
-          Publish
-        </button>
+        {/* Publish ships with the Phase C DB + auth wiring — hidden until then
+            rather than shown as a permanently-dead disabled button. */}
         {state === 'error' && (
           <span className="text-sm text-telemetry-red">{error}</span>
         )}

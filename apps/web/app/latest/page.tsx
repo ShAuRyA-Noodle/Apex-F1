@@ -120,6 +120,16 @@ export default async function LatestPage(props: {
   const hasNewsData = all.some((i) => i.provider === 'newsdata');
   const newsDataCount = all.reduce((n, i) => n + (i.provider === 'newsdata' ? 1 : 0), 0);
 
+  // Only ever render a filter control that can match at least one current row
+  // (CORE RULE #1: no dead controls). Sentiment + non-English languages are
+  // NewsData paid-tier only, so on the free key they vanish instead of
+  // filtering the stream to zero. Source pills hide when their provider is off.
+  const sentimentsPresent = SENTIMENT_ORDER.filter((s) => all.some((i) => i.sentiment === s));
+  const hasSentiment = sentimentsPresent.length > 0;
+  const langsPresent = new Set<string>(['en']);
+  for (const i of all) if (i.language) langsPresent.add(i.language);
+  const visibleSourcePills = SOURCE_PILLS.filter((p) => all.some((i) => p.match(i)));
+
   const activeLang = pickEnum<NewsDataLanguageIso>(lang, LANGUAGE_ORDER);
   const activeSentiment = pickEnum<NewsDataSentiment>(sentiment, SENTIMENT_ORDER);
 
@@ -177,7 +187,7 @@ export default async function LatestPage(props: {
           >
             All sources
           </Link>
-          {SOURCE_PILLS.map((pill) => {
+          {visibleSourcePills.map((pill) => {
             const active = source === pill.slug;
             return (
               <Link
@@ -218,7 +228,7 @@ export default async function LatestPage(props: {
           >
             All
           </Link>
-          {LANGUAGE_ORDER.map((iso) => {
+          {LANGUAGE_ORDER.filter((iso) => langsPresent.has(iso)).map((iso) => {
             const active = activeLang === iso;
             return (
               <Link
@@ -232,8 +242,8 @@ export default async function LatestPage(props: {
           })}
         </div>
 
-        {/* Sentiment row - only when at least one NewsData row exists. */}
-        {hasNewsData && (
+        {/* Sentiment row - only when a row actually carries a sentiment value. */}
+        {hasSentiment && (
           <div className="flex flex-wrap items-center gap-1 border border-outline-variant/60 p-1">
             <span className="px-3 py-2 font-mono text-[10px] uppercase tracking-[0.22em] text-outline">
               Sentiment
@@ -244,7 +254,7 @@ export default async function LatestPage(props: {
             >
               All
             </Link>
-            {SENTIMENT_ORDER.map((s) => {
+            {sentimentsPresent.map((s) => {
               const active = activeSentiment === s;
               return (
                 <Link

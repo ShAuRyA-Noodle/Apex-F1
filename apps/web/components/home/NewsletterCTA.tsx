@@ -4,17 +4,31 @@ import { useState } from 'react';
 
 export function NewsletterCTA() {
   const [email, setEmail] = useState('');
-  const [state, setState] = useState<'idle' | 'success' | 'error'>('idle');
+  const [state, setState] = useState<'idle' | 'pending' | 'success' | 'error'>('idle');
 
-  function onSubmit(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!email.includes('@')) {
       setState('error');
       return;
     }
-    setState('success');
-    setEmail('');
-    window.setTimeout(() => setState('idle'), 4000);
+    setState('pending');
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setState('success');
+        setEmail('');
+        window.setTimeout(() => setState('idle'), 4000);
+      } else {
+        setState('error');
+      }
+    } catch {
+      setState('error');
+    }
   }
 
   return (
@@ -47,9 +61,10 @@ export function NewsletterCTA() {
               />
               <button
                 type="submit"
-                className="bg-telemetry-red px-7 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-on-background transition-opacity hover:opacity-90"
+                disabled={state === 'pending'}
+                className="bg-telemetry-red px-7 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-on-background transition-opacity hover:opacity-90 disabled:opacity-60"
               >
-                Subscribe
+                {state === 'pending' ? 'Subscribing…' : 'Subscribe'}
               </button>
             </div>
             {state === 'success' && (

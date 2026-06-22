@@ -94,7 +94,7 @@ function Role({
       </div>
       <p className="mt-3 max-w-2xl text-base text-on-surface-variant">{pitch}</p>
       <a
-        href={mailto}
+        href={`mailto:${mailto}`}
         className="mt-4 inline-flex items-center gap-2 text-data text-telemetry-red transition-colors hover:text-on-background"
       >
         APPLY · EMAIL US

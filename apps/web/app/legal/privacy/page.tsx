@@ -49,8 +49,8 @@ export default function PrivacyPage() {
         <p>
           You can request access, correction, deletion, or export of your data at any time by
           emailing{' '}
-          <a href="mailto:privacy@apex.example" className="text-telemetry-red underline">
-            privacy@apex.example
+          <a href="mailto:privacy@apex.gg" className="text-telemetry-red underline">
+            privacy@apex.gg
           </a>
           . We respond within 30 days per GDPR and CCPA.
         </p>

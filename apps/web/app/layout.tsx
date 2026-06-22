@@ -41,7 +41,6 @@ import { BreakingNewsTickerServer } from '@/components/live/BreakingNewsTickerSe
 import { Footer } from '@/components/shell/Footer';
 import { CookieConsent } from '@/components/shell/CookieConsent';
 import { PosthogScript } from '@/components/shell/PosthogScript';
-import { ToastProvider } from '@/components/shell/Toast';
 import { VideoPlayerModal } from '@/components/video/VideoPlayerModal';
 
 const SITE = 'Apex';
@@ -99,7 +98,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <LenisProvider>
-          <ToastProvider>
             <a
               href="#main"
               className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:bg-telemetry-red focus:px-4 focus:py-2 focus:text-on-background"
@@ -116,7 +114,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
             <CookieConsent />
             <VideoPlayerModal />
-          </ToastProvider>
         </LenisProvider>
         <PosthogScript />
       </body>
