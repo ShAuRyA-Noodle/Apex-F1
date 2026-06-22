@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Apex+',
   description:
-    'Apex+ — the ad-free, telemetry-replay, full-archive tier. Founding-member offer at launch.',
+    'Apex+ · the ad-free, telemetry-replay, full-archive tier. Founding-member offer at launch.',
 };
 
 const FEATURES: { icon: string; title: string; desc: string }[] = [
@@ -13,7 +13,7 @@ const FEATURES: { icon: string; title: string; desc: string }[] = [
   { icon: 'analytics', title: 'Ghost Lap telemetry replays', desc: 'Two cars, same lap, side-by-side delta. The thing no fan site does for free.' },
   { icon: 'leaderboard', title: 'Grid Prediction Market', desc: 'Pick 5 questions a race weekend. Build a friends league. Compete for the season title.' },
   { icon: 'notifications_active', title: 'Race-day priority push', desc: 'First-to-know notifications: lights out, qualifying surprises, breaking moves. No noise.' },
-  { icon: 'mail', title: 'Apex+ Paddock Memo', desc: 'A subscriber-only second newsletter — long-form Saturday paddock corner.' },
+  { icon: 'mail', title: 'Apex+ Paddock Memo', desc: 'A subscriber-only second newsletter · long-form Saturday paddock corner.' },
 ];
 
 export default function MembershipPage() {
@@ -27,7 +27,7 @@ export default function MembershipPage() {
             who pause the broadcast.
           </h1>
           <p className="mt-6 max-w-3xl font-editorial text-xl leading-relaxed text-on-surface-variant md:text-2xl">
-            Apex stays free for the daily fan. Apex+ is for the diehard — the analyst
+            Apex stays free for the daily fan. Apex+ is for the diehard · the analyst
             checking gap charts at lap 28, the strategist counting laps to undercut, the
             archivist who wants the entire 76-year championship in one queryable home.
           </p>
@@ -96,8 +96,8 @@ export default function MembershipPage() {
           <h2 className="text-data text-telemetry-red">FAQ</h2>
           <dl className="mt-8 divide-y divide-outline-variant/40 border-y border-outline-variant/40">
             <Q q="When does Apex+ launch?" a="Phase C (Month 4-6 of the roadmap). Founding-member checkout opens with launch and closes at the 1000th supporter." />
-            <Q q="What about regular monthly pricing?" a="After Founding Member: $4.99/month or $49/year. Apex stays free for the casual fan — Apex+ is purely for the diehard." />
-            <Q q="Does it replace F1 TV?" a="No. F1 TV is live broadcast you watch. Apex+ is the intelligence layer around the broadcast — pre-race strategy, live timing, in-depth telemetry, post-race archive." />
+            <Q q="What about regular monthly pricing?" a="After Founding Member: $4.99/month or $49/year. Apex stays free for the casual fan · Apex+ is purely for the diehard." />
+            <Q q="Does it replace F1 TV?" a="No. F1 TV is live broadcast you watch. Apex+ is the intelligence layer around the broadcast · pre-race strategy, live timing, in-depth telemetry, post-race archive." />
             <Q q="Is this affiliated with Formula 1 / FIA / FOM?" a="No. Apex is independent and unofficial. Every page has the disclaimer." />
           </dl>
         </div>

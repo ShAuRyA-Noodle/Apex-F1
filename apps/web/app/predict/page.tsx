@@ -8,7 +8,7 @@ export const revalidate = 600;
 export const metadata: Metadata = {
   title: 'Grid Predict',
   description:
-    'Apex Grid Prediction Market — pick 5 questions every race weekend, build a league with friends, climb the global leaderboard.',
+    'Apex Grid Prediction Market · pick 5 questions every race weekend, build a league with friends, climb the global leaderboard.',
 };
 
 export default async function PredictPage() {
@@ -46,7 +46,7 @@ export default async function PredictPage() {
           <p className="mt-6 max-w-3xl font-editorial text-xl leading-relaxed text-on-surface-variant md:text-2xl">
             Make 5 calls before qualifying locks. Score across the weekend. Build a league with
             your friends. Climb the global leaderboard across the season. Free, no signup
-            required to play — sign in to track streaks.
+            required to play · sign in to track streaks.
           </p>
           <div className="mt-8 flex flex-wrap items-center gap-4">
             <Link

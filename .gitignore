@@ -13,6 +13,11 @@ coverage/
 *.log
 .DS_Store
 
+# Stray secret drop file. NEVER commit. Move keys into .env.local.
+codes.txt
+secrets.txt
+keys.txt
+
 # Local-only claude-mem context (per-folder; not for remote)
 **/CLAUDE.local.md
 

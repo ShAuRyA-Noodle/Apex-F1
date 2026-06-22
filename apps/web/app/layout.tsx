@@ -7,15 +7,16 @@ import { MegaNav } from '@/components/shell/MegaNav';
 import { Footer } from '@/components/shell/Footer';
 import { CookieConsent } from '@/components/shell/CookieConsent';
 import { PosthogScript } from '@/components/shell/PosthogScript';
+import { ToastProvider } from '@/components/shell/Toast';
 
 const SITE = 'Apex';
 const DESCRIPTION =
-  'Apex — independent Formula 1 fan platform. Schedule, results, drivers, teams, news, video, and live race-day intelligence. Unofficial.';
+  'Apex · independent Formula 1 fan platform. Schedule, results, drivers, teams, news, video, and live race-day intelligence. Unofficial.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'),
   title: {
-    default: `${SITE} — Independent Formula 1 fan platform`,
+    default: `${SITE} · Independent Formula 1 fan platform`,
     template: `%s · ${SITE}`,
   },
   description: DESCRIPTION,
@@ -24,7 +25,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     siteName: SITE,
-    title: `${SITE} — Independent Formula 1 fan platform`,
+    title: `${SITE} · Independent Formula 1 fan platform`,
     description: DESCRIPTION,
     locale: 'en_US',
   },
@@ -56,20 +57,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <LenisProvider>
-          <a
-            href="#main"
-            className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-telemetry-red focus:px-4 focus:py-2 focus:text-on-background"
-          >
-            Skip to content
-          </a>
-          <TopUtilityBar />
-          <RaceTickerBar />
-          <MegaNav />
-          <main id="main" className="relative">
-            {children}
-          </main>
-          <Footer />
-          <CookieConsent />
+          <ToastProvider>
+            <a
+              href="#main"
+              className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-100 focus:bg-telemetry-red focus:px-4 focus:py-2 focus:text-on-background"
+            >
+              Skip to content
+            </a>
+            <TopUtilityBar />
+            <MegaNav />
+            <RaceTickerBar />
+            <main id="main" className="relative">
+              {children}
+            </main>
+            <Footer />
+            <CookieConsent />
+          </ToastProvider>
         </LenisProvider>
         <PosthogScript />
       </body>

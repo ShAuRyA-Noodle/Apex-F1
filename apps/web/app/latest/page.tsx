@@ -41,7 +41,7 @@ export default async function LatestPage(props: {
             Latest
           </h1>
           <p className="mt-4 max-w-2xl font-editorial text-lg text-on-surface-variant md:text-2xl">
-            {items.length} stories aggregated from independent F1 newsrooms — newest first.
+            {items.length} stories aggregated from independent F1 newsrooms · newest first.
             Links open at source. Refresh: 5 min.
           </p>
         </div>

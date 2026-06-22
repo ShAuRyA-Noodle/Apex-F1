@@ -6,7 +6,7 @@ export const revalidate = 15;
 
 export const metadata: Metadata = {
   title: 'Race control',
-  description: 'Live race control messages — direct from OpenF1.',
+  description: 'Live race control messages · direct from OpenF1.',
 };
 
 function fmtTime(iso: string) {

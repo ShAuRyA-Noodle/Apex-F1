@@ -1,7 +1,7 @@
 import { getF1Videos, YT_F1_CHANNELS } from '@apex/api-client/youtube';
 
 export async function HighlightsRail() {
-  // FORMULA 1 official channel only — race highlights, onboard, post-race shows.
+  // FORMULA 1 official channel only · race highlights, onboard, post-race shows.
   const officialChannel = YT_F1_CHANNELS.find((c) => c.name === 'FORMULA 1');
   if (!officialChannel) return null;
   const videos = await getF1Videos({

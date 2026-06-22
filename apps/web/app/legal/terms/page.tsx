@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Terms of Service',
-  description: 'Terms of using Apex — the independent F1 fan platform.',
+  description: 'Terms of using Apex · the independent F1 fan platform.',
 };
 
 export default function TermsPage() {

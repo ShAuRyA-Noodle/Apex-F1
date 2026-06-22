@@ -1,21 +1,36 @@
 'use client';
 
 import Link from 'next/link';
-import { useState, useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@apex/ui';
+import { ApexMonogram } from './ApexMonogram';
+
+type DropdownColumn = {
+  title: string;
+  links: { label: string; href: string; tag?: string }[];
+};
+
+type DropdownPreview = {
+  eyebrow: string;
+  title: string;
+  href: string;
+  meta?: string;
+};
 
 type MegaSection = {
   label: string;
   href: string;
-  groups: { title: string; links: { label: string; href: string; tag?: string }[] }[];
+  columns: DropdownColumn[];
+  preview?: DropdownPreview;
 };
 
 const NAV: MegaSection[] = [
   {
     label: 'Latest',
     href: '/latest',
-    groups: [
+    columns: [
       {
         title: 'Sources',
         links: [
@@ -30,31 +45,68 @@ const NAV: MegaSection[] = [
         title: 'Community',
         links: [
           { label: 'r/formula1 hot', href: '/latest?source=reddit' },
+          { label: 'Reddit · F1Technical', href: '/latest?source=reddit-tech' },
+        ],
+      },
+      {
+        title: 'Long form',
+        links: [
+          { label: 'Race Lab', href: '/latest?type=longform' },
+          { label: 'Editorial', href: '/latest?type=editorial' },
         ],
       },
     ],
+    preview: {
+      eyebrow: 'BREAKING',
+      title: 'Verstappen reacts to Singapore floor change',
+      href: '/latest',
+      meta: '14 min ago · Autosport',
+    },
   },
   {
     label: 'Schedule',
     href: '/schedule',
-    groups: [
+    columns: [
       {
-        title: 'Current season',
+        title: 'Season 2026',
         links: [
-          { label: 'Full schedule', href: '/schedule' },
+          { label: 'Full calendar', href: '/schedule' },
+          { label: 'Next race', href: '/schedule?view=next' },
+          { label: 'Sprint rounds', href: '/schedule?type=sprint' },
+        ],
+      },
+      {
+        title: 'Past seasons',
+        links: [
+          { label: '2025 archive', href: '/schedule/2025' },
+          { label: '2024 archive', href: '/schedule/2024' },
         ],
       },
     ],
+    preview: {
+      eyebrow: 'NEXT ROUND',
+      title: 'Marina Bay Street Circuit',
+      href: '/schedule/2026/singapore',
+      meta: 'Race lights out · 13d 4h',
+    },
   },
   {
     label: 'Results',
     href: '/results/2026/drivers',
-    groups: [
+    columns: [
       {
         title: 'Standings',
         links: [
-          { label: 'Drivers', href: '/results/2026/drivers' },
-          { label: 'Constructors', href: '/results/2026/teams' },
+          { label: 'Drivers 2026', href: '/results/2026/drivers' },
+          { label: 'Constructors 2026', href: '/results/2026/teams' },
+          { label: 'Drivers 2025', href: '/results/2025/drivers' },
+        ],
+      },
+      {
+        title: 'Archive',
+        links: [
+          { label: 'All seasons', href: '/results/archive' },
+          { label: 'Champions index', href: '/drivers/champions' },
         ],
       },
     ],
@@ -62,27 +114,40 @@ const NAV: MegaSection[] = [
   {
     label: 'Drivers',
     href: '/drivers',
-    groups: [
+    columns: [
       {
-        title: 'Grid',
-        links: [{ label: 'Current grid', href: '/drivers' }],
+        title: 'Grid 2026',
+        links: [
+          { label: 'Current grid', href: '/drivers' },
+          { label: 'Rookies', href: '/drivers?filter=rookies' },
+        ],
+      },
+      {
+        title: 'Hall',
+        links: [
+          { label: 'Champions', href: '/drivers/champions' },
+          { label: 'Hall of Fame', href: '/drivers/hall-of-fame' },
+        ],
       },
     ],
   },
   {
     label: 'Teams',
     href: '/teams',
-    groups: [
+    columns: [
       {
         title: 'Constructors',
-        links: [{ label: 'Current constructors', href: '/teams' }],
+        links: [
+          { label: 'Current 2026', href: '/teams' },
+          { label: 'Historical index', href: '/teams?view=historical' },
+        ],
       },
     ],
   },
   {
     label: 'Video',
     href: '/video',
-    groups: [
+    columns: [
       {
         title: 'Channels',
         links: [
@@ -95,12 +160,33 @@ const NAV: MegaSection[] = [
       },
     ],
   },
+  {
+    label: 'Live',
+    href: '/live/timing',
+    columns: [
+      {
+        title: 'Race day',
+        links: [
+          { label: 'Live timing', href: '/live/timing', tag: 'LIVE' },
+          { label: 'Race control', href: '/live/race-control' },
+          { label: 'Track map', href: '/live/track' },
+        ],
+      },
+    ],
+  },
 ];
 
 export function MegaNav() {
+  const pathname = usePathname();
   const [open, setOpen] = useState<string | null>(null);
-  const closeTimer = useRef<number | null>(null);
+  const [mobile, setMobile] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const closeTimer = useRef<number | null>(null);
+
+  // Find active section for the red-dot indicator
+  const activeLabel =
+    NAV.find((n) => pathname === n.href || pathname.startsWith(n.href + '/'))?.label ?? null;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -109,130 +195,437 @@ export function MegaNav() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Lock body scroll when mobile menu open
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    document.body.style.overflow = mobile ? 'hidden' : '';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobile]);
+
   const enter = (label: string) => {
     if (closeTimer.current) window.clearTimeout(closeTimer.current);
     setOpen(label);
   };
   const leave = () => {
-    closeTimer.current = window.setTimeout(() => setOpen(null), 120);
+    closeTimer.current = window.setTimeout(() => setOpen(null), 140);
   };
 
   return (
-    <header
-      className={cn(
-        'sticky top-9 z-30 w-full border-b border-outline-variant/40 transition-colors',
-        scrolled ? 'bg-background/90 backdrop-blur-xl' : 'bg-background/70 backdrop-blur',
-      )}
-    >
-      <div className="mx-auto flex w-full max-w-[1600px] items-center justify-between px-4 py-3 md:px-grid-margin">
-        <Link href="/" className="flex items-center gap-3" onMouseEnter={leave}>
-          <div className="flex h-8 w-8 items-center justify-center bg-telemetry-red font-data text-base font-bold text-on-background">
-            A
-          </div>
-          <span className="text-display text-xl uppercase tracking-tight text-on-background">
-            Apex
-          </span>
-        </Link>
+    <>
+      <header
+        data-shell="mega-nav"
+        className={cn(
+          'sticky top-0 z-40 w-full md:top-8',
+          'glass-pronounced transition-[backdrop-filter] duration-300',
+          scrolled && 'shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]',
+        )}
+      >
+        <div className="apex-container flex h-16 items-center justify-between md:h-[72px]">
+          {/* Left: logo lockup */}
+          <Link href="/" className="group flex items-center gap-3" onMouseEnter={leave}>
+            <ApexMonogram size={32} animated />
+            <span className="flex items-baseline gap-2">
+              <span className="font-display text-[26px] font-extrabold uppercase leading-none tracking-[-0.04em] text-on-background">
+                Apex
+              </span>
+              <span className="hidden font-data text-[10px] tracking-[0.18em] text-outline md:inline">
+                v0.1 · BETA
+              </span>
+            </span>
+          </Link>
 
-        <nav aria-label="Main" className="hidden lg:flex" onMouseLeave={leave}>
-          <ul className="flex items-stretch gap-1">
-            {NAV.map((section) => (
-              <li
-                key={section.label}
-                className="relative"
-                onMouseEnter={() => enter(section.label)}
+          {/* Center: primary nav */}
+          <nav aria-label="Primary" className="hidden lg:flex" onMouseLeave={leave}>
+            <ul className="relative flex items-stretch gap-1">
+              {NAV.map((section) => {
+                const isActive = activeLabel === section.label;
+                const isOpen = open === section.label;
+                return (
+                  <li
+                    key={section.label}
+                    className="relative"
+                    onMouseEnter={() => enter(section.label)}
+                  >
+                    <Link
+                      href={section.href}
+                      className={cn(
+                        'relative flex h-[72px] items-center px-4 font-data text-[12.5px] tracking-[0.14em] transition-colors',
+                        isActive || isOpen
+                          ? 'text-on-background'
+                          : 'text-on-surface-variant hover:text-on-background',
+                      )}
+                    >
+                      {section.label.toUpperCase()}
+                      {isActive && (
+                        <motion.span
+                          layoutId="apex-nav-dot"
+                          className="absolute bottom-3 left-1/2 h-1 w-1 -translate-x-1/2 rounded-full bg-telemetry-red"
+                          transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                        />
+                      )}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </nav>
+
+          {/* Right: search + mobile menu */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              aria-label="Open search"
+              onClick={() => setSearchOpen(true)}
+              className="group flex h-10 items-center gap-2 border border-outline-variant/40 bg-surface-container/40 px-3 transition-colors hover:border-on-background/40 hover:bg-surface-container/70"
+            >
+              <span className="material-symbols-outlined text-[18px] text-on-surface-variant transition-colors group-hover:text-on-background">
+                search
+              </span>
+              <span className="hidden font-data text-[11px] tracking-[0.16em] text-on-surface-variant lg:inline">
+                SEARCH
+              </span>
+              <span className="hidden font-data text-[10px] tracking-[0.16em] text-outline lg:inline">
+                /
+              </span>
+            </button>
+
+            <button
+              type="button"
+              aria-label="Open menu"
+              onClick={() => setMobile(true)}
+              className="flex h-10 w-10 items-center justify-center border border-outline-variant/40 bg-surface-container/40 transition-colors hover:border-on-background/40 lg:hidden"
+            >
+              <span className="material-symbols-outlined text-[22px] text-on-background">
+                menu
+              </span>
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop mega-dropdown */}
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              key={open}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.22, ease: [0.215, 0.61, 0.355, 1] }}
+              className="absolute left-0 right-0 top-full hidden lg:block"
+              onMouseEnter={() => enter(open)}
+              onMouseLeave={leave}
+            >
+              <div className="glass-panel border-t border-outline-variant/40">
+                <div className="apex-container grid grid-cols-12 gap-10 py-12">
+                  {(() => {
+                    const section = NAV.find((s) => s.label === open);
+                    if (!section) return null;
+                    const colSpan = section.preview ? 'col-span-8' : 'col-span-12';
+                    return (
+                      <>
+                        <div className={`${colSpan} grid grid-cols-${Math.max(section.columns.length, 1)} gap-8`}>
+                          {section.columns.map((col, i) => (
+                            <motion.div
+                              key={col.title}
+                              initial={{ opacity: 0, y: 6 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.25, delay: 0.04 * i }}
+                            >
+                              <h4 className="mb-4 font-data text-[10.5px] tracking-[0.20em] text-outline">
+                                {col.title.toUpperCase()}
+                              </h4>
+                              <ul className="space-y-3">
+                                {col.links.map((l) => (
+                                  <li key={l.href}>
+                                    <Link
+                                      href={l.href}
+                                      onClick={() => setOpen(null)}
+                                      className="group flex items-center gap-3 transition-colors hover:text-telemetry-red"
+                                    >
+                                      <span className="font-headline text-[17px] text-on-background transition-colors group-hover:text-telemetry-red">
+                                        {l.label}
+                                      </span>
+                                      {l.tag && (
+                                        <span className="rounded-sm bg-telemetry-red/20 px-1.5 py-0.5 font-data text-[9px] tracking-[0.16em] text-telemetry-red">
+                                          {l.tag}
+                                        </span>
+                                      )}
+                                      <span className="material-symbols-outlined ml-auto text-[16px] text-outline opacity-0 transition-all group-hover:translate-x-0.5 group-hover:opacity-100">
+                                        arrow_outward
+                                      </span>
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            </motion.div>
+                          ))}
+                        </div>
+
+                        {section.preview && (
+                          <motion.div
+                            initial={{ opacity: 0, scale: 0.98 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.3, delay: 0.08 }}
+                            className="col-span-4"
+                          >
+                            <Link
+                              href={section.preview.href}
+                              onClick={() => setOpen(null)}
+                              className="group relative block h-full overflow-hidden border border-outline-variant/40 bg-gradient-to-br from-surface-container-low to-carbon-black p-6 transition-all hover:border-telemetry-red/60"
+                            >
+                              <span className="font-data text-[10.5px] tracking-[0.22em] text-telemetry-red">
+                                {section.preview.eyebrow}
+                              </span>
+                              <h3 className="mt-3 font-display text-[22px] font-bold leading-tight tracking-[-0.02em] text-on-background">
+                                {section.preview.title}
+                              </h3>
+                              {section.preview.meta && (
+                                <p className="mt-4 font-data text-[11px] tracking-[0.14em] text-outline">
+                                  {section.preview.meta.toUpperCase()}
+                                </p>
+                              )}
+                              <span className="material-symbols-outlined absolute bottom-5 right-5 text-[20px] text-on-surface-variant transition-transform group-hover:translate-x-0.5 group-hover:text-telemetry-red">
+                                arrow_outward
+                              </span>
+                            </Link>
+                          </motion.div>
+                        )}
+                      </>
+                    );
+                  })()}
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </header>
+
+      {/* Search overlay */}
+      <AnimatePresence>
+        {searchOpen && <SearchOverlay onClose={() => setSearchOpen(false)} />}
+      </AnimatePresence>
+
+      {/* Mobile takeover */}
+      <AnimatePresence>
+        {mobile && (
+          <MobileTakeover
+            sections={NAV}
+            onClose={() => setMobile(false)}
+            onOpenSearch={() => {
+              setMobile(false);
+              setSearchOpen(true);
+            }}
+          />
+        )}
+      </AnimatePresence>
+    </>
+  );
+}
+
+/* ============================================================
+ * Mobile full-screen takeover
+ * ============================================================ */
+function MobileTakeover({
+  sections,
+  onClose,
+  onOpenSearch,
+}: {
+  sections: MegaSection[];
+  onClose: () => void;
+  onOpenSearch: () => void;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.24 }}
+      className="fixed inset-0 z-[70] flex flex-col lg:hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Apex navigation"
+    >
+      {/* Backdrop */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="absolute inset-0 bg-background/95 backdrop-blur-2xl"
+        onClick={onClose}
+      />
+
+      <motion.div
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -20, opacity: 0 }}
+        transition={{ duration: 0.32, ease: [0.215, 0.61, 0.355, 1] }}
+        className="relative flex h-full flex-col"
+      >
+        {/* Header bar inside takeover */}
+        <div className="apex-container flex h-16 items-center justify-between border-b border-outline-variant/30">
+          <Link href="/" onClick={onClose} className="flex items-center gap-2.5">
+            <ApexMonogram size={26} />
+            <span className="font-display text-[22px] font-extrabold uppercase tracking-[-0.04em] text-on-background">
+              Apex
+            </span>
+          </Link>
+          <button
+            type="button"
+            aria-label="Close menu"
+            onClick={onClose}
+            className="flex h-10 w-10 items-center justify-center border border-outline-variant/40"
+          >
+            <span className="material-symbols-outlined text-[22px] text-on-background">close</span>
+          </button>
+        </div>
+
+        {/* Search */}
+        <div className="apex-container pt-6">
+          <button
+            type="button"
+            onClick={onOpenSearch}
+            className="flex w-full items-center gap-3 border border-outline-variant/40 bg-surface-container/40 px-4 py-3.5 text-left"
+          >
+            <span className="material-symbols-outlined text-[20px] text-on-surface-variant">search</span>
+            <span className="font-data text-[12px] tracking-[0.16em] text-on-surface-variant">
+              SEARCH APEX
+            </span>
+          </button>
+        </div>
+
+        {/* Sections with stagger */}
+        <nav aria-label="Mobile primary" className="apex-container flex-1 overflow-y-auto py-8">
+          <ul className="space-y-1">
+            {sections.map((s, i) => (
+              <motion.li
+                key={s.label}
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.32, delay: 0.05 + i * 0.05, ease: [0.215, 0.61, 0.355, 1] }}
               >
                 <Link
-                  href={section.href}
-                  className={cn(
-                    'flex h-12 items-center px-4 text-[13px] uppercase tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background',
-                    open === section.label && 'text-on-background',
-                  )}
+                  href={s.href}
+                  onClick={onClose}
+                  className="group flex items-center justify-between border-b border-outline-variant/20 py-5"
                 >
-                  {section.label}
+                  <span className="font-display text-[44px] font-extrabold uppercase leading-[1.05] tracking-[-0.04em] text-on-background transition-colors group-hover:text-telemetry-red">
+                    {s.label}
+                  </span>
+                  <span className="material-symbols-outlined text-[28px] text-outline transition-transform group-hover:translate-x-1 group-hover:text-telemetry-red">
+                    arrow_forward
+                  </span>
                 </Link>
-              </li>
+              </motion.li>
             ))}
           </ul>
         </nav>
 
-        <button
-          aria-label="Open menu"
-          className="lg:hidden material-symbols-outlined text-[28px] text-on-background"
-          onClick={() => setOpen(open === 'mobile' ? null : 'mobile')}
-        >
-          menu
-        </button>
-      </div>
+        {/* Footer utility (the 3-dot reveal area for the slim utility bar) */}
+        <div className="apex-container border-t border-outline-variant/30 py-6">
+          <div className="grid grid-cols-2 gap-y-3 gap-x-6">
+            {(
+              [
+                { label: 'Newsletter', href: '/newsletter' },
+                { label: 'Archive', href: '/results/archive' },
+                { label: 'Apex+', href: '/membership' },
+                { label: 'Sign in', href: '/account' },
+              ] as const
+            ).map(({ label, href }) => (
+              <Link
+                key={href}
+                href={href}
+                onClick={onClose}
+                className="font-data text-[12px] tracking-[0.18em] text-on-surface-variant hover:text-on-background"
+              >
+                {label.toUpperCase()}
+              </Link>
+            ))}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
 
-      <AnimatePresence>
-        {open && open !== 'mobile' && (
-          <motion.div
-            key={open}
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="absolute left-0 right-0 top-full hidden border-y border-outline-variant/40 bg-surface-container/95 backdrop-blur-2xl lg:block"
-            onMouseEnter={() => enter(open)}
-            onMouseLeave={leave}
-          >
-            <div className="mx-auto grid w-full max-w-[1600px] grid-cols-12 gap-10 px-grid-margin py-10">
-              {NAV.find((s) => s.label === open)?.groups.map((g) => (
-                <div key={g.title} className="col-span-3">
-                  <h4 className="text-data mb-4 text-outline">{g.title}</h4>
-                  <ul className="space-y-3">
-                    {g.links.map((l) => (
-                      <li key={l.href}>
-                        <Link
-                          href={l.href}
-                          className="group flex items-center gap-2 text-on-surface transition-colors hover:text-telemetry-red"
-                        >
-                          <span className="font-headline text-base">{l.label}</span>
-                          {l.tag && (
-                            <span className="font-data text-[10px] text-telemetry-red">
-                              {l.tag}
-                            </span>
-                          )}
-                          <span className="material-symbols-outlined ml-auto text-[16px] opacity-0 transition-opacity group-hover:opacity-100">
-                            arrow_outward
-                          </span>
-                        </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
+/* ============================================================
+ * Search overlay (search button morphs into this)
+ * ============================================================ */
+function SearchOverlay({ onClose }: { onClose: () => void }) {
+  const [q, setQ] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
-        {open === 'mobile' && (
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="border-t border-outline-variant/40 bg-surface-container/98 backdrop-blur-2xl lg:hidden"
-          >
-            <ul className="divide-y divide-outline-variant/30 px-4 py-2">
-              {NAV.map((s) => (
-                <li key={s.label}>
-                  <Link
-                    href={s.href}
-                    onClick={() => setOpen(null)}
-                    className="flex items-center justify-between py-4 font-headline text-lg text-on-background"
+  useEffect(() => {
+    inputRef.current?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+      className="fixed inset-0 z-[80]"
+      role="dialog"
+      aria-label="Search"
+    >
+      <button
+        type="button"
+        aria-label="Close search"
+        onClick={onClose}
+        className="absolute inset-0 bg-background/80 backdrop-blur-xl"
+      />
+      <motion.div
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        exit={{ y: -40, opacity: 0 }}
+        transition={{ duration: 0.32, ease: [0.215, 0.61, 0.355, 1] }}
+        className="apex-container relative pt-[18vh]"
+      >
+        <div className="glass-panel mx-auto max-w-3xl p-2">
+          <div className="flex items-center gap-3 border-b border-outline-variant/40 px-4 py-4">
+            <span className="material-symbols-outlined text-[22px] text-telemetry-red">search</span>
+            <input
+              ref={inputRef}
+              type="search"
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search drivers, races, teams, archive..."
+              className="flex-1 bg-transparent font-headline text-[20px] text-on-background placeholder:text-outline focus:outline-none"
+            />
+            <button
+              type="button"
+              onClick={onClose}
+              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant hover:text-on-background"
+            >
+              ESC
+            </button>
+          </div>
+          <div className="px-4 py-4">
+            <p className="font-data text-[10.5px] tracking-[0.20em] text-outline">SUGGESTED</p>
+            <ul className="mt-3 space-y-2">
+              {['Next race · Singapore', 'Drivers · 2026 grid', 'Results · Constructors', 'Live timing'].map((s) => (
+                <li key={s}>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="flex w-full items-center gap-3 px-2 py-2 text-left transition-colors hover:bg-surface-container/40"
                   >
-                    {s.label}
-                    <span className="material-symbols-outlined text-[20px] text-outline">
-                      chevron_right
-                    </span>
-                  </Link>
+                    <span className="material-symbols-outlined text-[18px] text-outline">north_east</span>
+                    <span className="font-headline text-[15px] text-on-background">{s}</span>
+                  </button>
                 </li>
               ))}
             </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </header>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
   );
 }

@@ -7,7 +7,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: 'Teams',
-  description: 'Current Formula 1 constructors — live from Jolpica F1.',
+  description: 'Current Formula 1 constructors · live from Jolpica F1.',
 };
 
 export default async function TeamsIndexPage() {

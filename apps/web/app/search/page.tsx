@@ -65,7 +65,7 @@ export default async function SearchPage() {
           Find anything
         </h1>
         <p className="mt-4 max-w-2xl font-editorial text-lg text-on-surface-variant md:text-2xl">
-          Drivers · constructors · races — current season. Archive search lands in Phase B
+          Drivers · constructors · races · current season. Archive search lands in Phase B
           Wave 4 (Meilisearch over the 1950 → present DB).
         </p>
       </header>

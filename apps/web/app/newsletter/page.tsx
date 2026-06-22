@@ -3,7 +3,7 @@ import { NewsletterForm } from './form';
 
 export const metadata: Metadata = {
   title: 'Newsletter',
-  description: 'Race Week Briefing — one short race-week edition delivered before lights out.',
+  description: 'Race Week Briefing · one short race-week edition delivered before lights out.',
 };
 
 export default function NewsletterPage() {

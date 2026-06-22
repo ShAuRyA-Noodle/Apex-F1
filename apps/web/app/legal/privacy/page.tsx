@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Privacy Policy',
-  description: 'How Apex handles your data — GDPR + CCPA compliant.',
+  description: 'How Apex handles your data · GDPR + CCPA compliant.',
 };
 
 export default function PrivacyPage() {
@@ -23,15 +23,15 @@ export default function PrivacyPage() {
         </h2>
         <ul>
           <li>
-            <strong>Anonymous analytics</strong> (page views, interaction events) — only with your
+            <strong>Anonymous analytics</strong> (page views, interaction events) · only with your
             consent via the cookie banner. IP addresses are truncated server-side.
           </li>
           <li>
-            <strong>Account data</strong> (email, display name, preferences) — only if you create
+            <strong>Account data</strong> (email, display name, preferences) · only if you create
             an account.
           </li>
           <li>
-            <strong>Newsletter</strong> — email address only, used solely for newsletter delivery.
+            <strong>Newsletter</strong> · email address only, used solely for newsletter delivery.
             Unsubscribe at any time.
           </li>
         </ul>

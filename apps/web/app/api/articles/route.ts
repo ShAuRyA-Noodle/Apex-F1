@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   }
 
   // Phase C wires Drizzle insert + revalidatePath.
-  // Until then this is dry — but the validation + slug-check work today so
+  // Until then this is dry · but the validation + slug-check work today so
   // editors can pre-vet copy before DB is live.
   // eslint-disable-next-line no-console
   console.log(`[articles] draft save: ${slug} (${title.length} chars title)`);

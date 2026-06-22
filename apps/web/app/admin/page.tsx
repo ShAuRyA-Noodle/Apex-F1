@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'Admin',
-  description: 'Apex editorial CMS — internal use.',
+  description: 'Apex editorial CMS · internal use.',
   robots: { index: false, follow: false },
 };
 

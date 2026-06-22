@@ -11,7 +11,7 @@ export async function generateMetadata(props: {
   const { season } = await props.params;
   return {
     title: `${season} Schedule`,
-    description: `Formula 1 ${season} race calendar — dates, circuits, sessions.`,
+    description: `Formula 1 ${season} race calendar · dates, circuits, sessions.`,
   };
 }
 

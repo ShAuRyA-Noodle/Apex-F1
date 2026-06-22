@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'About Apex — independent Formula 1 fan platform.',
+  description: 'About Apex · independent Formula 1 fan platform.',
 };
 
 export default function AboutPage() {
@@ -15,7 +15,7 @@ export default function AboutPage() {
       </h1>
       <p className="mt-8 max-w-3xl font-editorial text-xl leading-relaxed text-on-surface-variant md:text-2xl">
         Apex is an independent, unofficial Formula 1 fan platform. We exist to give you a faster,
-        denser, more cinematic home for the sport than what the official channels offer — without
+        denser, more cinematic home for the sport than what the official channels offer · without
         rehosting their video, copying their writing, or pretending to be them.
       </p>
 
@@ -51,18 +51,18 @@ export default function AboutPage() {
         <h2 className="text-data text-telemetry-red">DATA SOURCES</h2>
         <ul className="mt-4 grid grid-cols-1 gap-3 font-editorial text-lg text-on-surface md:grid-cols-2">
           <li>
-            <strong>Jolpica F1</strong> — historical 1950–present schedule, results, standings,
+            <strong>Jolpica F1</strong> · historical 1950 to present schedule, results, standings,
             qualifying, pit stops, laps.
           </li>
           <li>
-            <strong>OpenF1</strong> — live timing, intervals, race control, weather, telemetry.
+            <strong>OpenF1</strong> · live timing, intervals, race control, weather, telemetry.
           </li>
           <li>
-            <strong>Wikidata + Wikimedia Commons</strong> — driver biographies and metadata
+            <strong>Wikidata + Wikimedia Commons</strong> · driver biographies and metadata
             (CC-BY-SA attributed).
           </li>
           <li>
-            <strong>OpenWeatherMap</strong> — race-weekend track-side forecasts.
+            <strong>OpenWeatherMap</strong> · race-weekend track-side forecasts.
           </li>
         </ul>
       </section>

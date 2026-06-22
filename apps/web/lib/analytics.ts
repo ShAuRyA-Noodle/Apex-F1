@@ -1,5 +1,5 @@
 /**
- * analytics — central wrapper around server + client analytics.
+ * analytics · central wrapper around server + client analytics.
  *
  * Phase C wires:
  *  - PostHog (POSTHOG_KEY / NEXT_PUBLIC_POSTHOG_KEY) for client events + feature flags
@@ -48,7 +48,7 @@ export async function captureServer(event: EventName, props: EventProps = {}) {
         timestamp: new Date().toISOString(),
         properties: { ...props, source: 'apex-web-server' },
       }),
-      // Don't block requests on analytics — short timeout
+      // Don't block requests on analytics · short timeout
       signal: AbortSignal.timeout(2000),
     });
   } catch {

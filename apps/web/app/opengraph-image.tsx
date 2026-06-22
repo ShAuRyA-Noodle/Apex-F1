@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og';
 
 export const runtime = 'edge';
-export const alt = 'Apex — Independent Formula 1 fan platform';
+export const alt = 'Apex · Independent Formula 1 fan platform';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 

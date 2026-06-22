@@ -1,4 +1,9 @@
+'use client';
+
 import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { ApexMonogram } from './ApexMonogram';
+import { LiveStatusDot } from './TopUtilityBar';
 
 const groups: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -33,8 +38,8 @@ const groups: { title: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: 'About', href: '/about' },
       { label: 'Apex+', href: '/membership' },
-      { label: 'Careers', href: '/careers' },
-      { label: 'Contact', href: '/contact' },
+      { label: 'Predict', href: '/predict' },
+      { label: 'Newsletter', href: '/newsletter' },
     ],
   },
   {
@@ -48,35 +53,84 @@ const groups: { title: string; links: { label: string; href: string }[] }[] = [
   },
 ];
 
+const HERO_WORDS = ['Independent.', 'Unofficial.', 'Original', 'editorial.'];
+
 export function Footer() {
   return (
-    <footer className="relative mt-32 border-t border-outline-variant/40 bg-carbon-black">
-      <div className="mx-auto w-full max-w-[1600px] px-4 py-16 md:px-grid-margin">
-        <div className="grid grid-cols-2 gap-10 md:grid-cols-5">
-          <div className="col-span-2 md:col-span-5 md:mb-8">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center bg-telemetry-red font-data text-base font-bold text-on-background">
-                A
-              </div>
-              <span className="text-display text-2xl uppercase tracking-tight text-on-background">
-                Apex
-              </span>
-            </Link>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-on-surface-variant">
-              Independent Formula 1 fan platform. Race-day intelligence, factual data,
-              cinematic editorial. No affiliation with Formula 1, FIA, FOM, or any team.
+    <footer
+      data-shell="footer"
+      className="relative overflow-hidden border-t border-outline-variant/40 bg-carbon-black"
+      style={{ marginTop: 'var(--apex-section-gap)' }}
+    >
+      {/* Faint monogram backdrop */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -right-12 bottom-0 select-none opacity-[0.04]"
+        style={{ filter: 'blur(1px)' }}
+      >
+        <ApexMonogram size={520} />
+      </div>
+
+      <div className="apex-container relative py-20 md:py-28">
+        {/* Editorial hero */}
+        <div className="grid grid-cols-12 gap-6">
+          <div className="col-span-12 lg:col-span-9">
+            <p className="font-data text-[11px] tracking-[0.22em] text-telemetry-red">
+              EST. 2026 · INDEPENDENT
+            </p>
+            <h2
+              className="mt-6 font-display font-extrabold uppercase leading-[0.95] tracking-[-0.045em] text-on-background"
+              style={{ fontSize: 'clamp(2.75rem, 7vw, 5.5rem)' }}
+            >
+              {HERO_WORDS.map((word, i) => (
+                <motion.span
+                  key={`${word}-${i}`}
+                  initial={{ y: 28, opacity: 0 }}
+                  whileInView={{ y: 0, opacity: 1 }}
+                  viewport={{ once: true, margin: '-80px' }}
+                  transition={{ duration: 0.6, delay: i * 0.08, ease: [0.215, 0.61, 0.355, 1] }}
+                  className="mr-3 inline-block"
+                >
+                  {word}
+                </motion.span>
+              ))}
+            </h2>
+            <p className="mt-8 max-w-2xl font-editorial text-[20px] leading-[1.55] text-on-surface-variant">
+              Apex is a fan-built information service. Race-day intelligence, factual data,
+              cinematic editorial. We do not sell access. We do not run advertising for teams.
+              We are built by people who watch the race and want to understand it deeper.
             </p>
           </div>
 
+          <div className="col-span-12 lg:col-span-3 lg:flex lg:items-end lg:justify-end">
+            <Link
+              href="/newsletter"
+              className="inline-flex items-center gap-2 border border-on-background bg-on-background px-5 py-3 transition-colors hover:bg-telemetry-red hover:border-telemetry-red"
+            >
+              <span className="font-data text-[12px] tracking-[0.18em] text-background">
+                JOIN THE PIT WALL
+              </span>
+              <span className="material-symbols-outlined text-[18px] text-background">arrow_outward</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="mt-16 h-px w-full bg-outline-variant/30" />
+
+        {/* 5 link columns */}
+        <div className="mt-12 grid grid-cols-2 gap-y-10 gap-x-6 sm:grid-cols-3 lg:grid-cols-5">
           {groups.map((g) => (
             <div key={g.title}>
-              <h4 className="text-data mb-4 text-telemetry-red">{g.title}</h4>
-              <ul className="space-y-3">
+              <h4 className="font-data text-[10.5px] tracking-[0.22em] text-telemetry-red">
+                {g.title.toUpperCase()}
+              </h4>
+              <ul className="mt-5 space-y-3">
                 {g.links.map((l) => (
                   <li key={l.href}>
                     <Link
                       href={l.href}
-                      className="text-sm text-on-surface-variant transition-colors hover:text-on-background"
+                      className="font-headline text-[15px] text-on-surface-variant transition-colors hover:text-on-background"
                     >
                       {l.label}
                     </Link>
@@ -87,19 +141,30 @@ export function Footer() {
           ))}
         </div>
 
-        <div className="mt-16 border-t border-outline-variant/30 pt-8 text-xs leading-relaxed text-outline">
-          <p>
+        {/* Editorial disclaimer in EB Garamond italic */}
+        <div className="mt-16 border-t border-outline-variant/30 pt-10">
+          <p className="max-w-4xl font-editorial text-[16px] italic leading-[1.6] text-on-surface-variant">
             Apex is an independent, fan-built Formula 1 information service. Apex is not
             affiliated with, endorsed by, or associated with Formula 1, Formula One World
             Championship Limited, FIA, FOM, Liberty Media, or any constructor or driver.
             &ldquo;Formula 1&rdquo;, &ldquo;F1&rdquo;, &ldquo;Grand Prix&rdquo;, and
-            team/driver names are used in a purely descriptive sense.
+            team & driver names are used in a purely descriptive, journalistic sense.
           </p>
-          <div className="mt-6 flex flex-col items-start gap-4 md:flex-row md:items-center md:justify-between">
-            <span>© {new Date().getFullYear()} Apex. All rights reserved.</span>
-            <span className="text-data text-telemetry-red">
+        </div>
+
+        {/* Bottom strip */}
+        <div className="mt-12 flex flex-col items-start gap-5 border-t border-outline-variant/30 pt-8 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-4">
+            <ApexMonogram size={20} />
+            <span className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant">
+              © {new Date().getFullYear()} APEX · BUILT BY FANS, FOR FANS
+            </span>
+          </div>
+          <div className="flex items-center gap-4">
+            <span className="rounded-sm border border-outline-variant/50 px-2 py-1 font-data text-[10px] tracking-[0.16em] text-on-surface-variant">
               v0.1 · PHASE 1 · BETA
             </span>
+            <LiveStatusDot label="ALL SYSTEMS OPERATIONAL" />
           </div>
         </div>
       </div>

@@ -37,7 +37,7 @@ const QUESTIONS: Q[] = [
   {
     id: 'safety_car',
     label: 'Safety car deployed?',
-    options: ['Yes — VSC only', 'Yes — full SC', 'No'],
+    options: ['Yes · VSC only', 'Yes · full SC', 'No'],
     points: 1,
   },
 ];

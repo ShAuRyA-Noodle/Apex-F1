@@ -7,7 +7,7 @@ export const revalidate = 30;
 
 export const metadata: Metadata = {
   title: 'Live track',
-  description: 'Current Formula 1 session — circuit, weather, conditions.',
+  description: 'Current Formula 1 session · circuit, weather, conditions.',
 };
 
 const COMPOUND_COLOR: Record<string, string> = {
@@ -80,13 +80,13 @@ export default async function LiveTrackPage() {
         <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
           <h2 className="text-data text-telemetry-red">CONDITIONS</h2>
           <ul className="mt-6 grid grid-cols-2 gap-px overflow-hidden bg-outline-variant/40 md:grid-cols-4 lg:grid-cols-6">
-            <Stat label="AIR" value={`${latestWeather?.air_temperature ?? '—'}°C`} />
-            <Stat label="TRACK" value={`${latestWeather?.track_temperature ?? '—'}°C`} />
-            <Stat label="HUMIDITY" value={`${latestWeather?.humidity ?? '—'}%`} />
-            <Stat label="PRESSURE" value={`${latestWeather?.pressure ?? '—'} mb`} />
+            <Stat label="AIR" value={`${latestWeather?.air_temperature ?? '·'}°C`} />
+            <Stat label="TRACK" value={`${latestWeather?.track_temperature ?? '·'}°C`} />
+            <Stat label="HUMIDITY" value={`${latestWeather?.humidity ?? '·'}%`} />
+            <Stat label="PRESSURE" value={`${latestWeather?.pressure ?? '·'} mb`} />
             <Stat
               label="WIND"
-              value={`${latestWeather?.wind_speed ?? '—'} m/s`}
+              value={`${latestWeather?.wind_speed ?? '·'} m/s`}
               sub={latestWeather?.wind_direction != null ? `${latestWeather.wind_direction}°` : undefined}
             />
             <Stat
@@ -96,7 +96,7 @@ export default async function LiveTrackPage() {
                   ? latestWeather.rainfall > 0
                     ? '● YES'
                     : 'NO'
-                  : '—'
+                  : '·'
               }
             />
           </ul>

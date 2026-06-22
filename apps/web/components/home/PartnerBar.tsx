@@ -1,4 +1,4 @@
-// Per PID §3.1 & §25 — only show partner logos we actually have license for.
+// Per PID §3.1 & §25 · only show partner logos we actually have license for.
 // Phase A: render a clean "Independent" badge + reciprocal community partners.
 
 export function PartnerBar() {

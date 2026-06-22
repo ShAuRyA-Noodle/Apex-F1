@@ -51,7 +51,7 @@ export default function DmcaPage() {
           <br />
           Apex Designated Agent
           <br />
-          (US Copyright Office DMCA Agent registration: pending — to be filed at{' '}
+          (US Copyright Office DMCA Agent registration: pending · to be filed at{' '}
           <a
             href="https://www.copyright.gov/dmca-directory/"
             target="_blank"

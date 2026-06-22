@@ -34,7 +34,7 @@ export async function generateMetadata(props: { params: Promise<RouteParams> }):
   if (!data) return { title: 'Race not found' };
   return {
     title: `${data.race.name} ${season}`,
-    description: `${data.race.name} ${season} — sessions, results, circuit, weather.`,
+    description: `${data.race.name} ${season} · sessions, results, circuit, weather.`,
   };
 }
 

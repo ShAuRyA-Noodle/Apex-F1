@@ -6,7 +6,7 @@ export const revalidate = 5;
 
 export const metadata: Metadata = {
   title: 'Live timing',
-  description: 'Live timing tower for the current Formula 1 session — powered by OpenF1.',
+  description: 'Live timing tower for the current Formula 1 session · powered by OpenF1.',
 };
 
 const COMPOUND_COLOR: Record<string, string> = {
@@ -19,7 +19,7 @@ const COMPOUND_COLOR: Record<string, string> = {
 };
 
 function fmtMs(seconds?: number): string {
-  if (seconds === undefined || seconds === null || Number.isNaN(seconds)) return '—';
+  if (seconds === undefined || seconds === null || Number.isNaN(seconds)) return '·';
   if (seconds === 0) return 'LEADER';
   if (seconds < 60) return `+${seconds.toFixed(3)}`;
   const m = Math.floor(seconds / 60);
@@ -28,7 +28,7 @@ function fmtMs(seconds?: number): string {
 }
 
 function fmtInterval(v: number | string | undefined): string {
-  if (v === undefined || v === null) return '—';
+  if (v === undefined || v === null) return '·';
   if (typeof v === 'string') return v;
   if (v === 0) return 'LAP';
   return `+${v.toFixed(3)}`;
@@ -107,8 +107,8 @@ export default async function LiveTimingPage() {
             </div>
             {latestWeather && (
               <div className="grid grid-cols-3 gap-px overflow-hidden bg-outline-variant/40">
-                <Stat label="AIR" value={`${latestWeather.air_temperature ?? '—'}°C`} />
-                <Stat label="TRACK" value={`${latestWeather.track_temperature ?? '—'}°C`} />
+                <Stat label="AIR" value={`${latestWeather.air_temperature ?? '·'}°C`} />
+                <Stat label="TRACK" value={`${latestWeather.track_temperature ?? '·'}°C`} />
                 <Stat label="RAIN" value={`${latestWeather.rainfall ?? 0} mm`} />
               </div>
             )}
@@ -140,7 +140,7 @@ export default async function LiveTimingPage() {
                 return (
                   <tr key={d.driver_number} className="transition-colors hover:bg-surface-container-low">
                     <td className="px-2 py-3 font-data text-lg text-on-background">
-                      {pos ?? '—'}
+                      {pos ?? '·'}
                     </td>
                     <td className="px-2 py-3 font-data text-on-surface-variant">
                       {d.driver_number}
@@ -179,7 +179,7 @@ export default async function LiveTimingPage() {
                       </div>
                     </td>
                     <td className="hidden px-2 py-3 text-right font-data text-on-surface-variant md:table-cell">
-                      L{stintSnap?.lap ?? '—'}
+                      L{stintSnap?.lap ?? '·'}
                     </td>
                   </tr>
                 );
