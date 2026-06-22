@@ -1,0 +1,29 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    {
+      "path": "/api/cron/rss-sync",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/cron/jolpica-nightly",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/weather-sync",
+      "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/youtube-sync",
+      "schedule": "0 4 * * *"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex" }
+      ]
+    }
+  ]
+}
