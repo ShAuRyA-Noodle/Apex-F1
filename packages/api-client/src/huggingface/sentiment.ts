@@ -100,9 +100,11 @@ export async function scoreSentiment(
 
   if (!raw) return null;
   if (raw instanceof Buffer) return null;
+  const json = raw as RawResponse;
 
   // Flatten the two possible shapes.
-  const rows: RawRow[] = Array.isArray(raw[0]) ? (raw[0] as RawRow[]) : (raw as RawRow[]);
+  const first = json[0];
+  const rows: RawRow[] = Array.isArray(first) ? (first as RawRow[]) : (json as RawRow[]);
   if (!Array.isArray(rows) || rows.length === 0) return null;
 
   return pickWinner(rows);

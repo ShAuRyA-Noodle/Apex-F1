@@ -182,8 +182,12 @@ export async function searchGiphyReaction(
   key: GiphyReactionKey,
   opts: Omit<SearchGiphyOptions, 'query'> & { seed?: number } = {},
 ): Promise<GiphyGif[]> {
-  const bank = GIPHY_REACTION_QUERIES[key];
-  if (!bank || bank.length === 0) return [];
+  // `bank` is a readonly tuple (the curated bank is declared `as const`), so
+  // its length is known to be > 0 at the type level. We still guard at runtime
+  // because the bank is `keyof typeof` accessed and a future refactor could
+  // legitimately add an empty bucket; the early return keeps things safe.
+  const bank = GIPHY_REACTION_QUERIES[key] as readonly string[];
+  if (bank.length === 0) return [];
 
   // Deterministic pick: seed % bank.length. Default seed = day-of-year so
   // every user gets the same GIF inside a given 24h cache window - which
@@ -191,7 +195,7 @@ export async function searchGiphyReaction(
   const fallbackSeed = Math.floor(Date.now() / (24 * 60 * 60 * 1000));
   const seed = opts.seed ?? fallbackSeed;
   const idx = ((seed % bank.length) + bank.length) % bank.length;
-  const query = bank[idx] ?? bank[0]!;
+  const query = bank[idx] ?? bank[0] ?? '';
 
   return searchGiphy({ ...opts, query });
 }

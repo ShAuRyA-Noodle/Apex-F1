@@ -20,7 +20,8 @@
     "./newsdata": "./src/newsdata/index.ts",
     "./currents": "./src/currents/index.ts",
     "./unsplash": "./src/unsplash/index.ts",
-    "./giphy": "./src/giphy/index.ts"
+    "./giphy": "./src/giphy/index.ts",
+    "./huggingface": "./src/huggingface/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",

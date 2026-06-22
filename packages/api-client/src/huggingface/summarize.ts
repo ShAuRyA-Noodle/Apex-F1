@@ -84,8 +84,9 @@ export async function summarize(
 
   if (!raw) return null;
   if (raw instanceof Buffer) return null;
+  const json = raw as RawSummary[] | RawSummary;
 
-  const row = Array.isArray(raw) ? raw[0] : raw;
+  const row = Array.isArray(json) ? json[0] : json;
   if (!row || typeof row.summary_text !== 'string') return null;
   const out = row.summary_text.trim();
   return out.length > 0 ? out : null;

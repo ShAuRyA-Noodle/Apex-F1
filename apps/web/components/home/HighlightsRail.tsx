@@ -1,4 +1,10 @@
-import { getF1Videos, YT_F1_CHANNELS } from '@apex/api-client/youtube';
+import {
+  formatCompactCount,
+  formatDuration,
+  getF1Videos,
+  isEnriched,
+  YT_F1_CHANNELS,
+} from '@apex/api-client/youtube';
 
 export async function HighlightsRail() {
   // FORMULA 1 official channel only · race highlights, onboard, post-race shows.
@@ -26,27 +32,42 @@ export async function HighlightsRail() {
           </a>
         </div>
         <ul className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6">
-          {videos.map((v) => (
-            <li key={v.videoId}>
-              <a
-                href={v.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group block"
-              >
-                <div className="relative aspect-video overflow-hidden bg-surface-container-high">
-                  <img
-                    src={v.thumbnailUrl}
-                    alt=""
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                </div>
-                <h3 className="mt-3 line-clamp-2 font-headline text-sm text-on-background md:text-base">
-                  {v.title}
-                </h3>
-              </a>
-            </li>
-          ))}
+          {videos.map((v) => {
+            const enriched = isEnriched(v);
+            const duration = enriched ? formatDuration(v.durationSeconds) : '';
+            const views = enriched ? formatCompactCount(v.viewCount) : '';
+            return (
+              <li key={v.videoId}>
+                <a
+                  href={v.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block"
+                >
+                  <div className="relative aspect-video overflow-hidden bg-surface-container-high">
+                    <img
+                      src={v.thumbnailUrl}
+                      alt=""
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                    {duration && (
+                      <span className="absolute bottom-2 right-2 bg-background/85 px-1.5 py-0.5 font-mono text-[11px] tracking-tight text-on-background">
+                        {duration}
+                      </span>
+                    )}
+                  </div>
+                  <h3 className="mt-3 line-clamp-2 font-headline text-sm text-on-background md:text-base">
+                    {v.title}
+                  </h3>
+                  {enriched && v.viewCount > 0 && (
+                    <div className="mt-1 text-xs uppercase tracking-[0.18em] text-outline">
+                      {views} views
+                    </div>
+                  )}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </div>
     </section>

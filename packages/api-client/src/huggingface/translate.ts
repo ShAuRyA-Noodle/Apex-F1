@@ -100,8 +100,9 @@ export async function translate(
 
   if (!raw) return null;
   if (raw instanceof Buffer) return null;
+  const json = raw as RawTranslation[] | RawTranslation;
 
-  const row = Array.isArray(raw) ? raw[0] : raw;
+  const row = Array.isArray(json) ? json[0] : json;
   if (!row || typeof row.translation_text !== 'string') return null;
   const out = row.translation_text.trim();
   return out.length > 0 ? out : null;
