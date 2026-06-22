@@ -55,6 +55,12 @@ const groups: { title: string; links: { label: string; href: string }[] }[] = [
 
 const HERO_WORDS = ['Independent.', 'Unofficial.', 'Original', 'editorial.'];
 
+// Capture the year once at module load so the SSR-rendered © text matches
+// the first client render. The previous inline `new Date().getFullYear()`
+// in render would diverge between server and client around the UTC New
+// Year boundary, throwing a hydration mismatch on the © text node.
+const COPYRIGHT_YEAR = new Date().getFullYear();
+
 export function Footer() {
   return (
     <footer
@@ -225,7 +231,7 @@ export function Footer() {
           <div className="flex items-center gap-4">
             <ApexMonogram size={20} />
             <span className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant">
-              © {new Date().getFullYear()} APEX · INDEPENDENT · SOLO BUILD
+              © {COPYRIGHT_YEAR} APEX · INDEPENDENT · SOLO BUILD
             </span>
           </div>
           <div className="flex items-center gap-4">

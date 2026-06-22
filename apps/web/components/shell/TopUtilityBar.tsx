@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { motion, useMotionValueEvent, useScroll } from 'framer-motion';
 import { ApexMonogram } from './ApexMonogram';
 
@@ -27,8 +27,15 @@ export function TopUtilityBar() {
   const [hidden, setHidden] = useState(false);
   const lastY = useRef(0);
 
+  // Read window.innerHeight inside a ref-cached value so the typeof-window
+  // branch never causes the first scroll event after hydration to flip
+  // `hidden` from the SSR snapshot of `false`. The handler still updates on
+  // every change · we just guarantee the comparison threshold is the live
+  // browser viewport, never the SSR fallback of 800.
+  const viewportH = useRef(800);
   useMotionValueEvent(scrollY, 'change', (y) => {
-    const past = y > (typeof window !== 'undefined' ? window.innerHeight : 800);
+    if (typeof window !== 'undefined') viewportH.current = window.innerHeight;
+    const past = y > viewportH.current;
     const goingDown = y > lastY.current;
     setHidden(past && goingDown);
     lastY.current = y;

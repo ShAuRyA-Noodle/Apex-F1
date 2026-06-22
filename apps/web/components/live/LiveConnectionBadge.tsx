@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useLiveStream } from './LiveStreamHook';
 
 /**
@@ -7,11 +8,27 @@ import { useLiveStream } from './LiveStreamHook';
  * Renders a colored dot + label. Pulses red when live data is flowing.
  *
  * Drop this into any /live/* header to show the user the stream is real-time.
+ *
+ * The `fresh` flag is computed inside a useEffect interval so the wall-clock
+ * comparison never runs during the SSR render. Audit (wf_c028f45c-79a) flagged
+ * the previous inline `Date.now() - lastFrameAt` as a latent hydration
+ * footgun · the moment anyone seeds `lastFrameAt` from a server cache, the
+ * dotClass string would diverge between SSR and the first client render.
  */
 export function LiveConnectionBadge() {
   const { connection, lastFrameAt } = useLiveStream();
-  const recentMs = lastFrameAt ? Date.now() - lastFrameAt : null;
-  const fresh = recentMs !== null && recentMs < 10_000;
+  const [fresh, setFresh] = useState(false);
+
+  useEffect(() => {
+    if (!lastFrameAt) {
+      setFresh(false);
+      return;
+    }
+    const tick = () => setFresh(Date.now() - lastFrameAt < 10_000);
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
+  }, [lastFrameAt]);
 
   const label =
     connection === 'open'
