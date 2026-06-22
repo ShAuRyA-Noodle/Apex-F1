@@ -24,12 +24,25 @@ interface CareerArcProps {
  * Horizontal full-history timeline. Active years filled with team color.
  * Championship years carry a podium-gold star. Tooltip on hover/tap.
  */
+// Computing the default endYear from new Date() in a 'use client' component
+// makes the rendered cell count drift between SSR and hydration whenever the
+// server and client straddle a UTC year boundary. Cap the default to the
+// last active driver year (the array passed in is server-resolved) so the
+// length of `range` is fully deterministic at hydration time.
+function defaultEndYear(years: CareerArcYear[]): number {
+  if (!years.length) return 1950;
+  let max = years[0]!.year;
+  for (const y of years) if (y.year > max) max = y.year;
+  return max;
+}
+
 export function CareerArc({
   startYear = 1950,
-  endYear = new Date().getUTCFullYear(),
+  endYear,
   years,
   className,
 }: CareerArcProps) {
+  const resolvedEndYear = endYear ?? defaultEndYear(years);
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, margin: '-10% 0px -10% 0px' });
   const [hover, setHover] = useState<number | null>(null);
@@ -42,9 +55,9 @@ export function CareerArc({
 
   const range: number[] = useMemo(() => {
     const arr: number[] = [];
-    for (let y = startYear; y <= endYear; y++) arr.push(y);
+    for (let y = startYear; y <= resolvedEndYear; y++) arr.push(y);
     return arr;
-  }, [startYear, endYear]);
+  }, [startYear, resolvedEndYear]);
 
   const activeYears = years.map((y) => y.year);
   const firstActive = Math.min(...activeYears);
@@ -125,7 +138,7 @@ export function CareerArc({
           const data = map.get(hover);
           if (!data) return null;
           return (
-            <CareerTooltip data={data} percent={((hover - startYear) / (endYear - startYear)) * 100} />
+            <CareerTooltip data={data} percent={((hover - startYear) / (resolvedEndYear - startYear)) * 100} />
           );
         })()}
       </div>

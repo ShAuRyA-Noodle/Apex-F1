@@ -4,13 +4,18 @@ import { motion } from 'framer-motion';
 import type { RssItem } from '@apex/api-client/rss';
 
 export function HeroLeadStoryClient({ lead }: { lead: RssItem }) {
+  // Pin the timeZone to UTC so the string formats identically on the Node
+  // SSR pass and the browser hydration pass · without this, the server
+  // formats in Vercel's TZ (UTC) and the client formats in the visitor's
+  // local TZ, breaking React 19 hydration on the lead-story chip.
   const published = lead.pubDate
     ? new Date(lead.pubDate).toLocaleString('en-GB', {
         day: 'numeric',
         month: 'short',
         hour: '2-digit',
         minute: '2-digit',
-      })
+        timeZone: 'UTC',
+      }) + ' UTC'
     : '';
   return (
     <section className="relative w-full overflow-hidden bg-background">
@@ -42,7 +47,11 @@ export function HeroLeadStoryClient({ lead }: { lead: RssItem }) {
             <div className="mb-4 flex items-center gap-3">
               <span className="text-data text-telemetry-red">{lead.source}</span>
               <span className="h-px w-12 bg-outline" />
-              {published && <span className="text-data text-outline">{published}</span>}
+              {published && (
+                <span className="text-data text-outline" suppressHydrationWarning>
+                  {published}
+                </span>
+              )}
             </div>
 
             <h1 className="text-display text-4xl text-on-background sm:text-5xl md:text-7xl lg:text-[84px]">
