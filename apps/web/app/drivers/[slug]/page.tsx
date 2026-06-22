@@ -4,6 +4,10 @@ import { notFound } from 'next/navigation';
 import { jolpica, mapDriver, mapResult } from '@apex/api-client/jolpica';
 import { getDriverFactsFromWikidata } from '@apex/api-client/wikidata';
 import {
+  getWikipediaSummaryByUrl,
+  getDriverFactsByQid,
+} from '@apex/api-client/wikipedia';
+import {
   nationalityToCountryCode,
   flagEmoji,
   teamColorBySlug,
@@ -47,7 +51,35 @@ export default async function DriverProfilePage(props: {
   if (!raw) notFound();
   const d = mapDriver(raw);
   const cc = nationalityToCountryCode(d.nationality);
-  const facts = await getDriverFactsFromWikidata(d.fullName, { revalidate: 86400 });
+  // Two-step enrichment that always wins where the old label-match SPARQL fell short:
+  //   1. Hit the Wikipedia REST summary endpoint with the article URL
+  //      Jolpica already gives us. Returns bio extract + image + the
+  //      driver's canonical Wikidata Q-id.
+  //   2. Use that Q-id to pull dob / place of birth / height from
+  //      Wikidata via wbgetentities (id lookup, no SPARQL fuzz).
+  // Fallback to the legacy SPARQL client only if BOTH steps return nothing
+  // (handles drivers without a Wikipedia article — e.g. very old grids).
+  const wikiSummary = d.wikiUrl
+    ? await getWikipediaSummaryByUrl(d.wikiUrl, { revalidate: 86400 })
+    : null;
+  const wdFacts = wikiSummary?.wikidataId
+    ? await getDriverFactsByQid(wikiSummary.wikidataId, { revalidate: 86400 })
+    : null;
+  const legacyFacts =
+    !wdFacts && !wikiSummary
+      ? await getDriverFactsFromWikidata(d.fullName, { revalidate: 86400 })
+      : null;
+
+  // Unified read-side shape used throughout the rest of this component.
+  const facts = {
+    qid: wdFacts?.qid ?? legacyFacts?.qid,
+    dob: wdFacts?.dob ?? legacyFacts?.dob,
+    pob: wdFacts?.placeOfBirth ?? legacyFacts?.pob,
+    height: wdFacts?.heightM ?? legacyFacts?.height,
+    image: wdFacts?.imageUrl ?? legacyFacts?.image,
+    extract: wikiSummary?.extract,
+    description: wikiSummary?.description,
+  } as const;
 
   // Pull race history once. Used for: career arc, last 5 races, debut year, current team color.
   const allResults = await jolpica.getDriverResults(slug, { revalidate: 86400 });
