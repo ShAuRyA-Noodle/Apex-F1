@@ -5,6 +5,7 @@ import {
   integer,
   timestamp,
   index,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { race } from './race';
 import { session } from './session';
@@ -34,7 +35,13 @@ export const video = pgTable(
   },
   (t) => ({
     publishedIdx: index('video_published_idx').on(t.publishedAt),
-    providerAssetIdx: index('video_provider_asset_idx').on(t.provider, t.providerAssetId),
+    // Unique on (provider, providerAssetId) so concurrent youtube-nightly
+    // runs cannot race-double-insert and so onConflictDoUpdate has a stable
+    // natural key. Closes audit P0 finding in audit-data-models-types.
+    providerAssetUnique: uniqueIndex('video_provider_asset_unique').on(
+      t.provider,
+      t.providerAssetId,
+    ),
   }),
 );
 

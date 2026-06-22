@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { cn } from '@apex/ui';
@@ -56,12 +56,8 @@ const NAV: MegaSection[] = [
         ],
       },
     ],
-    preview: {
-      eyebrow: 'BREAKING',
-      title: 'Verstappen reacts to Singapore floor change',
-      href: '/latest',
-      meta: '14 min ago · Autosport',
-    },
+    // Preview gets overwritten at render-time by the server wrapper with the
+    // live RSS top item. Left blank here so a stale string never renders.
   },
   {
     label: 'Schedule',
@@ -83,12 +79,7 @@ const NAV: MegaSection[] = [
         ],
       },
     ],
-    preview: {
-      eyebrow: 'NEXT ROUND',
-      title: 'Marina Bay Street Circuit',
-      href: '/schedule/2026/singapore',
-      meta: 'Race lights out · 13d 4h',
-    },
+    // Preview overwritten at render-time with the live next-race chip.
   },
   {
     label: 'Results',
@@ -176,7 +167,14 @@ const NAV: MegaSection[] = [
   },
 ];
 
-export function MegaNav() {
+export interface MegaNavLivePreviews {
+  /** Live RSS top item — overrides the "Latest" dropdown preview card. */
+  latest?: DropdownPreview;
+  /** Live next-race chip — overrides the "Schedule" dropdown preview card. */
+  schedule?: DropdownPreview;
+}
+
+export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
   const pathname = usePathname();
   const [open, setOpen] = useState<string | null>(null);
   const [mobile, setMobile] = useState(false);
@@ -187,6 +185,19 @@ export function MegaNav() {
   // Find active section for the red-dot indicator
   const activeLabel =
     NAV.find((n) => pathname === n.href || pathname.startsWith(n.href + '/'))?.label ?? null;
+
+  // Inject live previews into the static NAV at render time. This keeps the
+  // NAV structure declarative while letting the dropdowns reflect real-time
+  // data passed by the server wrapper.
+  const navWithPreviews = NAV.map((section) => {
+    if (section.label === 'Latest' && previews?.latest) {
+      return { ...section, preview: previews.latest };
+    }
+    if (section.label === 'Schedule' && previews?.schedule) {
+      return { ...section, preview: previews.schedule };
+    }
+    return section;
+  });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -239,7 +250,7 @@ export function MegaNav() {
           {/* Center: primary nav */}
           <nav aria-label="Primary" className="hidden lg:flex" onMouseLeave={leave}>
             <ul className="relative flex items-stretch gap-1">
-              {NAV.map((section) => {
+              {navWithPreviews.map((section) => {
                 const isActive = activeLabel === section.label;
                 const isOpen = open === section.label;
                 return (
@@ -320,7 +331,7 @@ export function MegaNav() {
               <div className="glass-panel border-t border-outline-variant/40">
                 <div className="apex-container grid grid-cols-12 gap-10 py-12">
                   {(() => {
-                    const section = NAV.find((s) => s.label === open);
+                    const section = navWithPreviews.find((s) => s.label === open);
                     if (!section) return null;
                     const colSpan = section.preview ? 'col-span-8' : 'col-span-12';
                     return (
@@ -552,9 +563,32 @@ function MobileTakeover({
 /* ============================================================
  * Search overlay (search button morphs into this)
  * ============================================================ */
+/**
+ * Search overlay with real Enter-key submit + suggestion navigation.
+ *
+ * Audit findings closed:
+ *   - audit-shell P2 [MegaNav.tsx:594] input had no submit handler
+ *   - audit-shell P2 [MegaNav.tsx:613-624] suggestions only closed the modal
+ *
+ * Behaviour:
+ *   - Enter on the input pushes /search?q=<query>
+ *   - Each suggestion has a real { label, href } pair and routes via
+ *     next/navigation router.push when clicked. No more inert chips.
+ *   - ESC + backdrop-click + ESC-button all close.
+ */
+const SEARCH_SUGGESTIONS: { label: string; href: string }[] = [
+  { label: 'Next race · Schedule', href: '/schedule' },
+  { label: 'Drivers · 2026 grid', href: '/drivers' },
+  { label: 'Standings · Drivers', href: '/results/2026/drivers' },
+  { label: 'Standings · Constructors', href: '/results/2026/teams' },
+  { label: 'Live timing', href: '/live/timing' },
+  { label: 'World champions', href: '/drivers/champions' },
+];
+
 function SearchOverlay({ onClose }: { onClose: () => void }) {
   const [q, setQ] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -564,6 +598,22 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [onClose]);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const query = q.trim();
+    if (query) {
+      router.push(`/search?q=${encodeURIComponent(query)}`);
+    } else {
+      router.push('/search');
+    }
+    onClose();
+  };
+
+  const goSuggestion = (href: string) => {
+    router.push(href);
+    onClose();
+  };
 
   return (
     <motion.div
@@ -588,7 +638,7 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
         transition={{ duration: 0.32, ease: [0.215, 0.61, 0.355, 1] }}
         className="apex-container relative pt-[18vh]"
       >
-        <div className="glass-panel mx-auto max-w-3xl p-2">
+        <form onSubmit={submit} className="glass-panel mx-auto max-w-3xl p-2">
           <div className="flex items-center gap-3 border-b border-outline-variant/40 px-4 py-4">
             <span className="material-symbols-outlined text-[22px] text-telemetry-red">search</span>
             <input
@@ -599,6 +649,9 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
               placeholder="Search drivers, races, teams, archive..."
               className="flex-1 bg-transparent font-headline text-[20px] text-on-background placeholder:text-outline focus:outline-none"
             />
+            <span className="hidden font-data text-[10px] tracking-[0.18em] text-outline md:inline">
+              PRESS RETURN
+            </span>
             <button
               type="button"
               onClick={onClose}
@@ -610,21 +663,21 @@ function SearchOverlay({ onClose }: { onClose: () => void }) {
           <div className="px-4 py-4">
             <p className="font-data text-[10.5px] tracking-[0.20em] text-outline">SUGGESTED</p>
             <ul className="mt-3 space-y-2">
-              {['Next race · Singapore', 'Drivers · 2026 grid', 'Results · Constructors', 'Live timing'].map((s) => (
-                <li key={s}>
+              {SEARCH_SUGGESTIONS.map((s) => (
+                <li key={s.href}>
                   <button
                     type="button"
-                    onClick={onClose}
+                    onClick={() => goSuggestion(s.href)}
                     className="flex w-full items-center gap-3 px-2 py-2 text-left transition-colors hover:bg-surface-container/40"
                   >
                     <span className="material-symbols-outlined text-[18px] text-outline">north_east</span>
-                    <span className="font-headline text-[15px] text-on-background">{s}</span>
+                    <span className="font-headline text-[15px] text-on-background">{s.label}</span>
                   </button>
                 </li>
               ))}
             </ul>
           </div>
-        </div>
+        </form>
       </motion.div>
     </motion.div>
   );

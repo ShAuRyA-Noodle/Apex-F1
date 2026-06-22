@@ -5,6 +5,7 @@ import {
   timestamp,
   uuid,
   index,
+  uniqueIndex,
 } from 'drizzle-orm/pg-core';
 import { driver } from './driver';
 import { season } from './season';
@@ -21,7 +22,10 @@ export const team = pgTable(
     technicalChief: text('technical_chief'),
     powerUnit: text('power_unit'),
     foundedYear: integer('founded_year'),
-    colorHex: text('color_hex'),
+    // Shared Team type declares colorHex as required (drives team color
+    // stripes site-wide). Default to neutral grey so the column never
+    // returns null at the read boundary. Worker / admin can override.
+    colorHex: text('color_hex').notNull().default('#262626'),
     logoUrl: text('logo_url'),
     carImageUrl: text('car_image_url'),
     liveryImageUrl: text('livery_image_url'),
@@ -54,6 +58,14 @@ export const driverTeamHistory = pgTable(
   (t) => ({
     driverSeasonIdx: index('dth_driver_season_idx').on(t.driverId, t.seasonYear),
     teamSeasonIdx: index('dth_team_season_idx').on(t.teamId, t.seasonYear),
+    // Unique natural key so the worker can do an idempotent upsert without
+    // a SELECT-then-INSERT race. Closes audit P1 (driver_team_history
+    // table is never written today).
+    driverTeamSeasonUnique: uniqueIndex('dth_driver_team_season_unique').on(
+      t.driverId,
+      t.teamId,
+      t.seasonYear,
+    ),
   }),
 );
 

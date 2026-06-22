@@ -166,8 +166,25 @@ async function main() {
             status: new Date(r.raceStartIso) < new Date() ? 'completed' : 'upcoming',
             wikiUrl: r.wikiUrl,
           })
-          .onConflictDoNothing({
+          // Update on conflict so the historical worker stays idempotent
+          // when Jolpica revises a date / slug / circuit upstream. Matches
+          // the nightly worker (jolpica-nightly.ts:62-71) so both workers
+          // share update semantics. Closes audit P1 finding.
+          .onConflictDoUpdate({
             target: [schema.race.seasonYear, schema.race.round],
+            set: {
+              slug: r.slug,
+              name: r.name,
+              officialName: r.name,
+              country: r.country,
+              city: r.city,
+              circuitId: circuitRow[0]?.id,
+              dateStart: new Date(r.raceStartIso),
+              isSprint: r.sessions.some((s) => s.kind === 'S'),
+              status: new Date(r.raceStartIso) < new Date() ? 'completed' : 'upcoming',
+              wikiUrl: r.wikiUrl,
+              updatedAt: new Date(),
+            },
           });
         bump({ itemsOut: 1 });
 

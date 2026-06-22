@@ -10,8 +10,14 @@ const KIND_LABEL: Record<SearchItem['kind'], string> = {
   race: 'RACE',
 };
 
-export function SearchClient({ items }: { items: SearchItem[] }) {
-  const [q, setQ] = useState('');
+export function SearchClient({
+  items,
+  initialQuery = '',
+}: {
+  items: SearchItem[];
+  initialQuery?: string;
+}) {
+  const [q, setQ] = useState(initialQuery);
   const [kindFilter, setKindFilter] = useState<SearchItem['kind'] | 'all'>('all');
 
   const results = useMemo(() => {

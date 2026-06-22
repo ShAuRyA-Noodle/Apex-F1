@@ -3,7 +3,15 @@
 
 export type SessionKind = 'FP1' | 'FP2' | 'FP3' | 'SQ' | 'S' | 'Q' | 'R';
 export type RaceStatus = 'completed' | 'live' | 'upcoming' | 'testing' | 'cancelled';
-export type ArticleType = 'news' | 'feature' | 'analysis' | 'quiz' | 'guide' | 'press' | 'gallery';
+export type ArticleType =
+  | 'news'
+  | 'feature'
+  | 'analysis'
+  | 'quiz'
+  | 'guide'
+  | 'press'
+  | 'gallery'
+  | 'newsletter';
 export type Tyre = 'soft' | 'medium' | 'hard' | 'intermediate' | 'wet' | 'unknown';
 
 export interface Season {

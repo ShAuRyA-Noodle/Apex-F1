@@ -22,7 +22,13 @@ export type SearchItem = {
   href: string;
 };
 
-export default async function SearchPage() {
+interface SearchPageProps {
+  searchParams: Promise<{ q?: string }>;
+}
+
+export default async function SearchPage({ searchParams }: SearchPageProps) {
+  const { q } = await searchParams;
+
   const [driverRaw, constructorRaw, scheduleRaw] = await Promise.all([
     jolpica.getDriverStandings('current', { revalidate: 1800 }),
     jolpica.getConstructorStandings('current', { revalidate: 1800 }),
@@ -66,12 +72,12 @@ export default async function SearchPage() {
         </h1>
         <p className="mt-4 max-w-2xl font-editorial text-lg text-on-surface-variant md:text-2xl">
           Drivers · constructors · races · current season. Archive search lands in Phase B
-          Wave 4 (Meilisearch over the 1950 → present DB).
+          Wave 4 (Meilisearch over the 1950 to present DB).
         </p>
       </header>
 
       <div className="mt-12">
-        <SearchClient items={items} />
+        <SearchClient items={items} initialQuery={q ?? ''} />
       </div>
     </article>
   );

@@ -3,7 +3,7 @@ import './globals.css';
 import { LenisProvider } from '@/components/motion/LenisProvider';
 import { TopUtilityBar } from '@/components/shell/TopUtilityBar';
 import { RaceTickerBar } from '@/components/shell/RaceTickerBar';
-import { MegaNav } from '@/components/shell/MegaNav';
+import { MegaNavServer } from '@/components/shell/MegaNavServer';
 import { Footer } from '@/components/shell/Footer';
 import { CookieConsent } from '@/components/shell/CookieConsent';
 import { PosthogScript } from '@/components/shell/PosthogScript';
@@ -66,7 +66,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Skip to content
             </a>
             <TopUtilityBar />
-            <MegaNav />
+            <MegaNavServer />
             <RaceTickerBar />
             <main id="main" className="relative">
               {children}
