@@ -342,13 +342,73 @@ export async function getF1NewsFeed(
     .map((it): RssItem => ({ ...it, provider: 'rss' }));
   const all = [...rssTagged, ...guardianResults, ...newsApiResults, ...newsDataResults, ...currentsResults];
 
+  // F1-relevance post-filter. Cricket / tennis / golf etc. keep sneaking in
+  // when keyword-search APIs match body text instead of headline subject.
+  // Dedicated F1 RSS feeds + Guardian's curated tag bypass this filter
+  // (they are publisher-curated upstream and trusted). Keyword-API providers
+  // get gated to entries whose title/description contains a strong F1 token.
+  const TRUSTED = new Set([
+    'Motorsport.com',
+    'Autosport',
+    'RaceFans',
+    'The Race',
+    'The Guardian',
+  ]);
+  const F1_REGEX = new RegExp(
+    [
+      'formula 1',
+      'formula one',
+      'f1',
+      'grand prix',
+      'gp(\\s|$)',
+      'verstappen',
+      'hamilton',
+      'leclerc',
+      'norris',
+      'piastri',
+      'russell',
+      'alonso',
+      'mclaren',
+      'ferrari',
+      'mercedes',
+      'red bull',
+      'aston martin',
+      'williams f1',
+      'kick sauber',
+      'rb f1',
+      'haas f1',
+      'fia',
+      'pirelli tyre',
+      'qualifying',
+      'pole position',
+      'safety car',
+      'drs',
+      'paddock',
+      'silverstone',
+      'monaco',
+      'monza',
+      'spa francorchamps',
+      'suzuka',
+      'interlagos',
+    ].join('|'),
+    'i',
+  );
+
+  function looksLikeF1(item: RssItem): boolean {
+    if (TRUSTED.has(item.source)) return true;
+    const hay = `${item.title} ${item.description ?? ''}`;
+    return F1_REGEX.test(hay);
+  }
+
+  const relevant = all.filter(looksLikeF1);
+
   // Sort newest-first before dedupe so the kept copy is always the freshest.
-  all.sort((a, b) => b.pubDateMs - a.pubDateMs);
+  relevant.sort((a, b) => b.pubDateMs - a.pubDateMs);
 
   const seenTitles = new Set<string>();
   const seenLinks = new Set<string>();
   const deduped: RssItem[] = [];
-  for (const item of all) {
+  for (const item of relevant) {
     const tk = dedupeKey(item.title);
     const lk = linkKey(item.link);
     if (tk && seenTitles.has(tk)) continue;

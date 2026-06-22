@@ -8,6 +8,7 @@ import { Footer } from '@/components/shell/Footer';
 import { CookieConsent } from '@/components/shell/CookieConsent';
 import { PosthogScript } from '@/components/shell/PosthogScript';
 import { ToastProvider } from '@/components/shell/Toast';
+import { VideoPlayerModal } from '@/components/video/VideoPlayerModal';
 
 const SITE = 'Apex';
 const DESCRIPTION =
@@ -72,6 +73,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </main>
             <Footer />
             <CookieConsent />
+            <VideoPlayerModal />
           </ToastProvider>
         </LenisProvider>
         <PosthogScript />

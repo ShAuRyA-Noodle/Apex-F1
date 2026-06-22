@@ -168,6 +168,9 @@ export default async function VideoPage(props: {
                 href={v.url}
                 target="_blank"
                 rel="noopener noreferrer"
+                data-apex-video-id={v.videoId || undefined}
+                data-apex-video-title={v.title}
+                data-apex-video-channel={v.channelName}
                 className="group block"
               >
                 <div className="relative aspect-video overflow-hidden bg-surface-container-high">

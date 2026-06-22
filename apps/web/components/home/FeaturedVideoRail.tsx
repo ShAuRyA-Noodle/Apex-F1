@@ -35,6 +35,9 @@ export async function FeaturedVideoRail() {
                   href={v.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-apex-video-id={v.videoId || undefined}
+                  data-apex-video-title={v.title}
+                  data-apex-video-channel={v.channelName}
                   className="group block"
                 >
                   <div className="relative aspect-[16/9] overflow-hidden bg-surface-container-high">

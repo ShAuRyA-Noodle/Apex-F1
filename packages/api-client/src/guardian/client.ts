@@ -95,45 +95,27 @@ export async function getGuardianF1News(
   const showFields = [...F1_DEFAULTS.showFields];
 
   try {
-    const [byTag, byKeyword] = await Promise.all([
-      guardianSearch(
-        {
-          tag: F1_DEFAULTS.tag,
-          section: F1_DEFAULTS.section,
-          pageSize,
-          orderBy: F1_DEFAULTS.orderBy,
-          showFields,
-        },
-        { revalidate, fetchImpl: opts.fetchImpl },
-      ).catch(() => [] as GuardianContentItem[]),
-      guardianSearch(
-        {
-          q: F1_DEFAULTS.q,
-          section: F1_DEFAULTS.section,
-          pageSize,
-          orderBy: F1_DEFAULTS.orderBy,
-          showFields,
-        },
-        { revalidate, fetchImpl: opts.fetchImpl },
-      ).catch(() => [] as GuardianContentItem[]),
-    ]);
+    // Tag-only query. The keyword fallback was matching ANY article inside
+    // section=sport that contained the words "formula" or "1" anywhere
+    // (including County Cricket live blogs). Guardian's sport/formula-one
+    // tag is editorially curated by their own team and only fires on
+    // genuine F1 content. Loses some breadth, gains 100% relevance.
+    const items = await guardianSearch(
+      {
+        tag: F1_DEFAULTS.tag,
+        pageSize,
+        orderBy: F1_DEFAULTS.orderBy,
+        showFields,
+      },
+      { revalidate, fetchImpl: opts.fetchImpl },
+    ).catch(() => [] as GuardianContentItem[]);
 
-    // Dedupe by Guardian content id (stable, opaque path-style identifier).
-    const seen = new Set<string>();
-    const merged: GuardianContentItem[] = [];
-    for (const item of [...byTag, ...byKeyword]) {
-      if (seen.has(item.id)) continue;
-      seen.add(item.id);
-      merged.push(item);
-    }
-
-    // Re-sort newest-first across both query streams.
-    merged.sort(
+    items.sort(
       (a, b) =>
         new Date(b.webPublicationDate).getTime() - new Date(a.webPublicationDate).getTime(),
     );
 
-    return merged;
+    return items;
   } catch {
     return [];
   }
