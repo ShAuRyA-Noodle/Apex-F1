@@ -11,4 +11,4 @@ import { getF1NewsFeed } from '@apex/api-client/rss';
  * boundaries on the home page, the shell paints immediately and each section
  * streams in as its data resolves.
  */
-export const getHomeFeed = cache(() => getF1NewsFeed({ limit: 30, revalidate: 300 }));
+export const getHomeFeed = cache(() => getF1NewsFeed({ limit: 40, revalidate: 300 }));

@@ -247,7 +247,12 @@ function capPerSource(items: RssItem[], maxPerSource: number): RssItem[] {
  * fails independently — a 429 from NewsAPI does not poison the RSS rows
  * (CORE RULE #1).
  *
- * NewsAPI revalidate is floored to 900s (15 min) to protect the 100/day quota.
+ * Quota'd providers carry a per-source revalidate FLOOR sized to their daily
+ * limit, so even when an external pinger hits /api/cron/rss-sync every 5 min the
+ * actual upstream network calls stay well under quota and last past midnight:
+ *   NewsAPI  1000s (~72/day, limit 100) · NewsData 600s (~144/day, limit 200)
+ *   Currents  600s (~144/day, limit 600) · Guardian 600s (~144/day, limit 500)
+ * The free RSS feeds carry no floor — they refresh on the caller's window (300s).
  */
 export async function getF1NewsFeed(
   opts: {
@@ -277,7 +282,7 @@ export async function getF1NewsFeed(
     if (!process.env['GUARDIAN_API_KEY']) return [];
     try {
       const { getGuardianF1News, mapGuardianItems } = await import('../guardian');
-      const raw = await getGuardianF1News({ revalidate });
+      const raw = await getGuardianF1News({ revalidate: Math.max(revalidate, 600) });
       return mapGuardianItems(raw);
     } catch {
       return [];
@@ -289,7 +294,7 @@ export async function getF1NewsFeed(
   const newsApiPromise: Promise<RssItem[]> = includeNewsAPI
     ? getNewsAPIF1News({
         pageSize: 20,
-        revalidate: Math.max(revalidate, 900),
+        revalidate: Math.max(revalidate, 1000),
       })
         .then(mapNewsAPIArticlesToUi)
         .then(uiToRssItems)
@@ -322,7 +327,7 @@ export async function getF1NewsFeed(
     if (!process.env['CURRENTS_API_KEY']) return [];
     try {
       const { getCurrentsF1News, mapCurrentsItems } = await import('../currents');
-      const raw = await getCurrentsF1News({ revalidate });
+      const raw = await getCurrentsF1News({ revalidate: Math.max(revalidate, 600) });
       return mapCurrentsItems(raw).map((it): RssItem => ({ ...it, provider: 'currents' }));
     } catch {
       return [];
