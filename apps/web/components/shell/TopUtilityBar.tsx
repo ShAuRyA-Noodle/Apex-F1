@@ -68,8 +68,8 @@ export function TopUtilityBar() {
                   href={l.href}
                   className={
                     l.highlight
-                      ? 'font-data text-[11px] tracking-[0.16em] text-telemetry-red transition-colors hover:text-on-background'
-                      : 'font-data text-[11px] tracking-[0.16em] text-on-surface-variant transition-colors hover:text-on-background'
+                      ? 'link-draw font-data text-[11px] tracking-[0.16em] text-telemetry-red transition-colors hover:text-on-background'
+                      : 'link-draw font-data text-[11px] tracking-[0.16em] text-on-surface-variant transition-colors hover:text-on-background'
                   }
                 >
                   {l.label.toUpperCase()}

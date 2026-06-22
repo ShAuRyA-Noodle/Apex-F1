@@ -59,9 +59,17 @@ export default async function DriverProfilePage(props: {
   //      Wikidata via wbgetentities (id lookup, no SPARQL fuzz).
   // Fallback to the legacy SPARQL client only if BOTH steps return nothing
   // (handles drivers without a Wikipedia article — e.g. very old grids).
-  const wikiSummary = d.wikiUrl
-    ? await getWikipediaSummaryByUrl(d.wikiUrl, { revalidate: 86400 })
-    : null;
+  // Parallelize the two independent fan-outs: the Wikipedia summary chain
+  // (which then feeds Wikidata) and the Jolpica driver-results pull only
+  // share the driver record above, so they can race instead of waterfall.
+  // Cold-load on /drivers/norris was 4.8s when these ran sequentially.
+  const [wikiSummary, allResults] = await Promise.all([
+    d.wikiUrl
+      ? getWikipediaSummaryByUrl(d.wikiUrl, { revalidate: 86400 })
+      : Promise.resolve(null),
+    jolpica.getDriverResults(slug, { revalidate: 86400 }),
+  ]);
+
   const wdFacts = wikiSummary?.wikidataId
     ? await getDriverFactsByQid(wikiSummary.wikidataId, { revalidate: 86400 })
     : null;
@@ -81,8 +89,9 @@ export default async function DriverProfilePage(props: {
     description: wikiSummary?.description,
   } as const;
 
-  // Pull race history once. Used for: career arc, last 5 races, debut year, current team color.
-  const allResults = await jolpica.getDriverResults(slug, { revalidate: 86400 });
+  // allResults was already pre-fetched above in the Promise.all so we save
+  // a round trip on cold load. Used for: career arc, last 5 races, debut
+  // year, current team color.
 
   // Build per-year aggregation for the career arc.
   const yearMap = new Map<

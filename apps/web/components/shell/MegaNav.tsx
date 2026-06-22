@@ -212,6 +212,8 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
   const [mobile, setMobile] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
+  const lastYRef = useRef(0);
   const closeTimer = useRef<number | null>(null);
 
   // Find active section for the red-dot indicator
@@ -232,11 +234,31 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
   });
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    // User asked to drop the "always-on" sticky behavior. Now:
+    //   - First ~80px of the page = nav visible (so the brand always greets)
+    //   - Scroll down past 80px = nav slides off the top
+    //   - Any upward scroll instantly reveals it again (Material-You pattern)
+    //   - Any open dropdown OR open mobile sheet pins it open so the user
+    //     never loses the menu mid-interaction
+    const onScroll = () => {
+      const y = window.scrollY;
+      setScrolled(y > 8);
+      const goingDown = y > lastYRef.current;
+      const past = y > 80;
+      const interactionOpen = open !== null || mobile || searchOpen;
+      if (interactionOpen) {
+        setHidden(false);
+      } else if (past && goingDown) {
+        setHidden(true);
+      } else if (!goingDown || y < 80) {
+        setHidden(false);
+      }
+      lastYRef.current = y;
+    };
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [open, mobile, searchOpen]);
 
   // Lock body scroll when mobile menu open
   useEffect(() => {
@@ -257,8 +279,11 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
 
   return (
     <>
-      <header
+      <motion.header
         data-shell="mega-nav"
+        initial={false}
+        animate={{ y: hidden ? -120 : 0 }}
+        transition={{ duration: 0.36, ease: [0.215, 0.61, 0.355, 1] }}
         className={cn(
           'sticky top-0 z-40 w-full md:top-8',
           'glass-pronounced transition-[backdrop-filter] duration-300',
@@ -446,7 +471,7 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
             </motion.div>
           )}
         </AnimatePresence>
-      </header>
+      </motion.header>
 
       {/* Search overlay */}
       <AnimatePresence>

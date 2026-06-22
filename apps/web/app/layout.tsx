@@ -4,6 +4,7 @@ import { LenisProvider } from '@/components/motion/LenisProvider';
 import { TopUtilityBar } from '@/components/shell/TopUtilityBar';
 import { RaceTickerBar } from '@/components/shell/RaceTickerBar';
 import { MegaNavServer } from '@/components/shell/MegaNavServer';
+import { BreakingNewsTickerServer } from '@/components/live/BreakingNewsTickerServer';
 import { Footer } from '@/components/shell/Footer';
 import { CookieConsent } from '@/components/shell/CookieConsent';
 import { PosthogScript } from '@/components/shell/PosthogScript';
@@ -76,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <TopUtilityBar />
             <MegaNavServer />
             <RaceTickerBar />
+            <BreakingNewsTickerServer />
             <main id="main" className="relative">
               {children}
             </main>

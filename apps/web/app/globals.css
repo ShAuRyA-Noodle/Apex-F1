@@ -324,6 +324,59 @@ nextjs-portal,
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }
 
+/* Breaking-news ticker · pure CSS marquee, 70s loop. Two children
+ * (ul.apex-marquee + ul.apex-marquee-clone) live inside .apex-marquee-container
+ * and animate together so the strip never shows an empty gap. Hover pauses. */
+.apex-marquee-container {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 2.5rem;
+  white-space: nowrap;
+  mask-image: linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0, black 48px, black calc(100% - 48px), transparent 100%);
+}
+.apex-marquee,
+.apex-marquee-clone {
+  animation: apex-marquee-scroll 70s linear infinite;
+}
+.apex-marquee-container:hover .apex-marquee,
+.apex-marquee-container:hover .apex-marquee-clone,
+.apex-marquee-container:focus-within .apex-marquee,
+.apex-marquee-container:focus-within .apex-marquee-clone {
+  animation-play-state: paused;
+}
+@keyframes apex-marquee-scroll {
+  0% { transform: translate3d(0, 0, 0); }
+  100% { transform: translate3d(-100%, 0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .apex-marquee,
+  .apex-marquee-clone {
+    animation-duration: 200s;
+  }
+}
+
+/* Live tower position-change flash · drives the SSE-driven row glow on
+ * /live/timing. data-flash="up" tints the row green for a gain, "down"
+ * tints it red for a loss. 1.4s wash, GPU-only properties. */
+@keyframes apex-tower-flash-up {
+  0% { background-color: rgba(0, 200, 83, 0.0); }
+  20% { background-color: rgba(0, 200, 83, 0.18); }
+  100% { background-color: rgba(0, 200, 83, 0.0); }
+}
+@keyframes apex-tower-flash-down {
+  0% { background-color: rgba(225, 6, 0, 0.0); }
+  20% { background-color: rgba(225, 6, 0, 0.22); }
+  100% { background-color: rgba(225, 6, 0, 0.0); }
+}
+.tower-row[data-flash='up'] {
+  animation: apex-tower-flash-up 1400ms cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+}
+.tower-row[data-flash='down'] {
+  animation: apex-tower-flash-down 1400ms cubic-bezier(0.215, 0.61, 0.355, 1) forwards;
+}
+
 /* ============================================================
  * View Transitions · profile <-> career <-> history
  * Browsers without support (e.g. Firefox today) gracefully fall back to

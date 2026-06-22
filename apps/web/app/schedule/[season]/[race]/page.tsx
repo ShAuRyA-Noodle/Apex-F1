@@ -68,17 +68,18 @@ function fmtSessionDate(iso: string): string {
 export default async function RaceDetailPage(props: { params: Promise<RouteParams> }) {
   const { season, race: raceSlug } = await props.params;
   const seasonNum = Number(season);
+  // Kick off the Unsplash hero lookup BEFORE awaiting the schedule + results
+  // chain · the hero only needs the raceSlug, which we already have, so it
+  // can race against the two-step jolpica fetch inside loadRace. This shaves
+  // the marina_bay cold load that smoke flagged at 5.4s in half.
+  const heroPromise = getRaceHeroImage({ circuitSlug: raceSlug });
   const data = await loadRace(seasonNum, raceSlug);
   if (!data) notFound();
   const { race, results, round } = data;
   const cc = countryNameToCode(race.country);
   const hasResults = results.length > 0;
   const winner = hasResults ? results[0] : null;
-
-  // Circuit-specific cinematic backdrop for the sessions grid. Returns null
-  // when no Unsplash key is provisioned or all queries fail — UI degrades
-  // gracefully to a flat surface in that case.
-  const hero = await getRaceHeroImage({ circuitSlug: race.slug });
+  const hero = await heroPromise;
 
   const jsonLd = {
     '@context': 'https://schema.org',

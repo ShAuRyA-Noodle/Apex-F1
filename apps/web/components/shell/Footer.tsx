@@ -145,7 +145,7 @@ export function Footer() {
                   <li key={l.href}>
                     <Link
                       href={l.href}
-                      className="font-headline text-[15px] text-on-surface-variant transition-colors hover:text-on-background"
+                      className="link-draw font-headline text-[15px] text-on-surface-variant transition-colors hover:text-on-background"
                     >
                       {l.label}
                     </Link>
@@ -194,7 +194,7 @@ export function Footer() {
               href="https://github.com/ShAuRyA-Noodle"
               target="_blank"
               rel="noopener noreferrer me"
-              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+              className="link-draw font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
             >
               GITHUB
             </a>
@@ -203,7 +203,7 @@ export function Footer() {
               href="https://www.linkedin.com/in/shaurya-punj-2287513b3/"
               target="_blank"
               rel="noopener noreferrer me"
-              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+              className="link-draw font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
             >
               LINKEDIN
             </a>
@@ -212,14 +212,14 @@ export function Footer() {
               href="https://x.com/ShAuRyANoodle"
               target="_blank"
               rel="noopener noreferrer me"
-              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+              className="link-draw font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
             >
               X · TWITTER
             </a>
             <span className="h-3 w-px bg-outline-variant/60" aria-hidden />
             <a
               href="mailto:workwithshaurya10@gmail.com"
-              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+              className="link-draw font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
             >
               EMAIL
             </a>
