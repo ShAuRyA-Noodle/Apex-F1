@@ -78,7 +78,11 @@ export async function RaceTickerBar() {
   return (
     <div
       data-shell="race-ticker"
-      className="glass-medium sticky top-16 z-30 md:top-[104px]"
+      // Dropped the sticky positioning per user request · the ticker now
+      // lives in normal document flow under the nav, so it scrolls away
+      // with the rest of the hero instead of pinning under the navbar
+      // and stacking with the breaking-news strip + nav.
+      className="glass-medium relative z-30"
     >
       <div className="apex-container">
         <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory items-stretch gap-3 overflow-x-auto px-4 py-3 md:mx-0 md:gap-4 md:px-0 md:py-4">
@@ -227,7 +231,7 @@ function NextChipWeatherIcon({ code }: { code: number }) {
 
 function RaceTickerEmpty() {
   return (
-    <div className="glass-medium sticky top-16 z-30 md:top-[104px]">
+    <div className="glass-medium relative z-30">
       <div className="apex-container py-4">
         <div className="flex items-center justify-between border border-outline-variant/30 bg-surface-container/40 px-4 py-3">
           <div className="flex items-center gap-3">

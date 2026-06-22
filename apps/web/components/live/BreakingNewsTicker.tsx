@@ -83,7 +83,10 @@ export function BreakingNewsTicker({
   return (
     <div
       data-shell="breaking-news-ticker"
-      className="glass-medium sticky top-[112px] z-20 border-b border-outline-variant/30 md:top-[176px]"
+      // Lives in normal document flow so it scrolls away with the race
+      // ticker. The nav alone stays sticky (and compacts on scroll) per
+      // user request: "i want you to fix that too plus my navbar..."
+      className="glass-medium relative z-20 border-b border-outline-variant/30"
       role="region"
       aria-label="Breaking news ticker"
     >

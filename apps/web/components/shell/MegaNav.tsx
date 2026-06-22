@@ -281,24 +281,44 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
     <>
       <motion.header
         data-shell="mega-nav"
+        data-compact={hidden || undefined}
         initial={false}
-        animate={{ y: hidden ? -120 : 0 }}
-        transition={{ duration: 0.36, ease: [0.215, 0.61, 0.355, 1] }}
+        // No translateY hide. Per user feedback ("navbar completely disappears
+        // on scroll-down"), the nav now stays visible permanently · we just
+        // collapse it into a compact 44px-tall variant when scrolled past the
+        // hero. data-compact drives the height transition + element shrink.
+        animate={{ y: 0 }}
+        transition={{ duration: 0.32, ease: [0.215, 0.61, 0.355, 1] }}
         className={cn(
           'sticky top-0 z-40 w-full md:top-8',
           'glass-pronounced transition-[backdrop-filter] duration-300',
           scrolled && 'shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]',
         )}
       >
-        <div className="apex-container flex h-16 items-center justify-between md:h-[72px]">
+        <div
+          className={cn(
+            'apex-container flex items-center justify-between transition-[height] duration-300 ease-[cubic-bezier(0.215,0.61,0.355,1)]',
+            hidden ? 'h-12 md:h-[48px]' : 'h-16 md:h-[72px]',
+          )}
+        >
           {/* Left: logo lockup */}
           <Link href="/" className="group flex items-center gap-3" onMouseEnter={leave}>
-            <ApexMonogram size={32} animated />
+            <ApexMonogram size={hidden ? 22 : 32} animated />
             <span className="flex items-baseline gap-2">
-              <span className="font-display text-[26px] font-extrabold uppercase leading-none tracking-[-0.04em] text-on-background">
+              <span
+                className={cn(
+                  'font-display font-extrabold uppercase leading-none tracking-[-0.04em] text-on-background transition-all duration-300',
+                  hidden ? 'text-[18px]' : 'text-[26px]',
+                )}
+              >
                 Apex
               </span>
-              <span className="hidden font-data text-[10px] tracking-[0.18em] text-outline md:inline">
+              <span
+                className={cn(
+                  'hidden font-data tracking-[0.18em] text-outline transition-opacity duration-300 md:inline',
+                  hidden ? 'text-[9px] opacity-0' : 'text-[10px] opacity-100',
+                )}
+              >
                 v0.1 · BETA
               </span>
             </span>
@@ -320,7 +340,13 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
                       href={section.href}
                       prefetch
                       className={cn(
-                        'relative flex h-[72px] items-center px-4 font-data text-[12.5px] tracking-[0.14em] transition-colors',
+                        'relative flex items-center px-4 font-data tracking-[0.14em] transition-all duration-300',
+                        // Section pills shrink in lockstep with the navbar's
+                        // compact mode · same easing window so they don't
+                        // animate independently from the surrounding shell.
+                        hidden
+                          ? 'h-[48px] text-[11px]'
+                          : 'h-[72px] text-[12.5px]',
                         isActive || isOpen
                           ? 'text-on-background'
                           : 'text-on-surface-variant hover:text-on-background',
