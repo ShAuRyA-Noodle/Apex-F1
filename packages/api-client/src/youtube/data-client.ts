@@ -50,6 +50,12 @@ export interface YTVideoDetail {
   commentCount: number;
   tags: string[];
   categoryId: string;
+  /** YouTube status.embeddable — false means iframe will refuse to play. */
+  embeddable: boolean;
+  /** YouTube status.privacyStatus — only 'public' videos are safely embeddable. */
+  privacyStatus: 'public' | 'unlisted' | 'private' | 'unknown';
+  /** YouTube contentDetails.regionRestriction — if present, embed is region-gated. */
+  regionBlocked: boolean;
 }
 
 export interface YTChannelStats {
@@ -120,7 +126,15 @@ interface RawVideoItem {
     tags?: string[];
     categoryId?: string;
   };
-  contentDetails?: { duration: string };
+  contentDetails?: {
+    duration: string;
+    regionRestriction?: { allowed?: string[]; blocked?: string[] };
+  };
+  status?: {
+    embeddable?: boolean;
+    privacyStatus?: string;
+    uploadStatus?: string;
+  };
   statistics?: {
     viewCount?: string;
     likeCount?: string;
@@ -320,7 +334,7 @@ export async function getVideoDetails(videoIds: string[]): Promise<YTVideoDetail
       ytGet<RawVideosResponse>(
         'videos',
         {
-          part: 'snippet,contentDetails,statistics',
+          part: 'snippet,contentDetails,statistics,status',
           id: batch.join(','),
           maxResults: 50,
         },
@@ -334,6 +348,12 @@ export async function getVideoDetails(videoIds: string[]): Promise<YTVideoDetail
     if (!data?.items) continue;
     for (const it of data.items) {
       if (!it.snippet) continue;
+      const rr = it.contentDetails?.regionRestriction;
+      const privacy = it.status?.privacyStatus;
+      const privacyStatus: 'public' | 'unlisted' | 'private' | 'unknown' =
+        privacy === 'public' || privacy === 'unlisted' || privacy === 'private'
+          ? privacy
+          : 'unknown';
       out.push({
         videoId: it.id,
         title: it.snippet.title,
@@ -348,6 +368,11 @@ export async function getVideoDetails(videoIds: string[]): Promise<YTVideoDetail
         commentCount: toInt(it.statistics?.commentCount),
         tags: it.snippet.tags ?? [],
         categoryId: it.snippet.categoryId ?? '',
+        // Default to true when status absent so we don't filter out the entire
+        // RSS fallback path (which has no status data at all).
+        embeddable: it.status?.embeddable ?? true,
+        privacyStatus,
+        regionBlocked: Boolean(rr?.blocked && rr.blocked.length > 0),
       });
     }
   }

@@ -33,6 +33,11 @@ export interface YouTubeVideoEnriched {
   publishedAt: string;
   publishedMs: number;
   description: string;
+  /** YouTube status.embeddable — false means iframe will refuse to play. */
+  embeddable: boolean;
+  /** Region-blocked or non-public videos cannot be embedded. */
+  privacyStatus: 'public' | 'unlisted' | 'private' | 'unknown';
+  regionBlocked: boolean;
   /** Discriminator the UI uses to opt into enriched fields. */
   enriched: true;
 }
@@ -108,8 +113,29 @@ export function toEnrichedVideo(
     publishedAt: detail.publishedAt,
     publishedMs: Date.parse(detail.publishedAt) || 0,
     description: detail.description,
+    embeddable: detail.embeddable,
+    privacyStatus: detail.privacyStatus,
+    regionBlocked: detail.regionBlocked,
     enriched: true,
   };
+}
+
+/**
+ * True when the video can be embedded in an iframe on third-party sites.
+ *
+ * RSS-fallback videos (where we have no Data API metadata) default to true —
+ * we can't pre-check without spending a /videos.list unit per video, so we
+ * optimistically allow the modal to attempt the embed and fall back gracefully
+ * if YouTube refuses.
+ *
+ * Enriched videos use the live `status.embeddable` flag plus a region-block
+ * check. Non-public videos are always rejected.
+ */
+export function canEmbed(v: AnyYouTubeVideo): boolean {
+  if (!isEnriched(v)) return true;
+  if (v.privacyStatus !== 'public' && v.privacyStatus !== 'unknown') return false;
+  if (v.regionBlocked) return false;
+  return v.embeddable;
 }
 
 /** Build a Map for O(1) channel stat lookup by id. */

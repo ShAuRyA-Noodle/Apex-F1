@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
+  canEmbed,
   formatCompactCount,
   formatDuration,
   getF1Videos,
@@ -168,7 +169,7 @@ export default async function VideoPage(props: {
                 href={v.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                data-apex-video-id={v.videoId || undefined}
+                data-apex-video-id={canEmbed(v) && v.videoId ? v.videoId : undefined}
                 data-apex-video-title={v.title}
                 data-apex-video-channel={v.channelName}
                 className="group block"

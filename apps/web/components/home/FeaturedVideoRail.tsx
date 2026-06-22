@@ -1,4 +1,5 @@
 import {
+  canEmbed,
   formatCompactCount,
   formatDuration,
   getF1Videos,
@@ -29,13 +30,14 @@ export async function FeaturedVideoRail() {
             const enriched = isEnriched(v);
             const duration = enriched ? formatDuration(v.durationSeconds) : '';
             const views = enriched ? formatCompactCount(v.viewCount) : '';
+            const embed = canEmbed(v);
             return (
               <article key={v.videoId || v.url} className="w-[320px] shrink-0 md:w-[380px]">
                 <a
                   href={v.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  data-apex-video-id={v.videoId || undefined}
+                  data-apex-video-id={embed && v.videoId ? v.videoId : undefined}
                   data-apex-video-title={v.title}
                   data-apex-video-channel={v.channelName}
                   className="group block"

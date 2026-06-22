@@ -1,4 +1,5 @@
 import {
+  canEmbed,
   formatCompactCount,
   formatDuration,
   getF1Videos,
@@ -8,6 +9,10 @@ import {
 
 export async function HighlightsRail() {
   // FORMULA 1 official channel only · race highlights, onboard, post-race shows.
+  // NOTE: most FORMULA 1 official uploads are embed-blocked off-domain (FOM
+  // restricts to formula1.com whitelist). We still surface them as cards
+  // that link out at YouTube, but the in-page modal skips them via the
+  // canEmbed() check below.
   const officialChannel = YT_F1_CHANNELS.find((c) => c.name === 'FORMULA 1');
   if (!officialChannel) return null;
   const videos = await getF1Videos({
@@ -36,12 +41,16 @@ export async function HighlightsRail() {
             const enriched = isEnriched(v);
             const duration = enriched ? formatDuration(v.durationSeconds) : '';
             const views = enriched ? formatCompactCount(v.viewCount) : '';
+            const embed = canEmbed(v);
             return (
               <li key={v.videoId}>
                 <a
                   href={v.url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-apex-video-id={embed && v.videoId ? v.videoId : undefined}
+                  data-apex-video-title={v.title}
+                  data-apex-video-channel={v.channelName}
                   className="group block"
                 >
                   <div className="relative aspect-video overflow-hidden bg-surface-container-high">
