@@ -15,8 +15,11 @@ coverage/
 
 # Stray secret drop file. NEVER commit. Move keys into .env.local.
 codes.txt
+Code.txt
 secrets.txt
 keys.txt
+*.env.local
+*.env.*.local
 
 # Local-only claude-mem context (per-folder; not for remote)
 **/CLAUDE.local.md
