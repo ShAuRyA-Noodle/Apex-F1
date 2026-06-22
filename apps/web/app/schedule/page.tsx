@@ -51,9 +51,14 @@ export default async function SchedulePage() {
         {races.map((r, i) => {
           const isPast = new Date(r.raceStartIso).getTime() < now;
           const isNext = i === nextIdx;
+          // Anchor target so MegaNav "Jump to next race" link works.
           const cc = countryNameToCode(r.country);
           return (
-            <li key={r.slug} className="bg-background">
+            <li
+              key={r.slug}
+              id={isNext ? 'next' : undefined}
+              className="bg-background scroll-mt-24"
+            >
               <Link
                 href={`/schedule/${SEASON}/${r.slug}`}
                 className="group relative flex h-full items-stretch gap-5 p-6 transition-colors hover:bg-surface-container-low md:p-8"

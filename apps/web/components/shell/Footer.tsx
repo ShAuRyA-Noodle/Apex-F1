@@ -39,7 +39,7 @@ const groups: { title: string; links: { label: string; href: string }[] }[] = [
       { label: 'About', href: '/about' },
       { label: 'Apex+', href: '/membership' },
       { label: 'Predict', href: '/predict' },
-      { label: 'Newsletter', href: '/newsletter' },
+      { label: 'Support · tip jar', href: '/support' },
     ],
   },
   {
@@ -102,7 +102,7 @@ export function Footer() {
             </p>
           </div>
 
-          <div className="col-span-12 lg:col-span-3 lg:flex lg:items-end lg:justify-end">
+          <div className="col-span-12 flex flex-col items-start gap-3 lg:col-span-3 lg:items-end lg:justify-end">
             <Link
               href="/newsletter"
               className="inline-flex items-center gap-2 border border-on-background bg-on-background px-5 py-3 transition-colors hover:bg-telemetry-red hover:border-telemetry-red"
@@ -111,6 +111,15 @@ export function Footer() {
                 JOIN THE PIT WALL
               </span>
               <span className="material-symbols-outlined text-[18px] text-background">arrow_outward</span>
+            </Link>
+            <Link
+              href="/support"
+              className="inline-flex items-center gap-2 border border-outline-variant/70 px-5 py-3 text-on-background transition-colors hover:border-telemetry-red hover:text-telemetry-red"
+            >
+              <span className="material-symbols-outlined text-[18px]">local_cafe</span>
+              <span className="font-data text-[12px] tracking-[0.18em]">
+                BUY US A COFFEE
+              </span>
             </Link>
           </div>
         </div>

@@ -83,6 +83,12 @@ body {
   background-color: var(--color-background);
   color: var(--color-on-background);
   font-family: var(--font-body);
+  /* Bump the resting body size from browser default (16px) to a fluid floor
+   * of 16px → 17px so long-form copy stops feeling clipped on big screens.
+   * Tailwind's text-sm / text-base utilities still anchor on the 16px root,
+   * we only lift the unstyled paragraph baseline. */
+  font-size: clamp(16px, 0.95rem + 0.15vw, 17px);
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -133,7 +139,10 @@ html.lenis body {
 .text-data {
   font-family: var(--font-data);
   font-weight: 500;
-  font-size: 11px;
+  /* Audit P1: 11px caps with 0.18em tracking sat under WCAG legibility floor
+   * on most laptop screens · bump baseline to 12px and let the tracking
+   * stay loose so the telemetry vibe survives. */
+  font-size: 12px;
   letter-spacing: 0.18em;
   text-transform: uppercase;
 }

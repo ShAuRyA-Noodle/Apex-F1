@@ -26,49 +26,56 @@ type MegaSection = {
   preview?: DropdownPreview;
 };
 
+// Every href here must resolve to either an actual app/ route or a query
+// string the destination page actually filters on. Dead links from this NAV
+// were the #1 finding across the deep audit — every entry below is now
+// verified against /latest, /video, /results, /drivers, /teams page logic.
 const NAV: MegaSection[] = [
   {
     label: 'Latest',
     href: '/latest',
     columns: [
       {
-        title: 'Sources',
+        title: 'Newsrooms',
         links: [
-          { label: 'All news', href: '/latest' },
-          { label: 'Motorsport.com', href: '/latest?source=motorsport' },
+          { label: 'All sources', href: '/latest' },
+          // Slugs derived from F1_RSS_SOURCES.name -> lowercase, no spaces, no dots.
+          { label: 'Motorsport.com', href: '/latest?source=motorsportcom' },
           { label: 'Autosport', href: '/latest?source=autosport' },
           { label: 'RaceFans', href: '/latest?source=racefans' },
           { label: 'The Race', href: '/latest?source=the-race' },
         ],
       },
       {
-        title: 'Community',
+        title: 'Wire APIs',
         links: [
-          { label: 'r/formula1 hot', href: '/latest?source=reddit' },
-          { label: 'Reddit · F1Technical', href: '/latest?source=reddit-tech' },
+          { label: 'The Guardian', href: '/latest?source=the-guardian' },
+          { label: 'GNews', href: '/latest?source=gnews' },
+          { label: 'NewsData', href: '/latest?source=newsdata' },
         ],
       },
       {
-        title: 'Long form',
+        title: 'Filters',
         links: [
-          { label: 'Race Lab', href: '/latest?type=longform' },
-          { label: 'Editorial', href: '/latest?type=editorial' },
+          { label: 'English only', href: '/latest?lang=en' },
+          { label: 'Italian', href: '/latest?lang=it' },
+          { label: 'Positive sentiment', href: '/latest?sentiment=positive' },
         ],
       },
     ],
-    // Preview gets overwritten at render-time by the server wrapper with the
-    // live RSS top item. Left blank here so a stale string never renders.
   },
   {
     label: 'Schedule',
     href: '/schedule',
     columns: [
       {
-        title: 'Season 2026',
+        title: 'Current',
         links: [
-          { label: 'Full calendar', href: '/schedule' },
-          { label: 'Next race', href: '/schedule?view=next' },
-          { label: 'Sprint rounds', href: '/schedule?type=sprint' },
+          { label: 'Full 2026 calendar', href: '/schedule' },
+          // Anchor jump to the next-race tile on the schedule page. The
+          // /schedule page assigns #next to whichever race is next so this
+          // works even when the calendar advances.
+          { label: 'Jump to next race', href: '/schedule#next' },
         ],
       },
       {
@@ -76,28 +83,37 @@ const NAV: MegaSection[] = [
         links: [
           { label: '2025 archive', href: '/schedule/2025' },
           { label: '2024 archive', href: '/schedule/2024' },
+          { label: 'All seasons', href: '/results/archive' },
         ],
       },
     ],
-    // Preview overwritten at render-time with the live next-race chip.
   },
   {
     label: 'Results',
     href: '/results/2026/drivers',
     columns: [
       {
-        title: 'Standings',
+        title: 'Standings 2026',
         links: [
-          { label: 'Drivers 2026', href: '/results/2026/drivers' },
-          { label: 'Constructors 2026', href: '/results/2026/teams' },
-          { label: 'Drivers 2025', href: '/results/2025/drivers' },
+          { label: 'Drivers', href: '/results/2026/drivers' },
+          { label: 'Constructors', href: '/results/2026/teams' },
         ],
       },
       {
-        title: 'Archive',
+        title: 'Recent',
+        links: [
+          { label: '2025 drivers', href: '/results/2025/drivers' },
+          { label: '2025 constructors', href: '/results/2025/teams' },
+          { label: '2024 drivers', href: '/results/2024/drivers' },
+          { label: '2024 constructors', href: '/results/2024/teams' },
+        ],
+      },
+      {
+        title: 'Archive · 1950 to present',
         links: [
           { label: 'All seasons', href: '/results/archive' },
-          { label: 'Champions index', href: '/drivers/champions' },
+          { label: 'World champions', href: '/drivers/champions' },
+          { label: 'Constructor champions', href: '/teams/champions' },
         ],
       },
     ],
@@ -110,13 +126,12 @@ const NAV: MegaSection[] = [
         title: 'Grid 2026',
         links: [
           { label: 'Current grid', href: '/drivers' },
-          { label: 'Rookies', href: '/drivers?filter=rookies' },
         ],
       },
       {
-        title: 'Hall',
+        title: 'History',
         links: [
-          { label: 'Champions', href: '/drivers/champions' },
+          { label: 'World champions', href: '/drivers/champions' },
           { label: 'Hall of Fame', href: '/drivers/hall-of-fame' },
         ],
       },
@@ -130,7 +145,13 @@ const NAV: MegaSection[] = [
         title: 'Constructors',
         links: [
           { label: 'Current 2026', href: '/teams' },
-          { label: 'Historical index', href: '/teams?view=historical' },
+          { label: 'All constructors', href: '/teams/all' },
+        ],
+      },
+      {
+        title: 'History',
+        links: [
+          { label: 'Constructor champions', href: '/teams/champions' },
         ],
       },
     ],
@@ -143,10 +164,21 @@ const NAV: MegaSection[] = [
         title: 'Channels',
         links: [
           { label: 'All recent', href: '/video' },
-          { label: 'FORMULA 1 official', href: '/video?channel=formula1' },
+          // channelSlug() in /video/page.tsx is name.toLowerCase().replace(/\s+/g, '-')
+          // So "FORMULA 1" -> "formula-1", "Chain Bear" -> "chain-bear",
+          // "Tommo" -> "tommo", "Driver61" -> "driver61", "WTF1" -> "wtf1".
+          { label: 'FORMULA 1 official', href: '/video?channel=formula-1' },
           { label: 'Chain Bear', href: '/video?channel=chain-bear' },
-          { label: 'Tommo F1', href: '/video?channel=tommo' },
+          { label: 'WTF1', href: '/video?channel=wtf1' },
+          { label: 'Tommo', href: '/video?channel=tommo' },
           { label: 'Driver61', href: '/video?channel=driver61' },
+        ],
+      },
+      {
+        title: 'Sort',
+        links: [
+          { label: 'Newest first', href: '/video?sort=newest' },
+          { label: 'Most viewed', href: '/video?sort=most-viewed' },
         ],
       },
     ],
