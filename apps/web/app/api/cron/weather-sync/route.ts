@@ -1,20 +1,21 @@
 /**
  * Weather sync cron.
  *
- * Fires every hour during race weekends — pulls Open-Meteo forecast for the
- * next 3 races on the calendar so the /schedule/[season]/[race] hero and
- * RaceTickerBar weather chip are always fresh.
+ * Fires every hour — pulls Open-Meteo forecast for the next 3 races on the
+ * calendar so /schedule/[season]/[race] hero and RaceTickerBar weather chip
+ * always serve a fresh sample.
  *
  * Open-Meteo has no rate limit and no key, so this is purely a cache-priming
  * tick. Quota cost: zero.
  *
- * Schedule: 0 * * * * (every hour) via apps/web/vercel.json.
+ * Schedule: 0 * * * * via apps/web/vercel.json.
+ * Auth: Vercel cron header OR Bearer CRON_SECRET.
  */
 
 import { NextResponse } from 'next/server';
 import { jolpica, mapRace } from '@apex/api-client/jolpica';
 import { revalidatePath } from 'next/cache';
-import { buildReport, isAuthorizedCronRequest } from '@/lib/cron-auth';
+import { buildReport, isAuthorizedCronRequest, logReport, retry } from '@/lib/cron-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -31,9 +32,7 @@ type GetRaceWeatherFn = (args: {
 
 async function tryLoadOpenMeteo(): Promise<{ getRaceWeather?: GetRaceWeatherFn }> {
   try {
-    const dynamicImport = new Function('s', 'return import(s)') as (
-      s: string,
-    ) => Promise<unknown>;
+    const dynamicImport = new Function('s', 'return import(s)') as (s: string) => Promise<unknown>;
     const mod = (await dynamicImport('@apex/api-client/openmeteo').catch(() => null)) as
       | { getRaceWeather?: GetRaceWeatherFn }
       | null;
@@ -55,44 +54,38 @@ export async function GET(req: Request) {
 
   const { getRaceWeather } = await tryLoadOpenMeteo();
   if (!getRaceWeather) {
-    return NextResponse.json(
-      buildReport(start, {
-        ok: false,
-        skipped: '@apex/api-client/openmeteo not available yet — cron exited.',
-        results: {},
-      }),
-      { status: 200 },
-    );
+    const r = buildReport(start, {
+      ok: true,
+      route: 'weather-sync',
+      skipped: '@apex/api-client/openmeteo not available yet — cron exited.',
+      results: {},
+    });
+    logReport(r);
+    return NextResponse.json(r, { status: 200 });
   }
 
-  // Pull current schedule, find the next 3 upcoming races, fetch weather for each.
   let upcoming: Array<{ slug: string; lat: number; lon: number; date: string }> = [];
   try {
-    const races = (await jolpica.getSchedule('current', { revalidate: 3600 })).map(mapRace);
+    const races = (await retry(() => jolpica.getSchedule('current', { revalidate: 3600 }))).map(mapRace);
     const now = Date.now();
     upcoming = races
       .filter((r) => new Date(r.raceStartIso).getTime() > now)
       .slice(0, 3)
-      .map((r) => ({
-        slug: r.slug,
-        lat: r.lat,
-        lon: r.lon,
-        date: r.raceStartIso,
-      }));
+      .map((r) => ({ slug: r.slug, lat: r.lat, lon: r.lon, date: r.raceStartIso }));
   } catch (err) {
-    return NextResponse.json(
-      buildReport(start, {
-        ok: false,
-        error: `schedule fetch failed: ${err instanceof Error ? err.message : String(err)}`,
-      }),
-      { status: 500 },
-    );
+    const r = buildReport(start, {
+      ok: false,
+      route: 'weather-sync',
+      error: `schedule fetch failed: ${err instanceof Error ? err.message : String(err)}`,
+    });
+    logReport(r);
+    return NextResponse.json(r, { status: 500 });
   }
 
   const reports: Array<{ slug: string; ok: boolean; error?: string }> = [];
   for (const r of upcoming) {
     try {
-      await getRaceWeather({ lat: r.lat, lon: r.lon, dateStart: r.date });
+      await retry(() => getRaceWeather({ lat: r.lat, lon: r.lon, dateStart: r.date }));
       reports.push({ slug: r.slug, ok: true });
     } catch (err) {
       reports.push({
@@ -105,18 +98,18 @@ export async function GET(req: Request) {
 
   try {
     for (const r of upcoming) {
-      revalidatePath(`/schedule/2026/${r.slug}`);
+      revalidatePath(`/schedule/${new Date(r.date).getUTCFullYear()}/${r.slug}`);
     }
     revalidatePath('/');
   } catch {
     /* ignore */
   }
 
-  return NextResponse.json(
-    buildReport(start, {
-      ok: reports.every((r) => r.ok),
-      results: { races: reports, count: upcoming.length },
-    }),
-    { status: 200 },
-  );
+  const final = buildReport(start, {
+    ok: reports.every((r) => r.ok),
+    route: 'weather-sync',
+    results: { races: reports, count: upcoming.length },
+  });
+  logReport(final);
+  return NextResponse.json(final, { status: 200 });
 }

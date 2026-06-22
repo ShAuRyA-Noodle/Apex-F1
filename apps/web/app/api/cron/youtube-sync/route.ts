@@ -39,6 +39,7 @@ import {
   type YTSearchResult,
   type YTVideoDetail,
 } from '@apex/api-client/youtube';
+import { isAuthorizedCronRequest, logReport, retry } from '@/lib/cron-auth';
 
 // Force this route into the Node.js runtime — googleapis.com TLS + larger
 // payloads behave better on Node than Edge, and the route is cron-only so
@@ -72,17 +73,6 @@ interface SyncReport {
   skipped?: string;
 }
 
-function isAuthorized(req: Request): boolean {
-  // Vercel cron injects this header. It is stripped from public traffic.
-  if (req.headers.get('x-vercel-cron')) return true;
-
-  // Manual re-run via Authorization: Bearer <CRON_SECRET>.
-  const secret = process.env.CRON_SECRET;
-  if (!secret) return false;
-  const auth = req.headers.get('authorization') ?? '';
-  return auth === `Bearer ${secret}`;
-}
-
 function isoMinus24h(): string {
   return new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 }
@@ -90,7 +80,7 @@ function isoMinus24h(): string {
 export async function GET(req: Request) {
   const startedAt = new Date();
 
-  if (!isAuthorized(req)) {
+  if (!isAuthorizedCronRequest(req)) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 
@@ -126,12 +116,16 @@ export async function GET(req: Request) {
   for (const channel of YT_F1_CHANNELS) {
     try {
       // 1. /search — 100 units. Last 24h, this channel only, newest first.
-      const searchResults: YTSearchResult[] = await searchYouTubeF1Videos({
-        channelId: channel.channelId,
-        publishedAfter,
-        maxResults: 25,
-        order: 'date',
-      });
+      // retry() wraps so a single 503 from googleapis doesn't void the rest
+      // of the per-channel loop (quota still spent regardless).
+      const searchResults: YTSearchResult[] = await retry(() =>
+        searchYouTubeF1Videos({
+          channelId: channel.channelId,
+          publishedAfter,
+          maxResults: 25,
+          order: 'date',
+        }),
+      );
       totalUnits += 100;
 
       if (searchResults.length === 0) {
@@ -148,7 +142,7 @@ export async function GET(req: Request) {
 
       // 2. /videos — 1 unit. Batched up to 50 ids (we never exceed 25 here).
       const ids = searchResults.map((r) => r.videoId);
-      const details = await getVideoDetails(ids);
+      const details = await retry(() => getVideoDetails(ids));
       totalUnits += 1;
       allDetails = allDetails.concat(details);
 
@@ -212,6 +206,7 @@ export async function GET(req: Request) {
     },
   };
 
+  logReport({ ...report, route: 'youtube-sync' });
   return NextResponse.json(report, { status: 200 });
 }
 

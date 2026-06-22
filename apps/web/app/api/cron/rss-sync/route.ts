@@ -18,7 +18,7 @@
 import { NextResponse } from 'next/server';
 import { getF1NewsFeed } from '@apex/api-client/rss';
 import { revalidatePath, revalidateTag } from 'next/cache';
-import { buildReport, isAuthorizedCronRequest } from '@/lib/cron-auth';
+import { buildReport, isAuthorizedCronRequest, logReport, retry, timed } from '@/lib/cron-auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -31,36 +31,36 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
   }
 
-  let counts: Record<string, number> = {};
+  const counts: Record<string, number> = {};
   let total = 0;
   let error: string | undefined;
+  let fetchMs = 0;
 
   try {
-    const items = await getF1NewsFeed({ limit: 120, revalidate: 300 });
+    const [items, ms] = await timed(() => retry(() => getF1NewsFeed({ limit: 120, revalidate: 300 })));
+    fetchMs = ms;
     total = items.length;
     for (const it of items) {
       const key = it.source ?? 'unknown';
       counts[key] = (counts[key] ?? 0) + 1;
     }
-    // Push freshness into Next.js cache by busting any tagged surfaces.
     try {
       revalidatePath('/latest');
       revalidatePath('/');
-      // Next.js 16 requires a profile arg on revalidateTag.
       revalidateTag('news-feed', 'page');
     } catch {
-      // revalidate APIs only available in handler context; ignore failures
+      /* revalidate APIs only available in handler context */
     }
   } catch (err) {
     error = err instanceof Error ? err.message : String(err);
   }
 
-  return NextResponse.json(
-    buildReport(start, {
-      ok: !error,
-      results: { total, sources: counts },
-      ...(error ? { error } : {}),
-    }),
-    { status: error ? 500 : 200 },
-  );
+  const report = buildReport(start, {
+    ok: !error,
+    route: 'rss-sync',
+    results: { total, sources: counts, fetchMs },
+    ...(error ? { error } : {}),
+  });
+  logReport(report);
+  return NextResponse.json(report, { status: error ? 500 : 200 });
 }
