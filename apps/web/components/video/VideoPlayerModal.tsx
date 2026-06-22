@@ -59,6 +59,11 @@ export function VideoPlayerModal() {
     if (!open) return;
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    // Body overflow alone doesn't stop Lenis (it drives its own scroll loop),
+    // so the page slides behind the modal on desktop. Pause it while open.
+    const lenis = (window as unknown as { __lenis?: { stop: () => void; start: () => void } })
+      .__lenis;
+    lenis?.stop();
 
     function onKey(ev: KeyboardEvent) {
       if (ev.key === 'Escape') close();
@@ -70,6 +75,7 @@ export function VideoPlayerModal() {
 
     return () => {
       document.body.style.overflow = prevOverflow;
+      lenis?.start();
       window.removeEventListener('keydown', onKey);
       window.clearTimeout(t);
     };

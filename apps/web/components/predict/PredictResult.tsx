@@ -125,7 +125,7 @@ export function PredictResult({
       role="dialog"
       aria-live="polite"
       aria-label={`Race result: ${score} of ${maxScore} points`}
-      className="fixed inset-x-0 bottom-8 z-[100] mx-auto flex w-full max-w-md justify-center px-4 motion-safe:animate-[fadeUp_320ms_ease-out_forwards]"
+      className="fixed inset-x-0 bottom-8 z-[100] mx-auto flex w-full max-w-md justify-center px-4 motion-safe:animate-[apex-fade-up_320ms_ease-out_forwards]"
     >
       <div className="glass-medium relative w-full overflow-hidden rounded-sm border border-outline-variant/40 shadow-2xl">
         {/* GIF zone */}
@@ -196,22 +196,6 @@ export function PredictResult({
           </div>
         </div>
       </div>
-
-      {/* Scoped keyframe. Tailwind v4 utility-arbitrary syntax; inline here
-          so the component is self-contained and we don't pollute globals.css
-          with a one-off animation. */}
-      <style jsx>{`
-        @keyframes fadeUp {
-          0% {
-            opacity: 0;
-            transform: translate3d(0, 16px, 0);
-          }
-          100% {
-            opacity: 1;
-            transform: translate3d(0, 0, 0);
-          }
-        }
-      `}</style>
     </div>
   );
 }

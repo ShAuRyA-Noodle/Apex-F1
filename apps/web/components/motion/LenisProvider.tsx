@@ -28,6 +28,9 @@ export function LenisProvider({ children }: { children: ReactNode }) {
     });
 
     lenisRef.current = lenis;
+    // Expose the instance so modal/overlay components can freeze the page
+    // scroll behind them (Lenis runs its own loop and ignores body overflow).
+    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
     document.documentElement.classList.add('lenis', 'lenis-smooth');
 
     let rafId = 0;
@@ -40,6 +43,7 @@ export function LenisProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
+      delete (window as unknown as { __lenis?: Lenis }).__lenis;
       document.documentElement.classList.remove('lenis', 'lenis-smooth');
     };
   }, []);

@@ -213,6 +213,7 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
+  const [utilHidden, setUtilHidden] = useState(false);
   const lastYRef = useRef(0);
   const closeTimer = useRef<number | null>(null);
 
@@ -245,6 +246,10 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
       setScrolled(y > 8);
       const goingDown = y > lastYRef.current;
       const past = y > 80;
+      // Mirror TopUtilityBar's hide rule (y past one viewport, scrolling down)
+      // so the nav rises to top-0 and fills the 32px band the utility bar
+      // vacates — no transparent gap above the glass nav.
+      setUtilHidden(y > window.innerHeight && goingDown);
       const interactionOpen = open !== null || mobile || searchOpen;
       if (interactionOpen) {
         setHidden(false);
@@ -290,7 +295,8 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
         animate={{ y: 0 }}
         transition={{ duration: 0.32, ease: [0.215, 0.61, 0.355, 1] }}
         className={cn(
-          'sticky top-0 z-40 w-full md:top-8',
+          'sticky top-0 z-40 w-full transition-[top] duration-300',
+          utilHidden ? 'md:top-0' : 'md:top-8',
           'glass-pronounced transition-[backdrop-filter] duration-300',
           scrolled && 'shadow-[0_20px_60px_-30px_rgba(0,0,0,0.7)]',
         )}
@@ -418,9 +424,14 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
                     const section = navWithPreviews.find((s) => s.label === open);
                     if (!section) return null;
                     const colSpan = section.preview ? 'col-span-8' : 'col-span-12';
+                    // Static class map — Tailwind v4 purges runtime `grid-cols-${n}`.
+                    const gridCols =
+                      ['grid-cols-1', 'grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4'][
+                        Math.min(section.columns.length, 4)
+                      ] ?? 'grid-cols-1';
                     return (
                       <>
-                        <div className={`${colSpan} grid grid-cols-${Math.max(section.columns.length, 1)} gap-8`}>
+                        <div className={`${colSpan} grid ${gridCols} gap-8`}>
                           {section.columns.map((col, i) => (
                             <motion.div
                               key={col.title}
