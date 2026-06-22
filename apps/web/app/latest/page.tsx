@@ -294,6 +294,8 @@ export default async function LatestPage(props: {
                   <img
                     src={it.imageUrl}
                     alt=""
+                    loading="lazy"
+                    decoding="async"
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 </div>

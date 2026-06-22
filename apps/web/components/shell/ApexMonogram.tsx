@@ -3,15 +3,19 @@
 /**
  * Apex monogram. A wedge-A built from two strokes.
  * `animated` triggers a 1.1s stroke-draw on first paint (CSS keyframe, no JS).
+ * `idle` adds a subtle ~12s breathing pulse on the backplate so the logo
+ * never reads as static. Honors prefers-reduced-motion via the pulse class.
  * Renders sharp at 16, 20, 28, 36px.
  */
 export function ApexMonogram({
   size = 28,
   animated = false,
+  idle = true,
   className = '',
 }: {
   size?: number;
   animated?: boolean;
+  idle?: boolean;
   className?: string;
 }) {
   return (
@@ -21,7 +25,7 @@ export function ApexMonogram({
       viewBox="0 0 32 32"
       fill="none"
       aria-hidden
-      className={`${animated ? 'stroke-draw' : ''} ${className}`}
+      className={`${animated ? 'stroke-draw' : ''} ${idle ? 'apex-monogram-idle' : ''} ${className}`}
     >
       {/* Solid wedge backplate */}
       <path

@@ -263,6 +263,44 @@ html.lenis body {
   animation: apex-stroke-draw 1100ms cubic-bezier(0.215, 0.61, 0.355, 1) 200ms forwards;
 }
 
+/* Idle pulse on the monogram backplate · keeps the logo from reading as a
+ * static stamp. 12s cadence, opacity-only, GPU-cheap. The wrapping <svg>
+ * gets the class; the [fill] selector targets the red wedge only so the
+ * cross-bar + outline strokes stay solid. */
+@keyframes apex-monogram-breathe {
+  0%, 100% { opacity: 0.92; }
+  50% { opacity: 1; }
+}
+.apex-monogram-idle path[fill]:not([stroke]) {
+  animation: apex-monogram-breathe 12s ease-in-out infinite;
+  transform-origin: 50% 50%;
+  will-change: opacity;
+}
+
+/* Underline-draw on link hover · the bar grows from left to right inside
+ * 220ms instead of fading from underneath. Sites that "feel premium" use
+ * this exact treatment. Apply with `class="link-draw"` on any anchor. */
+.link-draw {
+  position: relative;
+  display: inline-block;
+}
+.link-draw::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1px;
+  background-color: var(--color-telemetry-red);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 220ms cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.link-draw:hover::after,
+.link-draw:focus-visible::after {
+  transform: scaleX(1);
+}
+
 /* Confetti for cookie accept (3 particles, CSS-only) */
 @keyframes apex-confetti-rise {
   0% { transform: translate3d(var(--cx, 0), 0, 0) rotate(0deg); opacity: 1; }

@@ -21,10 +21,23 @@ export function HeroLeadStoryClient({ lead }: { lead: RssItem }) {
     <section className="relative w-full overflow-hidden bg-background">
       <div className="relative h-[88vh] min-h-[640px] w-full">
         {lead.imageUrl && (
+          // Hero is the LCP element. fetchPriority="high" + decoding="async"
+          // tells the browser to start the connection before parsing the rest
+          // of the document; loading="eager" disables the lazy default and
+          // forces the GET on first paint. Width / height attributes give the
+          // browser a stable aspect ratio so it does not jank the layout when
+          // the image arrives. We keep a raw <img> here because RSS image
+          // hosts (motorsport.com, theguardian.com, newsdata cdn, etc.) are
+          // not enumerable for next/image's remotePatterns whitelist.
           <img
             src={lead.imageUrl}
             alt=""
             aria-hidden="true"
+            fetchPriority="high"
+            loading="eager"
+            decoding="async"
+            width={1920}
+            height={1080}
             className="absolute inset-0 h-full w-full object-cover"
           />
         )}

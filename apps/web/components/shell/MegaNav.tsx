@@ -293,6 +293,7 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
                   >
                     <Link
                       href={section.href}
+                      prefetch
                       className={cn(
                         'relative flex h-[72px] items-center px-4 font-data text-[12.5px] tracking-[0.14em] transition-colors',
                         isActive || isOpen
@@ -384,6 +385,7 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
                                   <li key={l.href}>
                                     <Link
                                       href={l.href}
+                                      prefetch
                                       onClick={() => setOpen(null)}
                                       className="group flex items-center gap-3 transition-colors hover:text-telemetry-red"
                                     >
@@ -415,6 +417,7 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
                           >
                             <Link
                               href={section.preview.href}
+                              prefetch
                               onClick={() => setOpen(null)}
                               className="group relative block h-full overflow-hidden border border-outline-variant/40 bg-gradient-to-br from-surface-container-low to-carbon-black p-6 transition-all hover:border-telemetry-red/60"
                             >

@@ -178,8 +178,9 @@ export default async function VideoPage(props: {
                   <img
                     src={v.thumbnailUrl}
                     alt=""
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     loading="lazy"
+                    decoding="async"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
                   {duration && (

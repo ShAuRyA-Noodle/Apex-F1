@@ -39,6 +39,8 @@ export async function HeroRail() {
                     <img
                       src={a.imageUrl}
                       alt=""
+                      loading="lazy"
+                      decoding="async"
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   </div>
