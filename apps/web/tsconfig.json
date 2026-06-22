@@ -13,7 +13,14 @@
       "@apex/api-client/reddit": ["../../packages/api-client/src/reddit"],
       "@apex/api-client/youtube": ["../../packages/api-client/src/youtube"],
       "@apex/api-client/openf1": ["../../packages/api-client/src/openf1"],
-      "@apex/api-client/wikidata": ["../../packages/api-client/src/wikidata"]
+      "@apex/api-client/wikidata": ["../../packages/api-client/src/wikidata"],
+      "@apex/api-client/guardian": ["../../packages/api-client/src/guardian"],
+      "@apex/api-client/gnews": ["../../packages/api-client/src/gnews"],
+      "@apex/api-client/openmeteo": ["../../packages/api-client/src/openmeteo"],
+      "@apex/api-client/newsapi": ["../../packages/api-client/src/newsapi"],
+      "@apex/api-client/newsdata": ["../../packages/api-client/src/newsdata"],
+      "@apex/api-client/unsplash": ["../../packages/api-client/src/unsplash"],
+      "@apex/api-client/giphy": ["../../packages/api-client/src/giphy"]
     },
     "noEmit": true,
     "allowJs": true,

@@ -18,6 +18,22 @@ interface ParallaxHeroProps {
   accent?: string;
   /** Optional right-edge full-height team color stripe. */
   rightStripeColor?: string;
+  /**
+   * Optional alt text for the background image. Defaults to '' so it stays
+   * decorative for screen readers when supplying a non-essential bg.
+   */
+  alt?: string;
+  /**
+   * Optional Unsplash attribution. When provided we render the mandated
+   * "Photo by NAME on Unsplash" link bottom-right of the hero. Required
+   * by Unsplash API guidelines whenever the image came from their API.
+   *
+   *   Spec: https://help.unsplash.com/en/articles/2511315
+   */
+  attribution?: {
+    name: string;
+    profileUrl: string;
+  };
 }
 
 const HEIGHT_CLASS: Record<NonNullable<ParallaxHeroProps['height']>, string> = {
@@ -31,6 +47,9 @@ const HEIGHT_CLASS: Record<NonNullable<ParallaxHeroProps['height']>, string> = {
  * Full-bleed cinematic hero. Background image scrolls at 0.3 speed.
  * Adds a bottom vignette and a top-left telemetry radial.
  * Optional right-edge full-height team color stripe (8px).
+ *
+ * When `attribution` is supplied, renders the Unsplash-required
+ * "Photo by NAME on Unsplash" credit pinned bottom-right.
  */
 export function ParallaxHero({
   imageUrl,
@@ -40,6 +59,8 @@ export function ParallaxHero({
   children,
   accent = '#e10600',
   rightStripeColor,
+  alt = '',
+  attribution,
 }: ParallaxHeroProps) {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
@@ -65,11 +86,11 @@ export function ParallaxHero({
         <motion.div
           className="absolute inset-0 -z-10"
           style={{ y, scale, opacity, willChange: 'transform' }}
-          aria-hidden="true"
+          aria-hidden={alt === ''}
         >
           <img
             src={imageUrl}
-            alt=""
+            alt={alt}
             className="h-full w-full object-cover"
             style={{ objectPosition }}
             loading="eager"
@@ -111,6 +132,33 @@ export function ParallaxHero({
       <div className="relative z-0 flex h-full min-h-inherit w-full flex-col">
         {children}
       </div>
+
+      {/* Unsplash attribution — license-required when source is Unsplash.
+         Glass-subtle text bottom-right, never blocks interaction above it. */}
+      {attribution && (
+        <div className="pointer-events-none absolute bottom-3 right-3 z-20 md:bottom-4 md:right-4">
+          <div className="pointer-events-auto rounded-sm bg-black/40 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-white/70 backdrop-blur-sm md:text-[11px]">
+            Photo by{' '}
+            <a
+              href={attribution.profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/95 underline-offset-2 transition-colors hover:text-telemetry-red hover:underline"
+            >
+              {attribution.name}
+            </a>{' '}
+            on{' '}
+            <a
+              href="https://unsplash.com/?utm_source=apex&utm_medium=referral"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-white/95 underline-offset-2 transition-colors hover:text-telemetry-red hover:underline"
+            >
+              Unsplash
+            </a>
+          </div>
+        </div>
+      )}
     </section>
   );
 }

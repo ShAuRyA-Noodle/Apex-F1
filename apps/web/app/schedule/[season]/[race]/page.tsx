@@ -9,6 +9,8 @@ import {
   type UiResult,
 } from '@apex/api-client/jolpica';
 import { countryNameToCode, flagEmoji, teamColorBySlug } from '@/lib/format';
+import { WeatherStrip } from '@/components/race/WeatherStrip';
+import { getRaceHeroImage } from '@/lib/heroImage';
 
 export const revalidate = 300;
 
@@ -73,6 +75,11 @@ export default async function RaceDetailPage(props: { params: Promise<RouteParam
   const hasResults = results.length > 0;
   const winner = hasResults ? results[0] : null;
 
+  // Circuit-specific cinematic backdrop for the sessions grid. Returns null
+  // when no Unsplash key is provisioned or all queries fail — UI degrades
+  // gracefully to a flat surface in that case.
+  const hero = await getRaceHeroImage({ circuitSlug: race.slug });
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'SportsEvent',
@@ -128,12 +135,45 @@ export default async function RaceDetailPage(props: { params: Promise<RouteParam
         </div>
       </header>
 
-      <section className="border-b border-outline-variant/30">
-        <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
-          <h2 className="text-data text-telemetry-red">SESSIONS</h2>
+      <section className="relative isolate overflow-hidden border-b border-outline-variant/30">
+        {/* Circuit-specific Unsplash backdrop. Sits at -z-10 so the grid lives
+           on top of a dimmed cinematic frame. Hidden entirely when no hero
+           resolves — section falls back to the page surface color. */}
+        {hero && (
+          <>
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-20"
+              style={{ backgroundColor: hero.color ?? '#0e0e0e' }}
+            />
+            <img
+              src={hero.urlHero}
+              alt={hero.alt}
+              className="pointer-events-none absolute inset-0 -z-10 h-full w-full object-cover opacity-40"
+              loading="lazy"
+              decoding="async"
+            />
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0 -z-10"
+              style={{
+                background:
+                  'linear-gradient(180deg, rgba(14,14,14,0.65) 0%, rgba(14,14,14,0.78) 60%, rgba(14,14,14,0.95) 100%)',
+              }}
+            />
+          </>
+        )}
+
+        <div className="relative mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
+          <div className="flex items-end justify-between gap-4">
+            <h2 className="text-data text-telemetry-red">SESSIONS</h2>
+            <span className="text-data text-outline">
+              {race.circuitName.toUpperCase()}
+            </span>
+          </div>
           <ul className="mt-6 grid grid-cols-1 gap-px overflow-hidden bg-outline-variant/40 md:grid-cols-4">
             {race.sessions.map((s) => (
-              <li key={s.kind} className="bg-background p-5">
+              <li key={s.kind} className="bg-background/90 p-5 backdrop-blur-sm">
                 <div className="text-data text-outline">{fmtSessionLabel(s.kind)}</div>
                 <div className="mt-2 font-headline text-base text-on-background md:text-lg">
                   {fmtSessionDate(s.iso)}
@@ -141,6 +181,33 @@ export default async function RaceDetailPage(props: { params: Promise<RouteParam
               </li>
             ))}
           </ul>
+
+          {/* Unsplash attribution — license-required when hero is from Unsplash.
+             Wikidata source renders nothing. Glass-subtle bottom-right. */}
+          {hero && hero.attributionName && hero.attributionUrl && (
+            <div className="mt-6 flex justify-end">
+              <div className="rounded-sm bg-black/40 px-2 py-1 text-[10px] uppercase tracking-[0.14em] text-white/70 backdrop-blur-sm md:text-[11px]">
+                Photo by{' '}
+                <a
+                  href={hero.attributionUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/95 underline-offset-2 transition-colors hover:text-telemetry-red hover:underline"
+                >
+                  {hero.attributionName}
+                </a>{' '}
+                on{' '}
+                <a
+                  href="https://unsplash.com/?utm_source=apex&utm_medium=referral"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/95 underline-offset-2 transition-colors hover:text-telemetry-red hover:underline"
+                >
+                  Unsplash
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
@@ -240,6 +307,15 @@ export default async function RaceDetailPage(props: { params: Promise<RouteParam
           </div>
         </div>
       </section>
+
+      {Number.isFinite(race.lat) && Number.isFinite(race.lon) && (
+        <WeatherStrip
+          lat={race.lat}
+          lon={race.lon}
+          raceStartIso={race.raceStartIso}
+          sessions={race.sessions}
+        />
+      )}
     </article>
   );
 }

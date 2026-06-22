@@ -9,6 +9,7 @@ import {
   teamColorBySlug,
 } from '@/lib/format';
 import { ParallaxHero } from '@/components/profile/ParallaxHero';
+import { getDriverHeroImage } from '@/lib/heroImage';
 import { StatStrip } from '@/components/profile/StatStrip';
 import { CountUpBadge } from '@/components/profile/CountUpBadge';
 import { CareerArc } from '@/components/profile/CareerArc';
@@ -119,7 +120,18 @@ export default async function DriverProfilePage(props: {
     return Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 3600 * 1000));
   })();
 
-  const heroImage = facts?.image ? commonsImageUrl(facts.image) : undefined;
+  // Unified hero lookup: Wikidata portrait → curated Unsplash by nationality
+  // → abstract fallback. Returns null only if every path fails.
+  const hero = await getDriverHeroImage({
+    fullName: d.fullName,
+    wikidataImage: facts?.image ?? null,
+    nationality: d.nationality,
+  });
+  const heroImage = hero?.urlHero ?? (facts?.image ? commonsImageUrl(facts.image) : undefined);
+  const heroAttribution =
+    hero && hero.source !== 'wikidata' && hero.attributionName
+      ? { name: hero.attributionName, profileUrl: hero.attributionUrl }
+      : undefined;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -150,6 +162,8 @@ export default async function DriverProfilePage(props: {
         height="xl"
         accent="#e10600"
         rightStripeColor={currentTeamColor}
+        alt={hero?.alt ?? ''}
+        attribution={heroAttribution}
       >
         {/* TOP utility row */}
         <div className="relative z-10 mx-auto flex w-full max-w-[1600px] items-center justify-between px-6 pt-12 md:px-grid-margin md:pt-16">

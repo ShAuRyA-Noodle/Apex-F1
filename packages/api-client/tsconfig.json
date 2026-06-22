@@ -4,6 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "noEmit": true,
+    "types": ["node"],
     "paths": {
       "@apex/types": ["../types/src"]
     }

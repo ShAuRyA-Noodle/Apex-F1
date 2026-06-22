@@ -12,8 +12,15 @@
     "./rss": "./src/rss/index.ts",
     "./reddit": "./src/reddit/index.ts",
     "./youtube": "./src/youtube/index.ts",
-    "./openf1": "./src/openf1/index.ts",
-    "./wikidata": "./src/wikidata/index.ts"
+    "./wikidata": "./src/wikidata/index.ts",
+    "./guardian": "./src/guardian/index.ts",
+    "./gnews": "./src/gnews/index.ts",
+    "./openmeteo": "./src/openmeteo/index.ts",
+    "./newsapi": "./src/newsapi/index.ts",
+    "./newsdata": "./src/newsdata/index.ts",
+    "./currents": "./src/currents/index.ts",
+    "./unsplash": "./src/unsplash/index.ts",
+    "./giphy": "./src/giphy/index.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -22,5 +29,8 @@
   "dependencies": {
     "@apex/types": "workspace:*",
     "fast-xml-parser": "^5.9.3"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.0"
   }
 }

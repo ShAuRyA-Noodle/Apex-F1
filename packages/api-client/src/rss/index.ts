@@ -1,5 +1,24 @@
 import { XMLParser } from 'fast-xml-parser';
+import {
+  getNewsAPIF1News,
+  mapNewsAPIArticlesToUi,
+  type UiNewsItem,
+} from '../newsapi';
+import type {
+  NewsDataSentiment,
+  NewsDataLanguageIso,
+} from '../newsdata/types';
 
+/**
+ * Legacy shape. New code should import UiNewsItem from '@apex/api-client/newsapi'.
+ * RssItem is retained so existing imports keep compiling — the aggregator now
+ * returns UiNewsItem[] across all providers.
+ *
+ * Optional `provider` / `sentiment` / `language` / `countries` / `articleId`
+ * are populated by the NewsData branch only; every other provider leaves
+ * them undefined. UI surfaces must null-check before rendering the sentiment
+ * badge or language pill.
+ */
 export interface RssItem {
   source: string;
   title: string;
@@ -10,6 +29,11 @@ export interface RssItem {
   imageUrl?: string;
   author?: string;
   categories?: string[];
+  provider?: 'rss' | 'newsapi' | 'guardian' | 'newsdata' | 'gnews' | 'currents';
+  sentiment?: NewsDataSentiment | null;
+  language?: NewsDataLanguageIso | null;
+  countries?: string[];
+  articleId?: string;
 }
 
 export interface RssSource {
@@ -152,6 +176,15 @@ function parseRss(xml: string, source: string): RssItem[] {
   return [];
 }
 
+/**
+ * Convert UiNewsItem rows (NewsAPI, etc.) into the aggregator's RssItem shape.
+ * RssItem now carries an optional `provider` discriminator, so we keep it
+ * intact — downstream UI (e.g. SentimentBadge gating) relies on it.
+ */
+function uiToRssItems(items: UiNewsItem[]): RssItem[] {
+  return items.map((it) => ({ ...it }));
+}
+
 async function fetchFeed(source: RssSource, revalidate: number): Promise<RssItem[]> {
   try {
     const res = await fetch(source.url, {
@@ -169,13 +202,164 @@ async function fetchFeed(source: RssSource, revalidate: number): Promise<RssItem
   }
 }
 
-/** Aggregate the configured F1 RSS sources. Returns items sorted newest-first. */
-export async function getF1NewsFeed(opts: { limit?: number; revalidate?: number } = {}): Promise<RssItem[]> {
+/** Normalize a title for fuzzy dedupe — lowercase, alphanumerics only. */
+function dedupeKey(title: string): string {
+  return title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+/** Normalize a URL for dedupe — strip protocol, www, query, trailing slash. */
+function linkKey(link: string): string {
+  try {
+    const u = new URL(link);
+    return `${u.hostname.replace(/^www\./, '')}${u.pathname.replace(/\/+$/, '')}`.toLowerCase();
+  } catch {
+    return link.toLowerCase();
+  }
+}
+
+/**
+ * Cap how many items any single source contributes so one fast publisher
+ * cannot dominate the rail. Preserves insertion order (which is already
+ * newest-first sorted before this runs).
+ */
+function capPerSource(items: RssItem[], maxPerSource: number): RssItem[] {
+  const counts = new Map<string, number>();
+  const out: RssItem[] = [];
+  for (const item of items) {
+    const n = counts.get(item.source) ?? 0;
+    if (n >= maxPerSource) continue;
+    counts.set(item.source, n + 1);
+    out.push(item);
+  }
+  return out;
+}
+
+/**
+ * Aggregate every configured F1 news provider into a single rail.
+ *
+ * Sources fan out in parallel:
+ *   - 4x RSS feeds (Motorsport.com, Autosport, RaceFans, The Race)
+ *   - The Guardian Open Platform (when GUARDIAN_API_KEY present)
+ *   - NewsAPI.org /v2/everything       (when NEWSAPI_KEY present, server-only)
+ *
+ * Output is deduped by normalized title + URL host and sorted newest-first
+ * with a per-source cap so no single provider drowns the rail. Each provider
+ * fails independently — a 429 from NewsAPI does not poison the RSS rows
+ * (CORE RULE #1).
+ *
+ * NewsAPI revalidate is floored to 900s (15 min) to protect the 100/day quota.
+ */
+export async function getF1NewsFeed(
+  opts: {
+    limit?: number;
+    revalidate?: number;
+    maxPerSource?: number;
+    /** Set false to skip NewsAPI entirely (quota pinch / debugging). Default true. */
+    includeNewsAPI?: boolean;
+    /** Set false to skip NewsData (debug / focused rails). Default true. */
+    includeNewsData?: boolean;
+    /** Set false to skip Currents (debug). Default true. */
+    includeCurrents?: boolean;
+  } = {},
+): Promise<RssItem[]> {
   const revalidate = opts.revalidate ?? 300;
-  const results = await Promise.all(F1_RSS_SOURCES.map((s) => fetchFeed(s, revalidate)));
-  const merged = results.flat();
-  merged.sort((a, b) => b.pubDateMs - a.pubDateMs);
-  return opts.limit ? merged.slice(0, opts.limit) : merged;
+  const maxPerSource = opts.maxPerSource ?? 8;
+  const includeNewsAPI = opts.includeNewsAPI !== false;
+  const includeNewsData = opts.includeNewsData !== false;
+  const includeCurrents = opts.includeCurrents !== false;
+
+  const rssPromise = Promise.all(F1_RSS_SOURCES.map((s) => fetchFeed(s, revalidate)));
+
+  // Guardian is fetched lazily so the rss-only path stays zero-dep. We
+  // import dynamically to avoid a hard cycle if guardian later wants rss
+  // types. The await Promise.all races both branches.
+  const guardianPromise: Promise<RssItem[]> = (async () => {
+    if (!process.env['GUARDIAN_API_KEY']) return [];
+    try {
+      const { getGuardianF1News, mapGuardianItems } = await import('../guardian');
+      const raw = await getGuardianF1News({ revalidate });
+      return mapGuardianItems(raw);
+    } catch {
+      return [];
+    }
+  })();
+
+  // NewsAPI runs server-side only. Its client already returns [] on missing
+  // key / 429 / 5xx, so we don't need a second try/catch here.
+  const newsApiPromise: Promise<RssItem[]> = includeNewsAPI
+    ? getNewsAPIF1News({
+        pageSize: 20,
+        revalidate: Math.max(revalidate, 900),
+      })
+        .then(mapNewsAPIArticlesToUi)
+        .then(uiToRssItems)
+        .catch(() => [] as RssItem[])
+    : Promise.resolve([]);
+
+  // NewsData — multi-language + sentiment. 200/day quota → floor to 600s
+  // revalidate. Lazy-imported to avoid loading the module when the key is
+  // missing or the caller has opted out.
+  const newsDataPromise: Promise<RssItem[]> = (async () => {
+    if (!includeNewsData) return [];
+    if (!process.env['NEWSDATA_API_KEY']) return [];
+    try {
+      const { getNewsDataF1News, mapNewsDataArticles } = await import('../newsdata');
+      const raw = await getNewsDataF1News({
+        pageSize: 10,
+        revalidate: Math.max(revalidate, 600),
+      });
+      // mapNewsDataArticles returns UiNewsItemExtended which is structurally
+      // assignable to RssItem (every NewsData-only field is optional on RssItem).
+      return mapNewsDataArticles(raw) as unknown as RssItem[];
+    } catch {
+      return [];
+    }
+  })();
+
+  // Currents — 600/day quota, real-time, multi-language, no delay (unlike GNews).
+  const currentsPromise: Promise<RssItem[]> = (async () => {
+    if (!includeCurrents) return [];
+    if (!process.env['CURRENTS_API_KEY']) return [];
+    try {
+      const { getCurrentsF1News, mapCurrentsItems } = await import('../currents');
+      const raw = await getCurrentsF1News({ revalidate });
+      return mapCurrentsItems(raw).map((it): RssItem => ({ ...it, provider: 'currents' }));
+    } catch {
+      return [];
+    }
+  })();
+
+  const [rssResults, guardianResults, newsApiResults, newsDataResults, currentsResults] = await Promise.all([
+    rssPromise,
+    guardianPromise,
+    newsApiPromise,
+    newsDataPromise,
+    currentsPromise,
+  ]);
+  // Tag plain-RSS rows with their provider key so the UI can group them.
+  const rssTagged = rssResults
+    .flat()
+    .map((it): RssItem => ({ ...it, provider: 'rss' }));
+  const all = [...rssTagged, ...guardianResults, ...newsApiResults, ...newsDataResults, ...currentsResults];
+
+  // Sort newest-first before dedupe so the kept copy is always the freshest.
+  all.sort((a, b) => b.pubDateMs - a.pubDateMs);
+
+  const seenTitles = new Set<string>();
+  const seenLinks = new Set<string>();
+  const deduped: RssItem[] = [];
+  for (const item of all) {
+    const tk = dedupeKey(item.title);
+    const lk = linkKey(item.link);
+    if (tk && seenTitles.has(tk)) continue;
+    if (lk && seenLinks.has(lk)) continue;
+    if (tk) seenTitles.add(tk);
+    if (lk) seenLinks.add(lk);
+    deduped.push(item);
+  }
+
+  const capped = capPerSource(deduped, maxPerSource);
+  return opts.limit ? capped.slice(0, opts.limit) : capped;
 }
 
 /** Fetch one specific source. Used by sections that want a single provider. */

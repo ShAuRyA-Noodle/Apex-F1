@@ -1,4 +1,12 @@
 import { jolpica, mapRace, type UiRace } from '@apex/api-client/jolpica';
+import {
+  openmeteo,
+  mapRaceWeather,
+  bucketFromWeathercode,
+  bucketIcon,
+  bucketLabel,
+  type SessionKind,
+} from '@apex/api-client/openmeteo';
 import { countryNameToCode, flagEmoji } from '@/lib/format';
 import { RaceTickerCountdown } from './RaceTickerCountdown';
 import Link from 'next/link';
@@ -37,6 +45,35 @@ export async function RaceTickerBar() {
   }
 
   const { window, nextSlug } = pickWindow(Date.now(), races);
+  const nextRace = window.find((r) => r.slug === nextSlug) ?? null;
+
+  // Pull a tiny weather code for the next race only. Network-cheap, cached 1h.
+  let nextRaceWxCode: number | null = null;
+  if (nextRace && Number.isFinite(nextRace.lat) && Number.isFinite(nextRace.lon)) {
+    try {
+      const raceDate = nextRace.raceStartIso.slice(0, 10);
+      const raw = await openmeteo.getRaceWeather({
+        lat: nextRace.lat,
+        lon: nextRace.lon,
+        dateStart: raceDate,
+        dateEnd: raceDate,
+        revalidate: 3600,
+      });
+      if (raw) {
+        const typedSessions: Array<{ kind: SessionKind; iso: string }> = [
+          { kind: 'R', iso: nextRace.raceStartIso },
+        ];
+        const ui = mapRaceWeather({
+          weather: raw,
+          sessions: typedSessions,
+          raceStartIso: nextRace.raceStartIso,
+        });
+        nextRaceWxCode = ui.raceDay?.weathercode ?? ui.sessions[0]?.weathercode ?? null;
+      }
+    } catch {
+      nextRaceWxCode = null;
+    }
+  }
 
   return (
     <div
@@ -57,6 +94,7 @@ export async function RaceTickerBar() {
                 cc={cc}
                 isPast={isPast}
                 isNext={isNext}
+                weathercode={isNext ? nextRaceWxCode : null}
               />
             );
           })}
@@ -71,11 +109,13 @@ function RaceChip({
   cc,
   isPast,
   isNext,
+  weathercode,
 }: {
   race: UiRace;
   cc: string | null;
   isPast: boolean;
   isNext: boolean;
+  weathercode: number | null;
 }) {
   const status = isPast ? 'PREVIOUS' : isNext ? 'NEXT RACE' : 'UPCOMING';
   const accent = isNext
@@ -142,8 +182,9 @@ function RaceChip({
       </div>
 
       {isNext && (
-        <div className="relative mt-2">
+        <div className="relative mt-2 flex items-center gap-2">
           <RaceTickerCountdown targetIso={race.raceStartIso} />
+          {weathercode != null && <NextChipWeatherIcon code={weathercode} />}
         </div>
       )}
 
@@ -158,6 +199,29 @@ function RaceChip({
         </div>
       )}
     </Link>
+  );
+}
+
+function NextChipWeatherIcon({ code }: { code: number }) {
+  const b = bucketFromWeathercode(code);
+  if (b === 'unknown') return null;
+  const isWet = b === 'rain' || b === 'snow' || b === 'thunderstorm';
+  return (
+    <span
+      title={bucketLabel(b)}
+      aria-label={`Forecast: ${bucketLabel(b)}`}
+      className={`inline-flex h-6 items-center gap-1 border border-outline-variant/40 bg-surface-container/60 px-1.5 ${
+        isWet ? 'text-telemetry-red' : 'text-on-surface-variant'
+      }`}
+    >
+      <span
+        aria-hidden
+        className="material-symbols-outlined leading-none"
+        style={{ fontSize: 14 }}
+      >
+        {bucketIcon(b)}
+      </span>
+    </span>
   );
 }
 
