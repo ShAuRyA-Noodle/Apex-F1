@@ -3,8 +3,24 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'About Apex · independent Formula 1 fan platform.',
+  description:
+    'About Apex · independent Formula 1 fan platform, designed, engineered, and shipped by one person · Shaurya Punj.',
 };
+
+const CREATOR = {
+  name: 'Shaurya Punj',
+  role: 'AI/ML + agentic software engineer',
+  tagline:
+    'Building intelligent systems that solve real problems. From machine learning pipelines to agentic AI · I engineer software that thinks, adapts, and delivers.',
+  location: 'India · IST',
+  links: [
+    { label: 'Portfolio', href: 'https://shauryapunj.com' },
+    { label: 'GitHub', href: 'https://github.com/ShAuRyA-Noodle' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/shaurya-punj-2287513b3/' },
+    { label: 'X · Twitter', href: 'https://x.com/ShAuRyANoodle' },
+    { label: 'Email', href: 'mailto:workwithshaurya10@gmail.com' },
+  ],
+} as const;
 
 export default function AboutPage() {
   return (
@@ -64,6 +80,40 @@ export default function AboutPage() {
           <li>
             <strong>OpenWeatherMap</strong> · race-weekend track-side forecasts.
           </li>
+        </ul>
+      </section>
+
+      <section className="mt-20 border-t border-outline-variant/30 pt-16">
+        <span className="text-data text-telemetry-red">BUILT BY · ONE PERSON</span>
+        <h2 className="mt-3 font-display text-4xl uppercase tracking-tight text-on-background md:text-6xl">
+          {CREATOR.name}
+        </h2>
+        <p className="mt-3 font-data text-[12px] tracking-[0.18em] text-on-surface-variant">
+          {CREATOR.role.toUpperCase()} · {CREATOR.location.toUpperCase()}
+        </p>
+        <p className="mt-8 max-w-3xl font-editorial text-[20px] leading-relaxed text-on-surface-variant md:text-2xl">
+          {CREATOR.tagline}
+        </p>
+        <p className="mt-6 max-w-3xl text-base text-on-surface-variant">
+          Every line of code, every design token, every data source on this site
+          was wired up by one person on a laptop. No team. No agency. No outside
+          investors. No rescue. If you find a bug, a slow page, or a dead button,
+          the buck stops at one inbox.
+        </p>
+        <ul className="mt-8 flex flex-wrap gap-3">
+          {CREATOR.links.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                target={link.href.startsWith('http') ? '_blank' : undefined}
+                rel={link.href.startsWith('http') ? 'noopener noreferrer me' : undefined}
+                className="inline-flex items-center gap-2 border border-outline-variant/60 px-4 py-2.5 font-data text-[12px] tracking-[0.18em] text-on-background transition-colors hover:border-telemetry-red hover:text-telemetry-red"
+              >
+                <span>{link.label.toUpperCase()}</span>
+                <span className="material-symbols-outlined text-[16px]">arrow_outward</span>
+              </Link>
+            </li>
+          ))}
         </ul>
       </section>
 

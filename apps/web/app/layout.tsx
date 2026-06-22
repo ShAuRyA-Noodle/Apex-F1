@@ -22,6 +22,9 @@ export const metadata: Metadata = {
   },
   description: DESCRIPTION,
   applicationName: SITE,
+  authors: [{ name: 'Shaurya Punj', url: 'https://shauryapunj.com' }],
+  creator: 'Shaurya Punj',
+  publisher: 'Shaurya Punj',
   keywords: ['Formula 1', 'F1', 'Grand Prix', 'live timing', 'race results', 'driver standings'],
   openGraph: {
     type: 'website',
@@ -30,7 +33,12 @@ export const metadata: Metadata = {
     description: DESCRIPTION,
     locale: 'en_US',
   },
-  twitter: { card: 'summary_large_image', title: SITE, description: DESCRIPTION },
+  twitter: {
+    card: 'summary_large_image',
+    title: SITE,
+    description: DESCRIPTION,
+    creator: '@ShAuRyANoodle',
+  },
   robots: { index: true, follow: true },
   icons: { icon: '/favicon.svg' },
 };

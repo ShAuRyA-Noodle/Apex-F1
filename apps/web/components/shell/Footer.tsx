@@ -161,12 +161,71 @@ export function Footer() {
           </p>
         </div>
 
-        {/* Bottom strip */}
-        <div className="mt-12 flex flex-col items-start gap-5 border-t border-outline-variant/30 pt-8 md:flex-row md:items-center md:justify-between">
+        {/* Creator credit · Apex is shipped by one person, named */}
+        <div className="mt-12 flex flex-col items-start gap-4 border-t border-outline-variant/30 pt-10 md:flex-row md:items-center md:justify-between">
+          <div className="flex flex-col gap-1">
+            <span className="font-data text-[11px] tracking-[0.22em] text-telemetry-red">
+              DESIGNED, ENGINEERED, SHIPPED BY
+            </span>
+            <a
+              href="https://shauryapunj.com"
+              target="_blank"
+              rel="noopener noreferrer me"
+              className="group inline-flex items-center gap-2 font-display text-2xl uppercase tracking-tight text-on-background transition-colors hover:text-telemetry-red md:text-3xl"
+            >
+              Shaurya Punj
+              <span className="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5">
+                arrow_outward
+              </span>
+            </a>
+            <span className="font-data text-[10.5px] tracking-[0.18em] text-on-surface-variant">
+              ONE PERSON · INDIA · IST
+            </span>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <a
+              href="https://github.com/ShAuRyA-Noodle"
+              target="_blank"
+              rel="noopener noreferrer me"
+              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+            >
+              GITHUB
+            </a>
+            <span className="h-3 w-px bg-outline-variant/60" aria-hidden />
+            <a
+              href="https://www.linkedin.com/in/shaurya-punj-2287513b3/"
+              target="_blank"
+              rel="noopener noreferrer me"
+              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+            >
+              LINKEDIN
+            </a>
+            <span className="h-3 w-px bg-outline-variant/60" aria-hidden />
+            <a
+              href="https://x.com/ShAuRyANoodle"
+              target="_blank"
+              rel="noopener noreferrer me"
+              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+            >
+              X · TWITTER
+            </a>
+            <span className="h-3 w-px bg-outline-variant/60" aria-hidden />
+            <a
+              href="mailto:workwithshaurya10@gmail.com"
+              className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant transition-colors hover:text-on-background"
+            >
+              EMAIL
+            </a>
+          </div>
+        </div>
+
+        {/* Bottom strip · version + uptime · sits below the credit */}
+        <div className="mt-10 flex flex-col items-start gap-5 border-t border-outline-variant/30 pt-8 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-4">
             <ApexMonogram size={20} />
             <span className="font-data text-[11px] tracking-[0.18em] text-on-surface-variant">
-              © {new Date().getFullYear()} APEX · BUILT BY FANS, FOR FANS
+              © {new Date().getFullYear()} APEX · INDEPENDENT · SOLO BUILD
             </span>
           </div>
           <div className="flex items-center gap-4">
