@@ -1,0 +1,42 @@
+name: Refresh news cache
+
+# Repo-native cron. Pings the Vercel rss-sync route so the homepage hero and
+# /latest regenerate with fresh stories on a schedule, independent of visitor
+# traffic. The route primes every provider's fetch cache and revalidates the
+# pages; per-provider revalidate floors keep paid-API daily quotas safe.
+#
+# The repo is public, so Actions minutes are free/unlimited. GitHub may delay or
+# coalesce scheduled runs under load — content freshness is best-effort, which is
+# exactly right for a news cache.
+
+on:
+  schedule:
+    - cron: '*/5 * * * *' # every 5 minutes
+  workflow_dispatch: {} # manual "Run workflow" button
+
+concurrency:
+  group: refresh-news
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping rss-sync (revalidate home + /latest)
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          code=$(curl -sS -m 60 -o /tmp/out.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "https://apex-f1-five.vercel.app/api/cron/rss-sync") || true
+          echo "rss-sync -> HTTP ${code}"
+          cat /tmp/out.json 2>/dev/null || true
+          echo
+          if [ "${code}" != "200" ]; then
+            echo "::error::rss-sync ping failed with HTTP ${code}"
+            exit 1
+          fi

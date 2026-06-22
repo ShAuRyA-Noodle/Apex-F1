@@ -4,8 +4,8 @@ import { HeroLeadStoryClient } from './HeroLeadStoryClient';
 
 /** How many image-bearing stories form the rotation pool. */
 const POOL_SIZE = 20;
-/** How many show in the hero crossfade at once. */
-const SHOW = 5;
+/** How many stories the hero crossfades through (more = more visible variety). */
+const SHOW = 8;
 /** The supporting slots advance one step per this window (synced to the 5-min
  *  external rss-sync ping), so the set visibly changes even on a quiet news day. */
 const ROTATE_MS = 5 * 60 * 1000;
