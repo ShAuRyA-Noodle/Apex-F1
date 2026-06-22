@@ -21,7 +21,9 @@
       "@apex/api-client/newsdata": ["../../packages/api-client/src/newsdata"],
       "@apex/api-client/unsplash": ["../../packages/api-client/src/unsplash"],
       "@apex/api-client/giphy": ["../../packages/api-client/src/giphy"],
-      "@apex/api-client/huggingface": ["../../packages/api-client/src/huggingface"]
+      "@apex/api-client/huggingface": ["../../packages/api-client/src/huggingface"],
+      "@apex/api-client/wikipedia": ["../../packages/api-client/src/wikipedia"],
+      "@apex/api-client/currents": ["../../packages/api-client/src/currents"]
     },
     "noEmit": true,
     "allowJs": true,

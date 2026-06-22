@@ -53,10 +53,10 @@ export interface YouTubeChannelSource {
 // Public channel-RSS feeds. No API key required.
 export const YT_F1_CHANNELS: YouTubeChannelSource[] = [
   { name: 'FORMULA 1', channelId: 'UCB_qr75-ydFVKSF9Dmo6izg' },
-  { name: 'Chain Bear', channelId: 'UCK01ZhWlMV4kHANXFhGUUKQ' },
-  { name: 'WTF1', channelId: 'UCqzwM8m2-mLPjQwQTvCJp_g' },
-  { name: 'Tommo F1', channelId: 'UCpf4kPmiMUjKHr-W-rOLg2A' },
-  { name: 'Driver61', channelId: 'UCcQrxs2sUEdOlVfsNNxgX6w' },
+  { name: 'Chain Bear', channelId: 'UC7u-Dg0jb7g9s7XjmtJrtpg' },
+  { name: 'WTF1', channelId: 'UCDxm-FbK9nmZKqHI19j-DOw' },
+  { name: 'Tommo', channelId: 'UCFHaLSX-Kqy5pGTszklkE8w' },
+  { name: 'Driver61', channelId: 'UCtbLA0YM6EpwUQhFUyPQU9Q' },
 ];
 
 // ─── Re-exports ─────────────────────────────────────────────────────────────
@@ -152,10 +152,37 @@ async function getF1VideosViaDataApi(opts: {
   const details = await getVideoDetails(allVideoIds);
   if (details.length === 0) return [];
 
-  // 4. Map → enriched UI shape, sort newest first, apply limit.
+  // 4. Map → enriched UI shape, sort newest first.
   const enriched = details.map((d) => toEnrichedVideo(d, statsById));
   const sorted = sortNewestFirst(enriched);
-  return opts.limit ? sorted.slice(0, opts.limit) : sorted;
+
+  // 5. Round-robin balance across channels.
+  // Without this, the most prolific channel (e.g. FORMULA 1 official, which
+  // uploads several times per day) drowns out the smaller editorial channels
+  // (Chain Bear, Tommo F1, Driver61) in a strict newest-first sort. We end up
+  // with a Featured rail that is 100% FOM-embed-blocked content. The round
+  // robin walks each channel in turn, taking one video at a time, until we
+  // either run out of videos or reach the limit.
+  if (opts.limit && opts.limit < sorted.length) {
+    const byChannel = new Map<string, YouTubeVideoEnriched[]>();
+    for (const v of sorted) {
+      const bucket = byChannel.get(v.channelId) ?? [];
+      bucket.push(v);
+      byChannel.set(v.channelId, bucket);
+    }
+    const queues = Array.from(byChannel.values());
+    const balanced: YouTubeVideoEnriched[] = [];
+    while (balanced.length < opts.limit && queues.some((q) => q.length > 0)) {
+      for (const queue of queues) {
+        if (balanced.length >= opts.limit) break;
+        const next = queue.shift();
+        if (next) balanced.push(next);
+      }
+    }
+    return balanced;
+  }
+
+  return sorted;
 }
 
 // ─── Public entry point ─────────────────────────────────────────────────────

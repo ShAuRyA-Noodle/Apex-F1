@@ -7,6 +7,7 @@ import {
   type UnsplashImage,
 } from '@apex/api-client/unsplash';
 import { generateImage } from '@apex/api-client/huggingface';
+import { getWikipediaSummaryByUrl } from '@apex/api-client/wikipedia';
 
 /**
  * Unified hero image helper.
@@ -145,9 +146,24 @@ export interface DriverHeroInput {
   fullName: string;
   /** Optional Wikidata Special:FilePath URL — pass null if absent. */
   wikidataImage?: string | null;
+  /** Wikipedia page URL — every Jolpica driver has one. Used for fallback image. */
+  wikiUrl?: string | null;
   /** Used for the curated query when no Wikidata image. */
   nationality?: string | null;
   revalidate?: number;
+}
+
+function fromWikipedia(thumbUrl: string, fullName: string): HeroImageResult {
+  return {
+    source: 'wikidata',
+    url: thumbUrl,
+    urlSmall: thumbUrl,
+    urlHero: thumbUrl,
+    alt: `${fullName} portrait`,
+    attributionName: '',
+    attributionUrl: '',
+    color: null,
+  };
 }
 
 /**
@@ -165,6 +181,27 @@ export async function getDriverHeroImage(
 ): Promise<HeroImageResult | null> {
   const revalidate = input.revalidate ?? DEFAULT_REVALIDATE;
 
+  // Tier 1 — Wikipedia REST API summary. Every Jolpica driver has a wikiUrl
+  // and the REST endpoint reliably returns originalimage/thumbnail for the
+  // article. This is the primary source because:
+  //   - Always lookup-by-URL — no exact-label fuzz like Wikidata SPARQL
+  //   - Returns HTTPS upload.wikimedia.org URLs (Wikidata returns http://
+  //     commons.wikimedia.org/wiki/Special:FilePath/ which Next.js sometimes
+  //     refuses to optimise and SSR-render reliably)
+  //   - Returns the canonical infobox photo curated by Wikipedia editors
+  if (input.wikiUrl) {
+    const summary = await getWikipediaSummaryByUrl(input.wikiUrl, {
+      revalidate,
+    });
+    const img = summary?.originalImageUrl ?? summary?.thumbnailUrl;
+    if (img) {
+      return fromWikipedia(img, input.fullName);
+    }
+  }
+
+  // Tier 2 — Wikidata Commons Special:FilePath fallback. SPARQL exact-label
+  // match is flaky for drivers with special characters in their canonical
+  // Wikidata label, so we accept this only as a fallback.
   if (input.wikidataImage) {
     return fromWikidata(input.wikidataImage, input.fullName);
   }

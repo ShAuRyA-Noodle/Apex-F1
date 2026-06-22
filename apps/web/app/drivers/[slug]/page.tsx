@@ -125,6 +125,7 @@ export default async function DriverProfilePage(props: {
   const hero = await getDriverHeroImage({
     fullName: d.fullName,
     wikidataImage: facts?.image ?? null,
+    wikiUrl: d.wikiUrl ?? null,
     nationality: d.nationality,
   });
   const heroImage = hero?.urlHero ?? (facts?.image ? commonsImageUrl(facts.image) : undefined);
