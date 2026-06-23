@@ -209,15 +209,28 @@ export const openf1 = {
     if (opts.dateLte) parts.push(`date<=${fmt(opts.dateLte)}`);
     const url = `${BASE}/location?${parts.join('&')}`;
     const fetchImpl = opts.fetchImpl ?? fetch;
-    try {
-      const res = await fetchImpl(url, {
-        next: opts.revalidate != null ? { revalidate: opts.revalidate } : undefined,
-      } as RequestInit);
-      if (!res.ok) return [];
-      return (await res.json()) as OpenF1Location[];
-    } catch {
-      return [];
+    // /location is heavy and occasionally times out; retry so a flaky fetch
+    // doesn't bake an empty map into the ISR cache.
+    for (let attempt = 0; attempt <= 2; attempt++) {
+      try {
+        const res = await fetchImpl(url, {
+          next: opts.revalidate != null ? { revalidate: opts.revalidate } : undefined,
+        } as RequestInit);
+        if (res.ok) return (await res.json()) as OpenF1Location[];
+        if ((res.status === 429 || res.status >= 500) && attempt < 2) {
+          await new Promise((r) => setTimeout(r, 600 * 2 ** attempt));
+          continue;
+        }
+        return [];
+      } catch {
+        if (attempt < 2) {
+          await new Promise((r) => setTimeout(r, 600 * 2 ** attempt));
+          continue;
+        }
+        return [];
+      }
     }
+    return [];
   },
 
   async getLaps(sessionKey: number, opts: FetchOpts = {}) {
