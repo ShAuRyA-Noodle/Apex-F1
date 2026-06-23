@@ -1,94 +1,54 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { PREDICT_QUESTIONS, PREDICT_MAX } from '@/lib/predict';
 
-interface Q {
+interface DriverOpt {
   id: string;
-  label: string;
-  options: string[];
-  points: number;
-}
-
-const QUESTIONS: Q[] = [
-  {
-    id: 'pole',
-    label: 'Pole position',
-    options: ['Verstappen', 'Norris', 'Piastri', 'Leclerc', 'Hamilton', 'Russell', 'Antonelli', 'Other'],
-    points: 3,
-  },
-  {
-    id: 'winner',
-    label: 'Race winner',
-    options: ['Verstappen', 'Norris', 'Piastri', 'Leclerc', 'Hamilton', 'Russell', 'Other'],
-    points: 5,
-  },
-  {
-    id: 'fastest_lap',
-    label: 'Fastest lap',
-    options: ['Verstappen', 'Norris', 'Piastri', 'Leclerc', 'Hamilton', 'Russell', 'Other'],
-    points: 1,
-  },
-  {
-    id: 'first_dnf',
-    label: 'First retirement (DNF)',
-    options: ['No DNF', 'Backmarker', 'Midfield', 'Top 5', 'Other'],
-    points: 3,
-  },
-  {
-    id: 'safety_car',
-    label: 'Safety car deployed?',
-    options: ['Yes · VSC only', 'Yes · full SC', 'No'],
-    points: 1,
-  },
-];
-
-const KEY_PREFIX = 'apex.predict.v1';
-
-function storageKey(raceSlug: string, season: number) {
-  return `${KEY_PREFIX}.${season}.${raceSlug}`;
+  name: string;
 }
 
 export function PredictForm({
   raceName,
   raceSlug,
   season,
+  round,
   isLocked,
+  drivers,
+  initialPicks,
 }: {
   raceName: string;
   raceSlug: string;
   season: number;
+  round: number;
   isLocked: boolean;
+  drivers: DriverOpt[];
+  initialPicks: Record<string, string>;
 }) {
-  const [picks, setPicks] = useState<Record<string, string>>({});
-  const [saved, setSaved] = useState(false);
+  const [picks, setPicks] = useState<Record<string, string>>(initialPicks);
+  const [state, setState] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
 
-  useEffect(() => {
+  async function save() {
+    setState('saving');
     try {
-      const raw = window.localStorage.getItem(storageKey(raceSlug, season));
-      if (raw) setPicks(JSON.parse(raw));
+      const res = await fetch('/api/predict', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ season, round, raceSlug, picks }),
+      });
+      setState(res.ok ? 'saved' : 'error');
+      if (res.ok) window.setTimeout(() => setState('idle'), 3500);
     } catch {
-      /* no-op */
-    }
-  }, [raceSlug, season]);
-
-  function save() {
-    try {
-      window.localStorage.setItem(storageKey(raceSlug, season), JSON.stringify(picks));
-      setSaved(true);
-      window.setTimeout(() => setSaved(false), 3000);
-    } catch {
-      /* no-op */
+      setState('error');
     }
   }
 
-  function setPick(id: string, opt: string) {
-    setPicks((p) => ({ ...p, [id]: opt }));
-    setSaved(false);
+  function setPick(id: string, optId: string) {
+    setPicks((p) => ({ ...p, [id]: optId }));
+    setState('idle');
   }
 
-  const total = QUESTIONS.reduce((acc, q) => acc + (picks[q.id] ? q.points : 0), 0);
-  const max = QUESTIONS.reduce((acc, q) => acc + q.points, 0);
-  const filled = Object.values(picks).filter(Boolean).length;
+  const filled = PREDICT_QUESTIONS.filter((q) => picks[q.id]).length;
 
   return (
     <div>
@@ -96,7 +56,7 @@ export function PredictForm({
         <div>
           <h2 className="text-data text-telemetry-red">YOUR PICKS · {raceName}</h2>
           <p className="mt-2 font-editorial text-lg text-on-surface-variant md:text-xl">
-            {filled} / {QUESTIONS.length} answered · max {max} pts
+            {filled} / {PREDICT_QUESTIONS.length} answered · {PREDICT_MAX} pts on the line
           </p>
         </div>
         {isLocked && (
@@ -104,50 +64,47 @@ export function PredictForm({
         )}
       </div>
 
-      <ol className="space-y-8">
-        {QUESTIONS.map((q) => (
-          <li key={q.id}>
+      <ol className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {PREDICT_QUESTIONS.map((q) => (
+          <li key={q.id} className="border border-outline-variant/40 bg-surface-container-low p-5">
             <div className="flex items-baseline justify-between">
-              <h3 className="font-headline text-lg text-on-background md:text-xl">{q.label}</h3>
+              <h3 className="font-headline text-lg text-on-background">{q.label}</h3>
               <span className="text-data text-outline">{q.points} PTS</span>
             </div>
-            <ul className="mt-4 flex flex-wrap gap-2">
-              {q.options.map((opt) => {
-                const active = picks[q.id] === opt;
-                return (
-                  <li key={opt}>
-                    <button
-                      type="button"
-                      onClick={() => setPick(q.id, opt)}
-                      disabled={isLocked}
-                      className={
-                        active
-                          ? 'bg-telemetry-red px-4 py-2 text-sm font-semibold text-on-background'
-                          : 'border border-outline-variant px-4 py-2 text-sm text-on-surface transition-colors hover:border-telemetry-red disabled:cursor-not-allowed disabled:opacity-50'
-                      }
-                    >
-                      {opt}
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
+            <select
+              value={picks[q.id] ?? ''}
+              disabled={isLocked}
+              onChange={(e) => setPick(q.id, e.target.value)}
+              className="mt-4 w-full border border-outline-variant bg-background px-4 py-3 font-headline text-base text-on-background focus:border-telemetry-red focus:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <option value="">Pick a driver…</option>
+              {drivers.map((d) => (
+                <option key={d.id} value={d.id}>
+                  {d.name}
+                </option>
+              ))}
+            </select>
           </li>
         ))}
       </ol>
 
-      <div className="mt-12 flex flex-wrap items-center gap-4">
+      <div className="mt-10 flex flex-wrap items-center gap-4">
         <button
           type="button"
           onClick={save}
-          disabled={isLocked || filled === 0}
+          disabled={isLocked || filled === 0 || state === 'saving'}
           className="bg-telemetry-red px-7 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-on-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          {saved ? 'Saved ✓' : 'Save my picks'}
+          {state === 'saving' ? 'Saving…' : state === 'saved' ? 'Locked in ✓' : 'Save my picks'}
         </button>
-        <span className="text-data text-outline">
-          POTENTIAL: {total} / {max} PTS
-        </span>
+        {state === 'saved' && (
+          <span className="text-data text-on-surface-variant">
+            Saved across this browser. Scored automatically after the race.
+          </span>
+        )}
+        {state === 'error' && (
+          <span className="text-data text-telemetry-red">Could not save. Try again.</span>
+        )}
       </div>
     </div>
   );

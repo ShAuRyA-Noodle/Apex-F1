@@ -179,6 +179,18 @@ export const jolpica = {
     return race ? { race, results: race.Results } : null;
   },
 
+  /** Qualifying classification for a single round (pole = position "1"). */
+  async getQualifying(season: number, round: number, opts: FetchOpts = {}) {
+    const env = await get<{
+      RaceTable: {
+        Races: Array<{
+          QualifyingResults?: Array<{ position: string; Driver: { driverId: string } }>;
+        }>;
+      };
+    }>(`${season}/${round}/qualifying.json`, { revalidate: 3600, ...opts });
+    return env.MRData.RaceTable.Races[0]?.QualifyingResults ?? [];
+  },
+
   /** Season-wide race results (used to compute driver/team season detail). */
   async getSeasonResults(season: number, opts: FetchOpts = {}) {
     const env = await get<JolpicaResultsEnvelope>(`${season}/results.json`, {

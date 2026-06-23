@@ -14,3 +14,4 @@ export * from './author';
 export * from './user';
 export * from './event_log';
 export * from './ingestion_run';
+export * from './prediction';
