@@ -40,7 +40,7 @@ const groups: { title: string; links: { label: string; href: string }[] }[] = [
       { label: 'Predict', href: '/predict' },
       { label: 'Careers', href: '/careers' },
       { label: 'Contact', href: '/contact' },
-      { label: 'Support · tip jar', href: '/support' },
+      { label: 'Give back', href: '/support' },
     ],
   },
   {
@@ -123,9 +123,9 @@ export function Footer() {
               href="/support"
               className="inline-flex items-center gap-2 border border-outline-variant/70 px-5 py-3 text-on-background transition-colors hover:border-telemetry-red hover:text-telemetry-red"
             >
-              <span className="material-symbols-outlined text-[18px]">local_cafe</span>
+              <span className="material-symbols-outlined text-[18px]">pets</span>
               <span className="font-data text-[12px] tracking-[0.18em]">
-                BUY US A COFFEE
+                HELP AN ANIMAL
               </span>
             </Link>
           </div>

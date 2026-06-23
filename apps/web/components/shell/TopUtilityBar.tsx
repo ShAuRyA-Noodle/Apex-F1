@@ -19,7 +19,7 @@ const utilityLinks = [
   { label: 'Newsletter', href: '/newsletter' },
   { label: 'Archive', href: '/results/archive' },
   { label: 'Search', href: '/search' },
-  { label: 'Support', href: '/support', highlight: true },
+  { label: 'Give back', href: '/support', highlight: true },
 ];
 
 export function TopUtilityBar() {
