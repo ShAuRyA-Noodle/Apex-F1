@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { getAggregatedF1News } from '@apex/api-client';
+import { getPublishedArticles } from '@apex/db';
 import { F1_RSS_SOURCES } from '@apex/api-client/rss';
 import type {
   NewsDataLanguageIso,
@@ -113,6 +114,7 @@ export default async function LatestPage(props: {
 }) {
   const { source, lang, sentiment } = await props.searchParams;
   const all = await getAggregatedF1News({ limit: 120, revalidate: 300 });
+  const originals = await getPublishedArticles(4);
 
   // Has NewsData enrichment landed in at least one row? Drives whether we
   // bother rendering the sentiment filter pill at all (CORE RULE #1: never
@@ -283,7 +285,52 @@ export default async function LatestPage(props: {
         </p>
       )}
 
-      {items.length === 0 && (
+      {originals.length > 0 && (
+        <section className="mt-12">
+          <h2 className="text-data text-telemetry-red">APEX ORIGINALS</h2>
+          <ul className="mt-6 grid grid-cols-1 gap-px overflow-hidden bg-outline-variant/40 md:grid-cols-2">
+            {originals.map((a) => (
+              <li key={a.slug} className="bg-background">
+                <Link
+                  href={`/article/${a.slug}`}
+                  className="group flex gap-4 p-5 transition-colors hover:bg-surface-container-low md:gap-6 md:p-7"
+                >
+                  {a.heroImageUrl && (
+                    <div className="relative h-28 w-44 shrink-0 overflow-hidden bg-surface-container-high md:h-32 md:w-52">
+                      <img
+                        src={a.heroImageUrl}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                    </div>
+                  )}
+                  <div className="flex flex-1 flex-col">
+                    <div className="flex flex-wrap items-center gap-2 text-data">
+                      <span className="text-telemetry-red">APEX ORIGINAL</span>
+                      {a.section && (
+                        <>
+                          <span className="text-outline">·</span>
+                          <span className="text-on-surface-variant">{a.section}</span>
+                        </>
+                      )}
+                    </div>
+                    <h3 className="mt-2 line-clamp-3 font-headline text-base text-on-background md:text-lg">
+                      {a.title}
+                    </h3>
+                    {a.dek && (
+                      <p className="mt-2 line-clamp-2 text-sm text-on-surface-variant">{a.dek}</p>
+                    )}
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {items.length === 0 && originals.length === 0 && (
         <p className="mt-20 text-center font-editorial text-xl text-on-surface-variant">
           No items match these filters. Drop the language or sentiment pill, or
           try again in a minute.
