@@ -16,11 +16,11 @@ import { generateImage, type T2IAspect, type T2IStyle } from '@apex/api-client/h
  *   }
  *
  * Responses:
- *   - 503 — HUGGINGFACE_TOKEN absent. Stub-mode. UI should treat as "no
+ *   - 503 · HUGGINGFACE_TOKEN absent. Stub-mode. UI should treat as "no
  *           image" and render its flat-color placeholder.
- *   - 400 — Invalid JSON / empty prompt.
- *   - 502 — HF returned null after retries / timeout.
- *   - 200 — { ok: true, url, source, width, height, model }
+ *   - 400 · Invalid JSON / empty prompt.
+ *   - 502 · HF returned null after retries / timeout.
+ *   - 200 · { ok: true, url, source, width, height, model }
  *
  * Storage path:
  *   - DEV (NODE_ENV !== 'production') → returns a `data:` URL with the
@@ -68,7 +68,7 @@ async function maybeUploadToR2(_pngBuffer: Buffer): Promise<string | null> {
 }
 
 export async function POST(req: Request) {
-  // Token gate. Stub-mode 503 — UI knows to render its placeholder.
+  // Token gate. Stub-mode 503 · UI knows to render its placeholder.
   if (!process.env['HUGGINGFACE_TOKEN']) {
     return NextResponse.json(
       {

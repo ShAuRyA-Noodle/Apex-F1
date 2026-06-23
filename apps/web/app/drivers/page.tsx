@@ -44,7 +44,7 @@ export default async function DriversIndexPage() {
                 />
                 <div className="flex items-start justify-between">
                   <div className="font-data text-4xl text-on-background md:text-5xl">
-                    {s.driver.number ?? '–'}
+                    {s.driver.number ?? '-'}
                   </div>
                   <div className="text-data text-outline">{s.driver.code}</div>
                 </div>

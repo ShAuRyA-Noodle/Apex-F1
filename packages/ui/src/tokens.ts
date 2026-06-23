@@ -1,4 +1,4 @@
-// Apex design tokens — Material-You dark, telemetry-grade.
+// Apex design tokens · Material-You dark, telemetry-grade.
 // Ported from the_grid_homepage/code.html legacy Tailwind config and PID §21.
 // Source of truth: every color / font / spacing in the production app pulls from here.
 

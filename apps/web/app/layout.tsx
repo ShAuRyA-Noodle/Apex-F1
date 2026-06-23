@@ -4,7 +4,7 @@ import './globals.css';
 import { LenisProvider } from '@/components/motion/LenisProvider';
 
 /**
- * Self-hosted via next/font — fonts are bundled + served from our own origin
+ * Self-hosted via next/font · fonts are bundled + served from our own origin
  * (no Google Fonts round-trip, no render-blocking <link>, no layout shift).
  * Each exposes a CSS variable consumed by the --font-* tokens in globals.css.
  */
@@ -87,7 +87,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`dark ${fontVars}`}>
       <head>
         {/* Text fonts are self-hosted via next/font (above). Only the Material
-            Symbols variable icon font still loads from Google — next/font does
+            Symbols variable icon font still loads from Google · next/font does
             not support its variable axes, so the CDN stylesheet stays. */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

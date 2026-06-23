@@ -1,5 +1,5 @@
 /**
- * Hugging Face summarization — Groq backup.
+ * Hugging Face summarization · Groq backup.
  *
  * Model: facebook/bart-large-cnn
  *   · BART encoder-decoder pretrained on CNN/DailyMail.
@@ -11,7 +11,7 @@
  * Use case:
  *   Primary summarizer is Groq Llama 3.3 70B (much higher quality,
  *   instruction-tunable). This module activates only when the Groq
- *   quota is hit or GROQ_API_KEY is missing — pure backup path.
+ *   quota is hit or GROQ_API_KEY is missing · pure backup path.
  *
  * Stub-mode contract: null when token absent.
  */
@@ -24,7 +24,7 @@ const MODEL = 'facebook/bart-large-cnn';
 const DEFAULT_MAX_TOKENS = 130;
 const DEFAULT_MIN_TOKENS = 40;
 
-/** Hard ceiling on input — BART's encoder caps at 1024 tokens. */
+/** Hard ceiling on input · BART's encoder caps at 1024 tokens. */
 const INPUT_CHAR_CEILING = 3800; // ~950 tokens, safe margin.
 
 interface RawSummary {
@@ -35,7 +35,7 @@ interface RawSummary {
  * Summarize a chunk of news prose into a short abstract.
  *
  * @param text       The article body. Headline + dek + first 1-2 paragraphs
- *                   is the sweet spot — BART degrades past ~1000 tokens.
+ *                   is the sweet spot · BART degrades past ~1000 tokens.
  * @param maxLength  Soft target length, in CHARACTERS, of the output.
  *                   We translate to BART's token budget internally.
  *                   Pass undefined for default ~130-token (~500-char) length.
@@ -74,7 +74,7 @@ export async function summarize(
       min_length: minTokens,
       do_sample: false,
       // truncation:'longest_first' protects us from over-long inputs at
-      // the HF side too — defense in depth alongside our char ceiling.
+      // the HF side too · defense in depth alongside our char ceiling.
       truncation: 'longest_first',
     },
     options: { wait_for_model: true, use_cache: true },

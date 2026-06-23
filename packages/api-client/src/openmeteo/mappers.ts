@@ -8,7 +8,7 @@ import type { RaceWeather } from './types';
  *
  * Track temp heuristic: ambient + 8 C. Crude, but good enough for a
  * pre-race strip. Actual track temp diverges with sun angle, asphalt age,
- * cloud cover etc — we'll improve later if Open-Meteo adds surface_temp.
+ * cloud cover etc · we'll improve later if Open-Meteo adds surface_temp.
  */
 
 export type SessionKind = 'FP1' | 'FP2' | 'FP3' | 'Q' | 'R' | 'S' | 'SQ';
@@ -92,7 +92,7 @@ export function bucketFromWeathercode(code: number | null | undefined): WeatherB
   if (code >= 51 && code <= 67) return 'rain';
   if (code >= 71 && code <= 77) return 'snow';
   if (code >= 95 && code <= 99) return 'thunderstorm';
-  // 80-82 = rain showers, 85-86 = snow showers — fold into rain/snow.
+  // 80-82 = rain showers, 85-86 = snow showers · fold into rain/snow.
   if (code >= 80 && code <= 82) return 'rain';
   if (code === 85 || code === 86) return 'snow';
   return 'unknown';
@@ -147,7 +147,7 @@ export function bucketIcon(b: WeatherBucket): string {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Helpers — pure, side-effect free.
+// Helpers · pure, side-effect free.
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Pick all hourly indices that fall within the [start, start+3h] window. */
@@ -165,7 +165,7 @@ function indicesForSession(
     const ts = hourlyTime[i];
     if (!ts) continue;
     const t = new Date(ts).getTime();
-    // Hourly timestamps are local-naive (no Z) — we treat them as UTC offset
+    // Hourly timestamps are local-naive (no Z) · we treat them as UTC offset
     // already applied by Open-Meteo ("timezone=auto"). Aligning by wall-clock
     // hour is acceptable because all session ISOs are stored UTC and the
     // delta is consistent within the same response.
@@ -226,7 +226,7 @@ export interface MapRaceWeatherInput {
   weather: RaceWeather;
   /** Sessions ordered as caller sees them. */
   sessions: Array<{ kind: SessionKind; iso: string }>;
-  /** ISO of the race start — used to lock onto the daily row. */
+  /** ISO of the race start · used to lock onto the daily row. */
   raceStartIso: string;
 }
 
@@ -275,7 +275,7 @@ export function mapRaceWeather(input: MapRaceWeatherInput): UiRaceWeather {
   }
 
   // ── Risk flags ──────────────────────────────────────────────────────────
-  // Thresholds chosen to be conservative — false positives are cheap, false
+  // Thresholds chosen to be conservative · false positives are cheap, false
   // negatives lose us the headline. F1 calls heavy rain anywhere >2mm/h.
   const heavyRain =
     (raceDay?.totalPrecipitationMm ?? 0) >= 5 ||
@@ -350,7 +350,7 @@ function buildSummary(args: {
 
 const CARDINALS = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'] as const;
 export function cardinalFromDeg(deg: number | null): string {
-  if (deg == null || !Number.isFinite(deg)) return '—';
+  if (deg == null || !Number.isFinite(deg)) return '-';
   const i = Math.round(((deg % 360) / 45)) % 8;
   return CARDINALS[i] ?? 'N';
 }

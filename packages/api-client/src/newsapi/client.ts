@@ -1,6 +1,6 @@
 // NewsAPI.org typed client for the F1 news rail.
 //
-// IMPORTANT — NewsAPI free / developer tier blocks requests whose Origin header
+// IMPORTANT · NewsAPI free / developer tier blocks requests whose Origin header
 // is a production domain (anything other than localhost). It is ALSO not
 // callable from the browser at all, because the free tier rejects CORS
 // preflights with `corsNotAllowed`. This module MUST therefore only be invoked
@@ -15,7 +15,7 @@
 //
 // Quota: 100 requests / 24h on the dev plan. We cache aggressively (default
 // 900s = 15 minutes) via Next.js fetch revalidate. At 15 min cadence one
-// deployment burns ~96 calls/day — leaves headroom for editorial preview.
+// deployment burns ~96 calls/day · leaves headroom for editorial preview.
 
 import {
   NEWSAPI_F1_QUERY,
@@ -46,7 +46,7 @@ export async function getNewsAPIF1News(
 ): Promise<NewsAPIArticle[]> {
   const apiKey = process.env['NEWSAPI_KEY'];
   if (!apiKey) {
-    // No key provisioned. Per repo rule #1 (NO mock data), return empty —
+    // No key provisioned. Per repo rule #1 (NO mock data), return empty -
     // the calling UI is expected to render an empty / loading state.
     return [];
   }
@@ -71,7 +71,7 @@ export async function getNewsAPIF1News(
           'Apex/0.1 (+https://github.com/ShAuRyA-Noodle/Apex-F1; server-only)',
       },
       signal: controller.signal,
-      // Next.js extended fetch — ISR on the server side.
+      // Next.js extended fetch · ISR on the server side.
       next: { revalidate, tags: ['news', 'news:newsapi'] },
     } as RequestInit);
 
@@ -81,7 +81,7 @@ export async function getNewsAPIF1News(
     }
     if (!res.ok) {
       // 401 = bad key, 426 = upgrade required (origin blocked on prod plan),
-      // 400 = malformed query. All non-recoverable — return empty.
+      // 400 = malformed query. All non-recoverable · return empty.
       return [];
     }
 
@@ -92,7 +92,7 @@ export async function getNewsAPIF1News(
 
     return json.articles.filter(isUsableArticle);
   } catch {
-    // AbortError, network error, JSON parse error — all become [].
+    // AbortError, network error, JSON parse error · all become [].
     return [];
   } finally {
     clearTimeout(timer);
@@ -122,7 +122,7 @@ function clampPageSize(n: number): number {
 
 /**
  * NewsAPI flags articles whose publisher revoked the license as "[Removed]"
- * across every text field. They are unrenderable — drop them up front.
+ * across every text field. They are unrenderable · drop them up front.
  */
 function isUsableArticle(a: NewsAPIArticle): boolean {
   if (!a.url || !a.title) return false;

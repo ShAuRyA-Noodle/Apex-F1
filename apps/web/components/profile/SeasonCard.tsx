@@ -24,7 +24,7 @@ interface SeasonCardProps {
   points: number;
   bestResult: string;
   championshipPosition?: number | null;
-  /** Open by default — used for the most-recent year. */
+  /** Open by default · used for the most-recent year. */
   defaultOpen?: boolean;
 }
 

@@ -11,7 +11,7 @@ const F1_DEFAULTS = {
   keywords: 'formula 1',
   category: 'sports',
   language: 'en',
-  /** 600 req/day free tier — generous, so 5-min cache same as RSS rail. */
+  /** 600 req/day free tier · generous, so 5-min cache same as RSS rail. */
   revalidate: 300,
 } as const;
 
@@ -66,8 +66,8 @@ export async function currentsSearch(
 }
 
 /**
- * F1 news rail entry point. Two parallel queries — one keyword, one
- * sports-category-only — then dedupe by id. Returns [] on any failure
+ * F1 news rail entry point. Two parallel queries · one keyword, one
+ * sports-category-only · then dedupe by id. Returns [] on any failure
  * (CORE RULE #1: no synthetic fallback).
  *
  * Currents free tier: 600 req/day, 18 languages, real-time (no delay).

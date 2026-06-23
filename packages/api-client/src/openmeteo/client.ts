@@ -76,7 +76,7 @@ function pickSource(dateStart: string, dateEnd: string): OpenMeteoSource {
   // Forecast window: any portion within next 14 days AND not deep past.
   if (latest >= -1 && earliest <= 14) return 'forecast';
   // Archive window: within roughly last 5 years (1826 days). Open-Meteo archive
-  // has a ~5 day publication lag — covered by the forecast branch above.
+  // has a ~5 day publication lag · covered by the forecast branch above.
   if (latest >= -1826 && latest < -1) return 'archive';
   return 'none';
 }
@@ -133,7 +133,7 @@ export const openmeteo = {
   /**
    * Pull hourly + daily weather covering [dateStart, dateEnd] at the given lat/lon.
    * Returns null when the date is outside both forecast and archive windows,
-   * or when the network/upstream fails — caller must handle null gracefully.
+   * or when the network/upstream fails · caller must handle null gracefully.
    */
   async getRaceWeather(input: GetRaceWeatherInput): Promise<RaceWeather | null> {
     const { lat, lon, dateStart, dateEnd, fetchImpl = fetch } = input;

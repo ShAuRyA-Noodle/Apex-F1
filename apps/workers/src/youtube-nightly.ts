@@ -4,7 +4,7 @@
  * Nightly poll of curated F1 YouTube channels via public channel-RSS feeds.
  * Writes new entries into the `video` table.
  *
- * Idempotent on (provider, provider_asset_id) — re-running is a no-op for
+ * Idempotent on (provider, provider_asset_id) · re-running is a no-op for
  * already-ingested videos.
  *
  * Usage:

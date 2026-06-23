@@ -1,8 +1,8 @@
 const BASE = 'https://api.groq.com/openai/v1/chat/completions';
 
-/** Llama 3.3 70B — best prose quality on Groq's free tier. */
+/** Llama 3.3 70B · best prose quality on Groq's free tier. */
 export const GROQ_MODEL_QUALITY = 'llama-3.3-70b-versatile';
-/** Llama 3.1 8B — fastest, for high-volume / low-stakes paths. */
+/** Llama 3.1 8B · fastest, for high-volume / low-stakes paths. */
 export const GROQ_MODEL_FAST = 'llama-3.1-8b-instant';
 
 export interface GroqMessage {
@@ -28,7 +28,7 @@ const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /**
  * One Groq chat completion (OpenAI-compatible endpoint). Returns the assistant
- * text, or `null` on a missing key / rate-limit / any error — never throws,
+ * text, or `null` on a missing key / rate-limit / any error · never throws,
  * never fabricates (CORE RULE #1). Retries 429/5xx with backoff.
  */
 export async function groqChat(

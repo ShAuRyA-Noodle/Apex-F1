@@ -1,7 +1,7 @@
 /**
  * Jolpica nightly sync cron.
  *
- * Fires daily at 03:00 UTC — pulls current season schedule + driver standings
+ * Fires daily at 03:00 UTC · pulls current season schedule + driver standings
  * + constructor standings to keep the cache primed before the morning UK news
  * cycle. Race week the schedule can change last-minute (FIA revisions, weather
  * postponements) so daily resync is the minimum cadence.

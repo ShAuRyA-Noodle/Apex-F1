@@ -1,7 +1,7 @@
 /**
  * Curated query maps.
  *
- * Goal: every hero slot — circuit page, driver profile, team page —
+ * Goal: every hero slot · circuit page, driver profile, team page -
  * resolves to a hand-tuned Unsplash query that produces a cinematic
  * result on the first hit. Raw search like "monaco f1" returns tourist
  * snaps; carefully phrased queries pull editorial-grade frames.
@@ -9,7 +9,7 @@
  * Phrasing rules:
  *   - lead with the strongest visual noun (skyline, forest, helmet)
  *   - add ONE mood modifier (cinematic, dramatic, dusk, mist)
- *   - never put "F1" or "Formula 1" — Unsplash's F1 library is thin and
+ *   - never put "F1" or "Formula 1" · Unsplash's F1 library is thin and
  *     biased toward generic crowd/grandstand shots. Use the venue or
  *     metaphor instead, then style modifier.
  *

@@ -55,7 +55,7 @@ async function get<T>(path: string, opts: FetchOpts = {}): Promise<JolpicaEnvelo
         next: opts.revalidate !== undefined ? { revalidate: opts.revalidate } : undefined,
       } as RequestInit);
 
-      // 429 / 5xx are transient — back off and retry, then degrade to empty.
+      // 429 / 5xx are transient · back off and retry, then degrade to empty.
       if (res.status === 429 || res.status >= 500) {
         if (attempt < MAX_RETRIES) {
           await sleep(500 * 2 ** attempt + Math.floor(Math.random() * 250));
@@ -63,7 +63,7 @@ async function get<T>(path: string, opts: FetchOpts = {}): Promise<JolpicaEnvelo
         }
         return emptyEnvelope<T>();
       }
-      // Other non-2xx (e.g. unknown driver slug) — degrade, never kill the build.
+      // Other non-2xx (e.g. unknown driver slug) · degrade, never kill the build.
       if (!res.ok) return emptyEnvelope<T>();
 
       return (await res.json()) as JolpicaEnvelope<T>;

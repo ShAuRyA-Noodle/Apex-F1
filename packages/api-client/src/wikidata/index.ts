@@ -1,4 +1,4 @@
-// Wikidata SPARQL client — public, no auth.
+// Wikidata SPARQL client · public, no auth.
 // Doc: https://query.wikidata.org/sparql
 
 const ENDPOINT = 'https://query.wikidata.org/sparql';

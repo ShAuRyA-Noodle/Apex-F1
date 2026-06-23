@@ -1,12 +1,12 @@
 /**
- * Hugging Face translation — multilingual /latest feed.
+ * Hugging Face translation · multilingual /latest feed.
  *
  * Model: facebook/nllb-200-distilled-600M
  *   · No Language Left Behind, 200-language distilled checkpoint.
  *   · Sweet spot for the F1 news feed: Italian (Gazzetta, Autosprint),
  *     German (Auto Motor und Sport, F1-Insider.com), Spanish (Marca,
  *     SoyMotor), French (L'Equipe), Dutch (De Telegraaf) all map cleanly.
- *   · ~600M params — fits comfortably on HF's free Inference tier.
+ *   · ~600M params · fits comfortably on HF's free Inference tier.
  *
  * Use case:
  *   When Italian / German / Spanish / French / Dutch items land in the
@@ -111,7 +111,7 @@ export async function translate(
 /**
  * Convenience for the news rail: translate an array of strings to
  * English, preserving order, swallowing individual failures as null.
- * Common shape — title + dek pairs are translated this way.
+ * Common shape · title + dek pairs are translated this way.
  */
 export async function translateBatchToEnglish(
   items: ReadonlyArray<{ text: string; sourceLang: SupportedLang }>,

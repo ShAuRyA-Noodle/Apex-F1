@@ -14,7 +14,7 @@
  * License obligation: when an image is consumed in production we MUST ping
  * /photos/:id/download (the photo's links.download_location URL) so the
  * photographer's stats register a download. We don't need to follow the
- * redirect — the ping itself is the trigger.
+ * redirect · the ping itself is the trigger.
  *   Spec: https://help.unsplash.com/en/articles/2511258-guideline-triggering-a-download
  */
 
@@ -28,14 +28,14 @@ export interface UnsplashSearchResponse {
 /** A single photo record. Only fields we actually use are typed. */
 export interface UnsplashPhoto {
   id: string;
-  /** Width and height in pixels — used for aspect-ratio sanity checks. */
+  /** Width and height in pixels · used for aspect-ratio sanity checks. */
   width: number;
   height: number;
   /** Average color hex, useful as a CSS background placeholder. */
   color: string | null;
   /** Photographer-supplied description (often null). */
   description: string | null;
-  /** Auto-generated alt — short, descriptive, English. */
+  /** Auto-generated alt · short, descriptive, English. */
   alt_description: string | null;
   urls: UnsplashUrls;
   links: UnsplashLinks;
@@ -71,12 +71,12 @@ export interface UnsplashLinks {
   download_location: string;
 }
 
-/** Photographer profile — we only render `name` + `links.html`. */
+/** Photographer profile · we only render `name` + `links.html`. */
 export interface UnsplashUser {
   id: string;
   username: string;
   name: string;
-  /** Twitter/Instagram handles are nullable — ignored for now. */
+  /** Twitter/Instagram handles are nullable · ignored for now. */
   links: {
     self: string;
     html: string;

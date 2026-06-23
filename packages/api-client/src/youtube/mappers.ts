@@ -1,11 +1,11 @@
 /**
- * YouTube mappers — bridge raw Data API shapes (data-client.ts) into the
+ * YouTube mappers · bridge raw Data API shapes (data-client.ts) into the
  * enriched UI shape used by render-path components.
  *
  * Two layers:
- *   YouTubeVideo          — channel-RSS-only baseline (no view counts, no duration).
+ *   YouTubeVideo          · channel-RSS-only baseline (no view counts, no duration).
  *                           Defined in ./index.ts. Always available.
- *   YouTubeVideoEnriched  — Data API extras layered on top. Only available when
+ *   YouTubeVideoEnriched  · Data API extras layered on top. Only available when
  *                           YOUTUBE_API_KEY is present. Optional fields collapse
  *                           gracefully when stats are missing.
  *
@@ -16,7 +16,7 @@
 
 import type { YTVideoDetail, YTChannelStats } from './data-client';
 
-/** Enriched video — Data API guaranteed fields + channel stats decoration. */
+/** Enriched video · Data API guaranteed fields + channel stats decoration. */
 export interface YouTubeVideoEnriched {
   videoId: string;
   title: string;
@@ -33,7 +33,7 @@ export interface YouTubeVideoEnriched {
   publishedAt: string;
   publishedMs: number;
   description: string;
-  /** YouTube status.embeddable — false means iframe will refuse to play. */
+  /** YouTube status.embeddable · false means iframe will refuse to play. */
   embeddable: boolean;
   /** Region-blocked or non-public videos cannot be embedded. */
   privacyStatus: 'public' | 'unlisted' | 'private' | 'unknown';
@@ -123,7 +123,7 @@ export function toEnrichedVideo(
 /**
  * True when the video can be embedded in an iframe on third-party sites.
  *
- * RSS-fallback videos (where we have no Data API metadata) default to true —
+ * RSS-fallback videos (where we have no Data API metadata) default to true -
  * we can't pre-check without spending a /videos.list unit per video, so we
  * optimistically allow the modal to attempt the embed and fall back gracefully
  * if YouTube refuses.
@@ -148,7 +148,7 @@ export function sortNewestFirst<T extends { publishedMs: number }>(items: T[]): 
   return [...items].sort((a, b) => b.publishedMs - a.publishedMs);
 }
 
-/** Sort by view count (enriched only — RSS fallback always sorts by date). */
+/** Sort by view count (enriched only · RSS fallback always sorts by date). */
 export function sortMostViewed(items: YouTubeVideoEnriched[]): YouTubeVideoEnriched[] {
   return [...items].sort((a, b) => b.viewCount - a.viewCount);
 }

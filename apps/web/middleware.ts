@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 /**
- * Admin is unauthenticated scaffolding (no Supabase Auth yet) — only robots.txt
+ * Admin is unauthenticated scaffolding (no Supabase Auth yet) · only robots.txt
  * was hiding it, so it was publicly reachable. Until a real auth gate lands,
  * block /admin/* entirely in PRODUCTION so the console + article editor are not
  * exposed. It stays open in local/preview dev for building.

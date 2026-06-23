@@ -74,7 +74,7 @@ export function CareerArc({
 
       {/* Track */}
       <div className="relative h-14 w-full border-t border-b border-outline-variant/40 bg-linear-to-b from-surface-container-low/40 to-transparent">
-        {/* Reveal line at top — animates left→right */}
+        {/* Reveal line at top · animates left→right */}
         <motion.span
           aria-hidden="true"
           className="absolute left-0 top-[-1px] block h-px bg-telemetry-red"

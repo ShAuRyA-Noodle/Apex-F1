@@ -28,7 +28,7 @@ type MegaSection = {
 
 // Every href here must resolve to either an actual app/ route or a query
 // string the destination page actually filters on. Dead links from this NAV
-// were the #1 finding across the deep audit — every entry below is now
+// were the #1 finding across the deep audit · every entry below is now
 // verified against /latest, /video, /results, /drivers, /teams page logic.
 const NAV: MegaSection[] = [
   {
@@ -200,9 +200,9 @@ const NAV: MegaSection[] = [
 ];
 
 export interface MegaNavLivePreviews {
-  /** Live RSS top item — overrides the "Latest" dropdown preview card. */
+  /** Live RSS top item · overrides the "Latest" dropdown preview card. */
   latest?: DropdownPreview;
-  /** Live next-race chip — overrides the "Schedule" dropdown preview card. */
+  /** Live next-race chip · overrides the "Schedule" dropdown preview card. */
   schedule?: DropdownPreview;
 }
 
@@ -252,7 +252,7 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
       const past = y > 80;
       // Mirror TopUtilityBar's hide rule (y past one viewport, scrolling down)
       // so the nav rises to top-0 and fills the 32px band the utility bar
-      // vacates — no transparent gap above the glass nav.
+      // vacates · no transparent gap above the glass nav.
       setUtilHidden(y > window.innerHeight && goingDown);
       const interactionOpen = open !== null || mobile || searchOpen;
       if (interactionOpen) {
@@ -443,7 +443,7 @@ export function MegaNav({ previews }: { previews?: MegaNavLivePreviews } = {}) {
                     const section = navWithPreviews.find((s) => s.label === open);
                     if (!section) return null;
                     const colSpan = section.preview ? 'col-span-8' : 'col-span-12';
-                    // Static class map — Tailwind v4 purges runtime `grid-cols-${n}`.
+                    // Static class map · Tailwind v4 purges runtime `grid-cols-${n}`.
                     const gridCols =
                       ['grid-cols-1', 'grid-cols-1', 'grid-cols-2', 'grid-cols-3', 'grid-cols-4'][
                         Math.min(section.columns.length, 4)

@@ -21,7 +21,7 @@ const ROTATE_MS = 5 * 60 * 1000;
  * Selection is deterministic per render (server picks, client receives fixed
  * props) so there is no hydration mismatch. Because the page is ISR + an external
  * pinger revalidates it every 5 min, each regeneration rotates the window.
- * Nothing here adds API calls — it re-slices the already-fetched feed.
+ * Nothing here adds API calls · it re-slices the already-fetched feed.
  */
 export async function HeroLeadStory() {
   const items = await getHomeFeed();

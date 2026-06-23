@@ -50,11 +50,11 @@ export interface YTVideoDetail {
   commentCount: number;
   tags: string[];
   categoryId: string;
-  /** YouTube status.embeddable — false means iframe will refuse to play. */
+  /** YouTube status.embeddable · false means iframe will refuse to play. */
   embeddable: boolean;
-  /** YouTube status.privacyStatus — only 'public' videos are safely embeddable. */
+  /** YouTube status.privacyStatus · only 'public' videos are safely embeddable. */
   privacyStatus: 'public' | 'unlisted' | 'private' | 'unknown';
-  /** YouTube contentDetails.regionRestriction — if present, embed is region-gated. */
+  /** YouTube contentDetails.regionRestriction · if present, embed is region-gated. */
   regionBlocked: boolean;
 }
 
@@ -266,23 +266,23 @@ async function ytGet<T>(
   }
 }
 
-// ─── /search.list — 100 units. CRON ONLY. ───────────────────────────────────
+// ─── /search.list · 100 units. CRON ONLY. ───────────────────────────────────
 
 export interface SearchOpts {
   /** Free-text query. Defaults to "Formula 1". */
   q?: string;
   /** Limit to a single channel (recommended). */
   channelId?: string;
-  /** ISO date — videos published after this instant. */
+  /** ISO date · videos published after this instant. */
   publishedAfter?: string;
-  /** 1–50. Defaults to 25. */
+  /** 1-50. Defaults to 25. */
   maxResults?: number;
   /** Order. Defaults to 'date' (newest first). */
   order?: 'date' | 'rating' | 'relevance' | 'title' | 'videoCount' | 'viewCount';
 }
 
 /**
- * /search.list — 100 quota units per call.
+ * /search.list · 100 quota units per call.
  *
  * Do NOT call from render path. Use only from cron jobs. Cached 6h as a
  * belt-and-suspenders measure against accidental re-invocation.
@@ -318,7 +318,7 @@ export async function searchYouTubeF1Videos(opts: SearchOpts = {}): Promise<YTSe
     }));
 }
 
-// ─── /videos.list — 1 unit per call, batched 50 ids. ────────────────────────
+// ─── /videos.list · 1 unit per call, batched 50 ids. ────────────────────────
 
 /**
  * Fetch full video details (statistics + contentDetails) for up to N videos.
@@ -379,11 +379,11 @@ export async function getVideoDetails(videoIds: string[]): Promise<YTVideoDetail
   return out;
 }
 
-// ─── /channels.list — 1 unit per call, batched 50 ids. ──────────────────────
+// ─── /channels.list · 1 unit per call, batched 50 ids. ──────────────────────
 
 /**
  * Fetch channel statistics (subscribers, totals, uploads playlist).
- * Cached 7 days — subscriber counts change slowly.
+ * Cached 7 days · subscriber counts change slowly.
  */
 export async function getChannelStats(channelIds: string[]): Promise<YTChannelStats[]> {
   const ids = Array.from(new Set(channelIds.filter(Boolean)));
@@ -423,7 +423,7 @@ export async function getChannelStats(channelIds: string[]): Promise<YTChannelSt
   return out;
 }
 
-// ─── /playlistItems.list — 1 unit per call. ─────────────────────────────────
+// ─── /playlistItems.list · 1 unit per call. ─────────────────────────────────
 
 /**
  * Fetch items from a playlist. Used for "uploads" playlist of a channel,
@@ -440,7 +440,7 @@ export async function getPlaylistItems(
       playlistId,
       maxResults: Math.min(Math.max(maxResults, 1), 50),
     },
-    { revalidate: 60 * 60 }, // 1h — uploads list moves with each new upload
+    { revalidate: 60 * 60 }, // 1h · uploads list moves with each new upload
   );
 
   if (!data?.items) return [];

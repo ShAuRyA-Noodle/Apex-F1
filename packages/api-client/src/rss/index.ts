@@ -11,7 +11,7 @@ import type {
 
 /**
  * Legacy shape. New code should import UiNewsItem from '@apex/api-client/newsapi'.
- * RssItem is retained so existing imports keep compiling — the aggregator now
+ * RssItem is retained so existing imports keep compiling · the aggregator now
  * returns UiNewsItem[] across all providers.
  *
  * Optional `provider` / `sentiment` / `language` / `countries` / `articleId`
@@ -179,7 +179,7 @@ function parseRss(xml: string, source: string): RssItem[] {
 /**
  * Convert UiNewsItem rows (NewsAPI, etc.) into the aggregator's RssItem shape.
  * RssItem now carries an optional `provider` discriminator, so we keep it
- * intact — downstream UI (e.g. SentimentBadge gating) relies on it.
+ * intact · downstream UI (e.g. SentimentBadge gating) relies on it.
  */
 function uiToRssItems(items: UiNewsItem[]): RssItem[] {
   return items.map((it) => ({ ...it }));
@@ -202,12 +202,12 @@ async function fetchFeed(source: RssSource, revalidate: number): Promise<RssItem
   }
 }
 
-/** Normalize a title for fuzzy dedupe — lowercase, alphanumerics only. */
+/** Normalize a title for fuzzy dedupe · lowercase, alphanumerics only. */
 function dedupeKey(title: string): string {
   return title.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
-/** Normalize a URL for dedupe — strip protocol, www, query, trailing slash. */
+/** Normalize a URL for dedupe · strip protocol, www, query, trailing slash. */
 function linkKey(link: string): string {
   try {
     const u = new URL(link);
@@ -244,7 +244,7 @@ function capPerSource(items: RssItem[], maxPerSource: number): RssItem[] {
  *
  * Output is deduped by normalized title + URL host and sorted newest-first
  * with a per-source cap so no single provider drowns the rail. Each provider
- * fails independently — a 429 from NewsAPI does not poison the RSS rows
+ * fails independently · a 429 from NewsAPI does not poison the RSS rows
  * (CORE RULE #1).
  *
  * Quota'd providers carry a per-source revalidate FLOOR sized to their daily
@@ -252,7 +252,7 @@ function capPerSource(items: RssItem[], maxPerSource: number): RssItem[] {
  * actual upstream network calls stay well under quota and last past midnight:
  *   NewsAPI  1000s (~72/day, limit 100) · NewsData 600s (~144/day, limit 200)
  *   Currents  600s (~144/day, limit 600) · Guardian 600s (~144/day, limit 500)
- * The free RSS feeds carry no floor — they refresh on the caller's window (300s).
+ * The free RSS feeds carry no floor · they refresh on the caller's window (300s).
  */
 export async function getF1NewsFeed(
   opts: {
@@ -301,7 +301,7 @@ export async function getF1NewsFeed(
         .catch(() => [] as RssItem[])
     : Promise.resolve([]);
 
-  // NewsData — multi-language + sentiment. 200/day quota → floor to 600s
+  // NewsData · multi-language + sentiment. 200/day quota → floor to 600s
   // revalidate. Lazy-imported to avoid loading the module when the key is
   // missing or the caller has opted out.
   const newsDataPromise: Promise<RssItem[]> = (async () => {
@@ -321,7 +321,7 @@ export async function getF1NewsFeed(
     }
   })();
 
-  // Currents — 600/day quota, real-time, multi-language, no delay (unlike GNews).
+  // Currents · 600/day quota, real-time, multi-language, no delay (unlike GNews).
   const currentsPromise: Promise<RssItem[]> = (async () => {
     if (!includeCurrents) return [];
     if (!process.env['CURRENTS_API_KEY']) return [];

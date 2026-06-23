@@ -12,7 +12,7 @@ export const driver = pgTable(
   'driver',
   {
     id: uuid('id').primaryKey().defaultRandom(),
-    /** Stable slug (Jolpica driverId — e.g. max_verstappen). */
+    /** Stable slug (Jolpica driverId · e.g. max_verstappen). */
     slug: text('slug').notNull().unique(),
     code: text('code'),
     permanentNumber: integer('permanent_number'),

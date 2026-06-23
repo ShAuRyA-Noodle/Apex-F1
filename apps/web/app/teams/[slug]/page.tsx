@@ -82,12 +82,12 @@ export default async function TeamProfilePage(props: {
     .slice(0, 8);
 
   // Championships count is not directly exposed by Jolpica; surface as "championships data soon"
-  // when not derivable — total constructor titles requires historical aggregation done in Phase B.
+  // when not derivable · total constructor titles requires historical aggregation done in Phase B.
   const constructorTitles: number | null = null;
 
   return (
     <article>
-      {/* HERO — color-driven, no portrait image (team has no canonical face) */}
+      {/* HERO · color-driven, no portrait image (team has no canonical face) */}
       <section
         className="relative isolate min-h-[100svh] w-full overflow-hidden"
         style={{
@@ -115,7 +115,7 @@ export default async function TeamProfilePage(props: {
           }}
         />
 
-        {/* Vignette — top + bottom scrim so nav text and the name stay legible on
+        {/* Vignette · top + bottom scrim so nav text and the name stay legible on
             light liveries (Haas #FFF, Renault #FFF500, Mercedes #00D2BE, etc). */}
         <div
           aria-hidden="true"
@@ -156,7 +156,7 @@ export default async function TeamProfilePage(props: {
           </span>
         </div>
 
-        {/* Name — display-xxl */}
+        {/* Name · display-xxl */}
         <div className="relative z-10 mx-auto mt-auto flex w-full max-w-[1700px] flex-col gap-10 px-4 pb-24 md:px-grid-margin md:pb-32">
           <div className="flex items-center gap-3">
             <span aria-hidden="true" className="h-2 w-12 bg-on-background" />
@@ -197,7 +197,7 @@ export default async function TeamProfilePage(props: {
         </div>
       </section>
 
-      {/* STAT STRIP — facts (founded year etc require Wikidata constructor ingest, Phase B) */}
+      {/* STAT STRIP · facts (founded year etc require Wikidata constructor ingest, Phase B) */}
       <StatStrip
         items={[
           { label: 'BASE', value: c.nationality, ornament: cc ? flagEmoji(cc) : '🏁' },

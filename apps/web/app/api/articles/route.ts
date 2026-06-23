@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   }
 
   // Phase C wires the Drizzle insert + revalidatePath. Until then persistence
-  // is a no-op, so we must NOT report success — return 501 so the editor shows
+  // is a no-op, so we must NOT report success · return 501 so the editor shows
   // "not saved" instead of a green check that lies. Validation + slug-check
   // above still run, so editors can pre-vet copy before the DB is live.
   // eslint-disable-next-line no-console

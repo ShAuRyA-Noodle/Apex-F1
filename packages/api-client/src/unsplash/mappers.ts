@@ -2,7 +2,7 @@ import type { UnsplashPhoto } from './types';
 
 /**
  * UI-facing image shape. We intentionally collapse the raw photo down to
- * just the fields the renderer needs — never ship the full envelope.
+ * just the fields the renderer needs · never ship the full envelope.
  *
  * `attributionName` + `attributionUrl` are mandatory under the Unsplash
  * license. Components that render an UnsplashImage MUST render both as
@@ -14,15 +14,15 @@ import type { UnsplashPhoto } from './types';
 export interface UnsplashImage {
   /** Stable Unsplash photo id (used for caching + dedup). */
   id: string;
-  /** 1080px on the long side — primary URL we ship. */
+  /** 1080px on the long side · primary URL we ship. */
   url: string;
-  /** 400px on the long side — list cards, blur-up placeholders. */
+  /** 400px on the long side · list cards, blur-up placeholders. */
   urlSmall: string;
-  /** 2048px on the long side — full-bleed hero / parallax. */
+  /** 2048px on the long side · full-bleed hero / parallax. */
   urlHero: string;
   /** Auto-generated or photographer-supplied alt text. */
   alt: string;
-  /** Average hex color — use as CSS background while image loads. */
+  /** Average hex color · use as CSS background while image loads. */
   color: string | null;
   /** Photographer display name, e.g. "Marc Najera". */
   attributionName: string;
@@ -37,7 +37,7 @@ export interface UnsplashImage {
    * download in the photographer's stats and keeps Apex compliant.
    */
   downloadLocation: string;
-  /** Pixel dims — useful for aspect-ratio reservations / LCP hints. */
+  /** Pixel dims · useful for aspect-ratio reservations / LCP hints. */
   width: number;
   height: number;
 }

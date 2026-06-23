@@ -1,7 +1,7 @@
 /**
  * jolpica-nightly
  *
- * Daily cron job — sync the current season:
+ * Daily cron job · sync the current season:
  *   - Schedule (in case FIA / FOM revises)
  *   - Driver standings
  *   - Constructor standings

@@ -53,7 +53,7 @@ export function HeroLeadStoryClient({ leads }: { leads: RssItem[] }) {
       onMouseLeave={() => setPaused(false)}
     >
       <div className="relative h-[88vh] min-h-[640px] w-full">
-        {/* Background layer — clipped so the Ken Burns zoom stays inside the frame. */}
+        {/* Background layer · clipped so the Ken Burns zoom stays inside the frame. */}
         <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
           <AnimatePresence mode="sync">
             {current.imageUrl && (
@@ -82,7 +82,7 @@ export function HeroLeadStoryClient({ leads }: { leads: RssItem[] }) {
           <div className="absolute inset-0 stave-line-bg opacity-[0.12] mix-blend-overlay" />
         </div>
 
-        {/* Copy layer — NOT clipped, with top clearance so a tall headline never
+        {/* Copy layer · NOT clipped, with top clearance so a tall headline never
             slides under the sticky shell / breaking-news strip. */}
         <div className="relative z-10 mx-auto flex h-full w-full max-w-[1600px] flex-col justify-end px-4 pb-16 pt-24 md:px-grid-margin md:pb-24">
           <AnimatePresence mode="wait">

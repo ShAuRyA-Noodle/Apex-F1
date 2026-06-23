@@ -52,7 +52,7 @@ export default async function VideoPage(props: {
 
   const videos = await getF1Videos({
     channels: filteredChannels.length > 0 ? filteredChannels : YT_F1_CHANNELS,
-    // Pull a larger pool so "most-viewed" sort has signal — not just the last 24.
+    // Pull a larger pool so "most-viewed" sort has signal · not just the last 24.
     limit: sort === 'most-viewed' ? 48 : 24,
     revalidate: 1800,
   });
@@ -123,7 +123,7 @@ export default async function VideoPage(props: {
         </div>
       </header>
 
-      {/* Sort toolbar — hidden when no enriched data is available (RSS-only). */}
+      {/* Sort toolbar · hidden when no enriched data is available (RSS-only). */}
       {anyEnriched && (
         <div className="mt-8 flex items-center gap-3">
           <span className="text-data text-on-surface-variant">SORT</span>

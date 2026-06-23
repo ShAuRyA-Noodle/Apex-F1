@@ -1,8 +1,8 @@
-// NewsAPI.org — raw response shapes for the /v2/everything endpoint.
+// NewsAPI.org · raw response shapes for the /v2/everything endpoint.
 //
 // Endpoint:    GET https://newsapi.org/v2/everything
 // Auth:        X-Api-Key: <NEWSAPI_KEY>          (header preferred over ?apiKey=)
-// Free tier:   100 req/day, dev-only — see client.ts for the CORS / origin caveat.
+// Free tier:   100 req/day, dev-only · see client.ts for the CORS / origin caveat.
 // Docs:        https://newsapi.org/docs/endpoints/everything
 //
 // We pin the search to the F1 universe and ask for the newest 20 EN-language
@@ -31,9 +31,9 @@ export interface NewsAPIArticle {
   /** Byline. Can be null (wire copy) or a comma-separated list of names. */
   author: string | null;
   title: string;
-  /** Short dek. NewsAPI sometimes returns "[Removed]" for de-listed items — we filter those. */
+  /** Short dek. NewsAPI sometimes returns "[Removed]" for de-listed items · we filter those. */
   description: string | null;
-  /** Canonical article URL. Required — items without a URL are dropped. */
+  /** Canonical article URL. Required · items without a URL are dropped. */
   url: string;
   /** Hero image. May be null; mapper falls back to the source favicon. */
   urlToImage: string | null;

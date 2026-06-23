@@ -106,7 +106,7 @@ export function formatDateRange(startIso: string, endIso?: string): string {
   if (!endIso) return startStr;
   const end = new Date(endIso);
   const endStr = end.toLocaleDateString('en-GB', { ...opts, year: 'numeric' });
-  return `${startStr} – ${endStr}`;
+  return `${startStr} - ${endStr}`;
 }
 
 const TEAM_COLOR_BY_SLUG: Record<string, string> = {

@@ -11,9 +11,9 @@ import {
 import { SessionWeatherIcon } from './SessionWeatherIcon';
 
 /**
- * WeatherStrip — glass-subtle strip under circuit stats on /schedule/[season]/[race].
+ * WeatherStrip · glass-subtle strip under circuit stats on /schedule/[season]/[race].
  *
- * Server component. Fails closed — if Open-Meteo returns nothing
+ * Server component. Fails closed · if Open-Meteo returns nothing
  * (race outside forecast/archive window or network error), the strip
  * renders nothing so the page doesn't show a confusing empty box.
  *
@@ -28,7 +28,7 @@ import { SessionWeatherIcon } from './SessionWeatherIcon';
 export interface WeatherStripProps {
   lat: number;
   lon: number;
-  /** ISO of the race start — used to anchor the daily row. */
+  /** ISO of the race start · used to anchor the daily row. */
   raceStartIso: string;
   sessions: Array<{ kind: string; iso: string }>;
   /** Optional explicit date window override. Otherwise derived from sessions. */
@@ -143,7 +143,7 @@ export async function WeatherStrip(props: WeatherStripProps) {
           </span>
         </div>
 
-        {/* Hero strip — glass-subtle */}
+        {/* Hero strip · glass-subtle */}
         <div className="glass-subtle relative overflow-hidden border border-outline-variant/30">
           <div className="grid grid-cols-1 gap-px bg-outline-variant/30 md:grid-cols-4">
             {/* Condition + summary */}
@@ -172,14 +172,14 @@ export async function WeatherStrip(props: WeatherStripProps) {
                   ? `${Math.round(lo)}-${Math.round(hi)}C`
                   : hi != null
                     ? `${Math.round(hi)}C`
-                    : '—'}
+                    : '-'}
               </div>
               <div className="mt-1 text-data text-on-surface-variant">
                 {trackLo != null && trackHi != null
                   ? `TRACK EST ${trackLo}-${trackHi}C`
                   : trackHi != null
                     ? `TRACK EST ${trackHi}C`
-                    : 'TRACK EST —'}
+                    : 'TRACK EST -'}
               </div>
             </div>
 
@@ -227,7 +227,7 @@ export async function WeatherStrip(props: WeatherStripProps) {
                 <span className="text-data text-outline">WIND</span>
               </div>
               <div className="mt-2 font-data text-2xl text-on-background md:text-3xl">
-                {wind != null ? `${wind}KPH` : '—'}
+                {wind != null ? `${wind}KPH` : '-'}
               </div>
               <div className="mt-1 text-data text-on-surface-variant">
                 FROM {cardinalFromDeg(dirAvg)}
@@ -249,7 +249,7 @@ export async function WeatherStrip(props: WeatherStripProps) {
                     <SessionWeatherIcon weathercode={s.weathercode} size={18} />
                   </div>
                   <div className="mt-2 font-data text-base text-on-background">
-                    {s.peakAirTempC != null ? `${Math.round(s.peakAirTempC)}C` : '—'}
+                    {s.peakAirTempC != null ? `${Math.round(s.peakAirTempC)}C` : '-'}
                   </div>
                   <div className="text-data text-on-surface-variant">
                     {s.precipitationProbabilityPct != null
@@ -257,7 +257,7 @@ export async function WeatherStrip(props: WeatherStripProps) {
                       : s.precipitationMm > 0
                         ? `${s.precipitationMm}MM`
                         : bucket === 'unknown'
-                          ? '—'
+                          ? '-'
                           : 'DRY'}
                     {s.peakWindKph != null ? ` · ${s.peakWindKph}KPH` : ''}
                   </div>

@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { jolpica, mapDriverStanding } from '@apex/api-client/jolpica';
 import { nationalityToCountryCode, flagEmoji, teamColorBySlug } from '@/lib/format';
 
-export const revalidate = 604800; // 1 week — champions only change once per year
+export const revalidate = 604800; // 1 week · champions only change once per year
 
 export const metadata: Metadata = {
   title: 'World Champions',
@@ -28,7 +28,7 @@ async function loadChampions(): Promise<ChampionRow[]> {
   const years: number[] = [];
   for (let y = CURRENT_YEAR; y >= FIRST_SEASON; y--) years.push(y);
 
-  // Parallel fetch with a sane concurrency window — Jolpica caps at 4 req/sec.
+  // Parallel fetch with a sane concurrency window · Jolpica caps at 4 req/sec.
   // Per-call ISR (1 week) means a cold ride is ~76 calls / 4 = 19s once a year.
   const BATCH = 8;
   const results: ChampionRow[] = [];

@@ -10,7 +10,7 @@ import { AnimatePresence, motion } from 'framer-motion';
  * Why a modal instead of pushing the user to youtube.com:
  *  - Keeps users on Apex (retention)
  *  - Lets us layer Apex chrome around the player (next video CTA,
- *    related coverage rail, Apex+ upsell — Phase C)
+ *    related coverage rail, Apex+ upsell · Phase C)
  *  - YouTube's privacy-enhanced domain (youtube-nocookie.com) means we
  *    avoid third-party cookie noise on first visit
  *

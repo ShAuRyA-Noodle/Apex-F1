@@ -125,7 +125,7 @@ export function ArticleEditor({ enabled }: { enabled: boolean }) {
         >
           {state === 'saving' ? 'Saving…' : state === 'saved' ? 'Saved ✓' : 'Save draft'}
         </button>
-        {/* Publish ships with the Phase C DB + auth wiring — hidden until then
+        {/* Publish ships with the Phase C DB + auth wiring · hidden until then
             rather than shown as a permanently-dead disabled button. */}
         {state === 'error' && (
           <span className="text-sm text-telemetry-red">{error}</span>

@@ -5,14 +5,14 @@
 // =========================================================================
 //
 // 1) RATE LIMIT: 100 requests / 24h. With Next.js ISR cache at 900s (15 min)
-//    a single query route burns ~96 requests/day — i.e. effectively right at
+//    a single query route burns ~96 requests/day · i.e. effectively right at
 //    the cap. We therefore default `revalidate` to 900 and refuse to push
 //    below 600 (see clamp below). The aggregator must NOT call this client
 //    from a hot-path; it must call it from an ISR-cached server component.
 //
 // 2) ARTICLE DELAY: free-tier articles surface ~12 HOURS AFTER PUBLICATION.
 //    GNews intentionally throttles the free feed so paying customers get the
-//    real-time signal. Do not market GNews stories as "breaking" — they are
+//    real-time signal. Do not market GNews stories as "breaking" · they are
 //    not. Useful for: deep archive sweeps, multi-source corroboration,
 //    non-English coverage (lang param), and filling gaps when our RSS feeds
 //    miss a story. NOT useful for: live race weekends, breaking news rails,
@@ -60,7 +60,7 @@ export interface GetGNewsF1NewsOptions {
   fetchImpl?: typeof fetch;
 }
 
-/** Minimum allowed `revalidate` — protects the 100-req/day quota. */
+/** Minimum allowed `revalidate` · protects the 100-req/day quota. */
 const MIN_REVALIDATE_SECONDS = 600;
 
 /** Default `revalidate` if caller doesn't specify. */

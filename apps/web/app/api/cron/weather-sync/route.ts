@@ -1,7 +1,7 @@
 /**
  * Weather sync cron.
  *
- * Fires every hour — pulls Open-Meteo forecast for the next 3 races on the
+ * Fires every hour · pulls Open-Meteo forecast for the next 3 races on the
  * calendar so /schedule/[season]/[race] hero and RaceTickerBar weather chip
  * always serve a fresh sample.
  *

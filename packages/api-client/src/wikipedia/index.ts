@@ -108,13 +108,13 @@ export interface WikidataDriverFacts {
   qid: string;
   /** ISO date string e.g. "1997-09-30". */
   dob?: string;
-  /** Place of birth — English label. */
+  /** Place of birth · English label. */
   placeOfBirth?: string;
   /** Height in meters, e.g. 1.81. */
   heightM?: number;
   /** Wikimedia Commons "Special:FilePath" URL for the main image (P18). */
   imageUrl?: string;
-  /** Country of citizenship — English label. */
+  /** Country of citizenship · English label. */
   citizenship?: string;
 }
 
@@ -148,7 +148,7 @@ interface WbGetEntitiesResponse {
  * Fetch structured facts for a driver by their Wikidata Q-id.
  *
  * Why this is more reliable than the label-match SPARQL we previously used:
- *   - The Q-id comes from Wikipedia's wikibase_item field — a 1:1 mapping
+ *   - The Q-id comes from Wikipedia's wikibase_item field · a 1:1 mapping
  *     baked into the article, never wrong.
  *   - We query Wikidata's wbgetentities REST endpoint (faster than SPARQL,
  *     no syntax) for the P569 (date of birth), P19 (place of birth), and
@@ -180,7 +180,7 @@ export async function getDriverFactsByQid(
     const claims = entity.claims;
     const facts: WikidataDriverFacts = { qid };
 
-    // P569 — date of birth
+    // P569 · date of birth
     const dobClaim = claims['P569']?.[0]?.mainsnak?.datavalue?.value;
     if (dobClaim && typeof dobClaim === 'object' && 'time' in dobClaim) {
       const t = (dobClaim as { time?: string }).time;
@@ -191,7 +191,7 @@ export async function getDriverFactsByQid(
       }
     }
 
-    // P2048 — height. Wikidata stores it inconsistently per entry — some
+    // P2048 · height. Wikidata stores it inconsistently per entry · some
     // use meters (1.81), some use centimeters (181), and the unit field is
     // unreliable. Normalize: anything > 3 is treated as cm, < 3 as m.
     const heightClaim = claims['P2048']?.[0]?.mainsnak?.datavalue?.value;
@@ -203,13 +203,13 @@ export async function getDriverFactsByQid(
       }
     }
 
-    // P18 — image
+    // P18 · image
     const imgClaim = claims['P18']?.[0]?.mainsnak?.datavalue?.value;
     if (typeof imgClaim === 'string' && imgClaim) {
       facts.imageUrl = `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(imgClaim.replace(/ /g, '_'))}`;
     }
 
-    // P19 — place of birth (Q-id) + P27 citizenship (Q-id), resolve labels in a second call
+    // P19 · place of birth (Q-id) + P27 citizenship (Q-id), resolve labels in a second call
     const pobClaim = claims['P19']?.[0]?.mainsnak?.datavalue?.value;
     const cizClaim = claims['P27']?.[0]?.mainsnak?.datavalue?.value;
     const pobId =
@@ -242,7 +242,7 @@ export async function getDriverFactsByQid(
           }
         }
       } catch {
-        /* place label failure — fact already partial, return what we have */
+        /* place label failure · fact already partial, return what we have */
       }
     }
 

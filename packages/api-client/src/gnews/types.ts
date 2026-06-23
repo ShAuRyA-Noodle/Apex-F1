@@ -1,7 +1,7 @@
 // GNews.io raw response shapes for /api/v4/search.
 // Docs: https://gnews.io/docs/v4#search-endpoint
 //
-// IMPORTANT — free-tier constraint:
+// IMPORTANT · free-tier constraint:
 //   The free plan applies a *12-hour publication delay* on every article.
 //   That is, an article published at T appears in /search no earlier
 //   than T + 12h. Real-time access is locked behind the paid tier
@@ -21,7 +21,7 @@ export const GNEWS_FREE_TIER_DELAY_MS = 12 * 60 * 60 * 1000;
 /** Supported `sortby` values. */
 export type GNewsSortBy = 'publishedAt' | 'relevance';
 
-/** Supported `lang` values (subset — full list in docs). */
+/** Supported `lang` values (subset · full list in docs). */
 export type GNewsLang =
   | 'en'
   | 'es'
@@ -35,7 +35,7 @@ export type GNewsLang =
   | 'zh'
   | 'ar';
 
-/** Supported `country` values (subset — `'any'` is our sentinel for "no filter"). */
+/** Supported `country` values (subset · `'any'` is our sentinel for "no filter"). */
 export type GNewsCountry =
   | 'any'
   | 'us'

@@ -1,5 +1,5 @@
 /**
- * YouTube provider — two-tier strategy.
+ * YouTube provider · two-tier strategy.
  *
  *  Tier 1 (preferred): YouTube Data API v3 via ./data-client
  *      Activated when process.env.YOUTUBE_API_KEY is set. Gives real view
@@ -9,7 +9,7 @@
  *
  *  Tier 2 (fallback): channel-RSS via youtube.com/feeds/videos.xml
  *      Activated automatically when YOUTUBE_API_KEY is missing. Free, no key,
- *      no quota — but no view counts, no duration, no subscriber data. UI
+ *      no quota · but no view counts, no duration, no subscriber data. UI
  *      degrades gracefully via the `enriched` discriminator in mappers.ts.
  *
  *  getF1Videos() picks the tier at call time. Per project rule #1 (NO mock
@@ -123,7 +123,7 @@ async function getF1VideosViaRss(opts: {
  *   /videos.list (1 unit, batched 50, cached 24h) → durations + stats
  *
  * Total at warm cache: 0 units. Cold: ~ N+1+1 units for N channels. With our
- * 5-channel curated set that is 7 units in the worst case — versus 500 units
+ * 5-channel curated set that is 7 units in the worst case · versus 500 units
  * if we used /search per channel. /search is reserved for the cron route.
  */
 async function getF1VideosViaDataApi(opts: {
@@ -133,7 +133,7 @@ async function getF1VideosViaDataApi(opts: {
   const channels = opts.channels ?? YT_F1_CHANNELS;
   const perChannel = Math.max(opts.limit ?? 16, 8);
 
-  // 1. Channel stats — gives us uploads playlist id + subscriber/thumb decoration.
+  // 1. Channel stats · gives us uploads playlist id + subscriber/thumb decoration.
   const stats = await getChannelStats(channels.map((c) => c.channelId));
   if (stats.length === 0) return [];
   const statsById = channelStatsMap(stats);
@@ -200,7 +200,7 @@ export interface GetF1VideosOpts {
  * Aggregate latest videos across the curated F1 channel set.
  *
  *   - When YOUTUBE_API_KEY is present (and forceRss is false): returns
- *     YouTubeVideoEnriched[] — real view counts, exact duration, subscriber
+ *     YouTubeVideoEnriched[] · real view counts, exact duration, subscriber
  *     counts. Components should narrow with `isEnriched(v)`.
  *   - When the key is missing OR the Data API call returns empty (quota /
  *     network error): falls back to channel-RSS and returns YouTubeVideo[].

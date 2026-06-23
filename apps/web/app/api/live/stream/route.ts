@@ -4,7 +4,7 @@
  * Server-Sent Events feed of the current OpenF1 session.
  *
  * Why SSE and not WebSockets:
- *   - One-way push (server -> client) — we never receive from the browser.
+ *   - One-way push (server -> client) · we never receive from the browser.
  *   - Works through every CDN + reverse proxy without special config.
  *   - Auto-reconnect built into EventSource. Free retry with backoff.
  *   - Vercel Node runtime supports streaming responses out of the box.

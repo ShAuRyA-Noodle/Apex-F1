@@ -139,7 +139,7 @@ export default async function RaceDetailPage(props: { params: Promise<RouteParam
       <section className="relative isolate overflow-hidden border-b border-outline-variant/30">
         {/* Circuit-specific Unsplash backdrop. Sits at -z-10 so the grid lives
            on top of a dimmed cinematic frame. Hidden entirely when no hero
-           resolves — section falls back to the page surface color. */}
+           resolves · section falls back to the page surface color. */}
         {hero && (
           <>
             <div
@@ -183,7 +183,7 @@ export default async function RaceDetailPage(props: { params: Promise<RouteParam
             ))}
           </ul>
 
-          {/* Unsplash attribution — license-required when hero is from Unsplash.
+          {/* Unsplash attribution · license-required when hero is from Unsplash.
              Wikidata source renders nothing. Glass-subtle bottom-right. */}
           {hero && hero.attributionName && hero.attributionUrl && (
             <div className="mt-6 flex justify-end">

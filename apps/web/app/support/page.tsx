@@ -4,7 +4,7 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'Give back · Help an animal',
   description:
-    'Apex is free, independent, and ad-free. No tip jar. If it earned a smile, do one kind thing for an animal near you — feed a stray, back a shelter, support a rescue — and tag the creator.',
+    'Apex is free, independent, and ad-free. No tip jar. If it earned a smile, do one kind thing for an animal near you · feed a stray, back a shelter, support a rescue · and tag the creator.',
 };
 
 const CREATOR_X = 'https://x.com/ShAuRyANoodle';
@@ -44,14 +44,14 @@ export default function SupportPage() {
       </h1>
 
       <p className="mt-10 max-w-3xl font-editorial text-[20px] leading-[1.6] text-on-surface-variant">
-        Apex is built and paid for by one person — no ads, no paywall, no team money, and no tip jar.
+        Apex is built and paid for by one person · no ads, no paywall, no team money, and no tip jar.
         If the live ticker, the archive, or a deep dive earned a smile, here&apos;s the only thing I&apos;ll
-        ever ask: go do one kind thing for an animal near you. Then tag me — I genuinely want to see it.
+        ever ask: go do one kind thing for an animal near you. Then tag me · I genuinely want to see it.
       </p>
 
       <p className="mt-6 max-w-3xl text-[16px] leading-[1.6] text-on-surface-variant">
         I&apos;m an animal lover before I&apos;m anything else. The best currency this site could ever
-        earn isn&apos;t money in an account — it&apos;s a stray that got fed, a shelter that got an hour,
+        earn isn&apos;t money in an account · it&apos;s a stray that got fed, a shelter that got an hour,
         a life that got rescued.
       </p>
 
@@ -74,7 +74,7 @@ export default function SupportPage() {
           DID A GOOD DEED? TAG ME
         </h3>
         <p className="mt-4 max-w-2xl text-[16px] leading-[1.6] text-on-surface-variant">
-          Post the stray you fed or the shelter you helped and tag me — it makes my whole week, and it
+          Post the stray you fed or the shelter you helped and tag me · it makes my whole week, and it
           nudges the next person to do the same. Every link is in the footer too.
         </p>
         <div className="mt-8 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
@@ -108,7 +108,7 @@ export default function SupportPage() {
         <div>
           <h3 className="font-data text-[11px] tracking-[0.22em] text-telemetry-red">WHY NO MONEY</h3>
           <p className="mt-4 text-[15px] leading-[1.6] text-on-surface-variant">
-            Apex runs on free tiers and a lot of nights. It doesn&apos;t need your money to survive — it
+            Apex runs on free tiers and a lot of nights. It doesn&apos;t need your money to survive · it
             needs you to be a little kinder than yesterday. That&apos;s a trade I&apos;ll take every
             single time.
           </p>

@@ -30,7 +30,7 @@ export interface UiNewsItem {
   imageUrl?: string;
   /** Byline. May be undefined. */
   author?: string;
-  /** Optional tag list — NewsAPI does not return one, so this is always [] here. */
+  /** Optional tag list · NewsAPI does not return one, so this is always [] here. */
   categories?: string[];
 }
 

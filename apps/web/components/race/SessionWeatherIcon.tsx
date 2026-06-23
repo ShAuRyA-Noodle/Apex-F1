@@ -5,7 +5,7 @@ import {
 } from '@apex/api-client/openmeteo';
 
 /**
- * SessionWeatherIcon — tiny Material Symbols glyph per session row.
+ * SessionWeatherIcon · tiny Material Symbols glyph per session row.
  * Sized to drop next to a session label without breaking row height.
  * Returns nothing when there's no weathercode (graceful fade-out).
  */

@@ -16,7 +16,7 @@
 export interface OpenMeteoResponse {
   latitude: number;
   longitude: number;
-  /** Generation time in milliseconds — diagnostic, not used. */
+  /** Generation time in milliseconds · diagnostic, not used. */
   generationtime_ms?: number;
   utc_offset_seconds: number;
   timezone: string;

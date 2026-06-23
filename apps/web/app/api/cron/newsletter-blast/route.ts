@@ -107,7 +107,7 @@ export async function GET(req: Request) {
     const r = buildReport(start, {
       ok: true,
       route: ROUTE,
-      skipped: 'RESEND_API_KEY or RESEND_AUDIENCE_ID missing — newsletter not sent.',
+      skipped: 'RESEND_API_KEY or RESEND_AUDIENCE_ID missing · newsletter not sent.',
     });
     logReport(r);
     return NextResponse.json(r, { status: 200 });

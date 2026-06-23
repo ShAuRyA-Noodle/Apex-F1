@@ -1,11 +1,11 @@
 /**
  * RSS + multi-source news sync cron.
  *
- * Fires every 5 minutes — keeps the Next.js fetch cache primed for every
+ * Fires every 5 minutes · keeps the Next.js fetch cache primed for every
  * news provider so /latest and the homepage rails always serve fresh data
  * regardless of human traffic. The Next.js cache layer dedupes upstream
  * requests within the revalidate window, so a single cron tick is exactly
- * one request per provider — never more.
+ * one request per provider · never more.
  *
  * Schedule: every 5 min via apps/web/vercel.json.
  * Auth: Vercel cron header OR Bearer CRON_SECRET.

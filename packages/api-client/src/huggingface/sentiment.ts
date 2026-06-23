@@ -1,5 +1,5 @@
 /**
- * Hugging Face sentiment scorer — news article tone.
+ * Hugging Face sentiment scorer · news article tone.
  *
  * Model: cardiffnlp/twitter-roberta-base-sentiment-latest
  *   · 3-way classifier: positive / neutral / negative
@@ -35,7 +35,7 @@ export interface SentimentResult {
  *   [[{label, score}, {label, score}, {label, score}]]   (default)
  * or
  *   [{label, score}, ...]                                 (single-item mode)
- * We accept both — HF has flip-flopped on this in the past.
+ * We accept both · HF has flip-flopped on this in the past.
  */
 type RawRow = { label: string; score: number };
 type RawResponse = RawRow[] | RawRow[][];
@@ -60,7 +60,7 @@ function pickWinner(rows: RawRow[]): SentimentResult | null {
 }
 
 /**
- * Score the sentiment of a single piece of text — headline + dek works
+ * Score the sentiment of a single piece of text · headline + dek works
  * well; pass the article body if you want a holistic read (the model
  * truncates to 512 tokens server-side).
  *
@@ -73,7 +73,7 @@ export async function scoreSentiment(
     fetchImpl?: typeof fetch;
     token?: string;
     /**
-     * When true we let HF block until the model warms — eliminates 503
+     * When true we let HF block until the model warms · eliminates 503
      * retries. Default true because sentiment is usually called in a
      * batch from a worker, not on a hot render path.
      */
@@ -112,7 +112,7 @@ export async function scoreSentiment(
 
 /**
  * Convenience: score an array of texts in parallel, preserving order.
- * Each slot is independent — if one item fails (e.g. transient 503 past
+ * Each slot is independent · if one item fails (e.g. transient 503 past
  * retries), its slot in the output array is null. The other slots survive.
  *
  * Caller should respect HF's gentle rate hints: at the free tier, batches

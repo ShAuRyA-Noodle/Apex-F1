@@ -1,5 +1,5 @@
 /**
- * Hugging Face Inference API — public surface.
+ * Hugging Face Inference API · public surface.
  *
  * Stub-mode behaviour: every export below resolves to null while
  * HUGGINGFACE_TOKEN is absent. The module fully activates the moment

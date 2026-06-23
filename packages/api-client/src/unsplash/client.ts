@@ -14,7 +14,7 @@ import { mapUnsplashPhoto, type UnsplashImage } from './mappers';
  * We cache search responses for 7 days per query (Next.js ISR), so a tier
  * 1 budget covers thousands of distinct queries per day comfortably. The
  * /photos/:id/download ping is NOT cached because it must run per render
- * — but it's still cheap and rate-counts the same.
+ * · but it's still cheap and rate-counts the same.
  *
  * Behaviour contract:
  *   - No key in env  → returns null. Caller MUST handle null.
@@ -28,7 +28,7 @@ const ENDPOINT = 'https://api.unsplash.com';
 export interface SearchUnsplashInput {
   /** Natural-language query. Required, non-empty after trim. */
   query: string;
-  /** Defaults to 'landscape' — hero imagery is full-bleed. */
+  /** Defaults to 'landscape' · hero imagery is full-bleed. */
   orientation?: UnsplashOrientation;
   /** Override ISR window. Default: 7 days. */
   revalidate?: number;
@@ -112,7 +112,7 @@ export async function searchUnsplashImage(
  *
  * We:
  *   - Run the ping with `revalidate: 0` so it actually executes per render.
- *   - Swallow all errors — failing the ping must NOT fail the page.
+ *   - Swallow all errors · failing the ping must NOT fail the page.
  *   - Don't follow the redirect; the API only cares the URL was hit.
  */
 async function pingDownload(
@@ -136,7 +136,7 @@ async function pingDownload(
 /**
  * High-level helper used by the heroImage facade. Runs the search, then
  * fires the license-required download ping in parallel-but-detached fashion
- * (we don't await it — the page should not block on a stats ping).
+ * (we don't await it · the page should not block on a stats ping).
  *
  * Returns null on missing key / empty result / network error.
  */
@@ -148,7 +148,7 @@ export async function getUnsplashAndAck(
 
   const accessKey = getAccessKey(input.accessKey);
   // searchUnsplashImage would have returned null if there was no key, so
-  // accessKey is guaranteed non-null here — but TS doesn't know that.
+  // accessKey is guaranteed non-null here · but TS doesn't know that.
   if (accessKey) {
     // Detached: do not await. Errors swallowed inside pingDownload.
     void pingDownload(

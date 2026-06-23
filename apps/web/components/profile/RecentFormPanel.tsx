@@ -24,7 +24,7 @@ export function RecentFormPanel({ races }: RecentFormPanelProps) {
   if (!races.length) return null;
   const slice = races.slice(0, 5);
 
-  // Build trend points — invert (1 = top of chart).
+  // Build trend points · invert (1 = top of chart).
   const points = slice.map((r, i) => {
     const pos = r.position ?? 20;
     const norm = 1 - Math.min(pos, 20) / 20; // 0..1

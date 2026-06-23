@@ -8,7 +8,7 @@ const BASE = 'https://content.guardianapis.com';
 
 /** Defaults we use for the F1 news rail. Locked at the call site, not env. */
 const F1_DEFAULTS = {
-  /** Most reliable F1 funnel — tag is editorially curated by Guardian themselves. */
+  /** Most reliable F1 funnel · tag is editorially curated by Guardian themselves. */
   tag: 'sport/formula-one',
   section: 'sport',
   /** Keyword fallback (used in OR'd with tag) when tag yields little. */
@@ -16,7 +16,7 @@ const F1_DEFAULTS = {
   showFields: ['trailText', 'thumbnail', 'byline'] as const,
   orderBy: 'newest' as const,
   pageSize: 20,
-  /** 5 minutes — same window as RSS rail; keeps Next.js ISR sane. */
+  /** 5 minutes · same window as RSS rail; keeps Next.js ISR sane. */
   revalidate: 300,
 } as const;
 
@@ -77,9 +77,9 @@ export async function guardianSearch(
 }
 
 /**
- * F1 news rail entry point. Two parallel queries — one against the curated
+ * F1 news rail entry point. Two parallel queries · one against the curated
  * `sport/formula-one` tag, one against the `q=formula 1` keyword inside
- * section=sport — then dedupe by id. Returns [] on any failure (CORE RULE
+ * section=sport · then dedupe by id. Returns [] on any failure (CORE RULE
  * #1: no synthetic fallback, UI handles empty state).
  *
  * Cached for 300s by default via Next.js ISR.

@@ -48,7 +48,7 @@ function countdownMeta(iso: string): string {
 export async function MegaNavServer() {
   const previews: MegaNavLivePreviews = {};
 
-  // Latest preview — first item from the unified F1 news aggregator.
+  // Latest preview · first item from the unified F1 news aggregator.
   try {
     const items = await getF1NewsFeed({ limit: 1, revalidate: 300 });
     const top = items[0];
@@ -61,10 +61,10 @@ export async function MegaNavServer() {
       };
     }
   } catch {
-    /* leave undefined — MegaNav renders no preview card rather than fake data */
+    /* leave undefined · MegaNav renders no preview card rather than fake data */
   }
 
-  // Schedule preview — next race on the calendar.
+  // Schedule preview · next race on the calendar.
   try {
     const races = (await jolpica.getSchedule('current', { revalidate: 600 })).map(mapRace);
     const next = nextRace(races);

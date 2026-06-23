@@ -14,11 +14,11 @@ export interface RedditPost {
 const REDDIT_FORMULA1_RSS = 'https://www.reddit.com/r/formula1.rss';
 
 function commentsLink(linkOrId: string): string {
-  // Reddit Atom IDs look like "t3_abc123" — we prefer the actual comments link.
+  // Reddit Atom IDs look like "t3_abc123" · we prefer the actual comments link.
   return linkOrId;
 }
 
-/** Top r/formula1 hot threads. Public RSS feed — no auth required. */
+/** Top r/formula1 hot threads. Public RSS feed · no auth required. */
 export async function getRedditFormula1Pulse(opts: {
   limit?: number;
   revalidate?: number;

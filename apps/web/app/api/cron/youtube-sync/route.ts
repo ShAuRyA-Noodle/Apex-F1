@@ -1,8 +1,8 @@
 /**
- * Daily YouTube sync cron — quota-bounded enrichment job.
+ * Daily YouTube sync cron · quota-bounded enrichment job.
  *
  * Schedule: "0 4 * * *" (04:00 UTC, low traffic window).
- * Configured in apps/web/vercel.json — see project root for the deployment file.
+ * Configured in apps/web/vercel.json · see project root for the deployment file.
  *
  * Budget per channel:
  *   1 × /search.list  → 100 units   (last-24h videos for this channel)
@@ -20,7 +20,7 @@
  *
  * Auth: only Vercel's cron infrastructure can hit this. Vercel injects the
  *   x-vercel-cron header on scheduled invocations (verified by their edge
- *   network — clients cannot forge it because Vercel strips it from inbound
+ *   network · clients cannot forge it because Vercel strips it from inbound
  *   requests before they reach the function). Additionally we honor a
  *   CRON_SECRET bearer for manual re-runs from the Vercel UI.
  *
@@ -41,12 +41,12 @@ import {
 } from '@apex/api-client/youtube';
 import { isAuthorizedCronRequest, logReport, retry } from '@/lib/cron-auth';
 
-// Force this route into the Node.js runtime — googleapis.com TLS + larger
+// Force this route into the Node.js runtime · googleapis.com TLS + larger
 // payloads behave better on Node than Edge, and the route is cron-only so
 // cold-start cost is irrelevant.
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
-export const maxDuration = 60; // seconds — Vercel hobby plan cap.
+export const maxDuration = 60; // seconds · Vercel hobby plan cap.
 
 interface SyncReport {
   ok: boolean;
@@ -99,7 +99,7 @@ export async function GET(req: Request) {
         videosEnriched: 0,
         videosPersisted: 0,
       },
-      skipped: 'YOUTUBE_API_KEY missing — cron exited without spending quota.',
+      skipped: 'YOUTUBE_API_KEY missing · cron exited without spending quota.',
     };
     return NextResponse.json(report, { status: 200 });
   }
@@ -115,7 +115,7 @@ export async function GET(req: Request) {
 
   for (const channel of YT_F1_CHANNELS) {
     try {
-      // 1. /search — 100 units. Last 24h, this channel only, newest first.
+      // 1. /search · 100 units. Last 24h, this channel only, newest first.
       // retry() wraps so a single 503 from googleapis doesn't void the rest
       // of the per-channel loop (quota still spent regardless).
       const searchResults: YTSearchResult[] = await retry(() =>
@@ -140,7 +140,7 @@ export async function GET(req: Request) {
         continue;
       }
 
-      // 2. /videos — 1 unit. Batched up to 50 ids (we never exceed 25 here).
+      // 2. /videos · 1 unit. Batched up to 50 ids (we never exceed 25 here).
       const ids = searchResults.map((r) => r.videoId);
       const details = await retry(() => getVideoDetails(ids));
       totalUnits += 1;
@@ -176,7 +176,7 @@ export async function GET(req: Request) {
       persisted = await persistVideos(allDetails);
     }
   } catch (err) {
-    // Persistence failure must NOT poison the response — quota was already spent.
+    // Persistence failure must NOT poison the response · quota was already spent.
     // The next run will see the same rows and idempotently upsert.
     perChannelReports.push({
       channelId: '_persistence',
@@ -216,13 +216,13 @@ export async function GET(req: Request) {
  *
  * Contract once @apex/db lands:
  *   export async function persistVideos(rows: YTVideoDetail[]): Promise<number>
- *   — idempotent upsert keyed on videoId, returns rows written.
+ *   · idempotent upsert keyed on videoId, returns rows written.
  */
 async function tryLoadDb(): Promise<{
   persistVideos?: (rows: YTVideoDetail[]) => Promise<number>;
 }> {
   try {
-    // Optional dependency — @apex/db may not exist yet. Resolve by string to
+    // Optional dependency · @apex/db may not exist yet. Resolve by string to
     // avoid TS module-not-found at build time. Returns {} when missing.
     const dynamicImport = new Function('s', 'return import(s)') as (
       s: string,

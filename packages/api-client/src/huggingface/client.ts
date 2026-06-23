@@ -1,5 +1,5 @@
 /**
- * Hugging Face Inference API — low-level client.
+ * Hugging Face Inference API · low-level client.
  *
  * Stub-mode contract:
  *   - No HUGGINGFACE_TOKEN in env → every call returns null. No throw.
@@ -23,13 +23,13 @@
  *          https://api-inference.huggingface.co/models/cardiffnlp/twitter-roberta-base-sentiment-latest \
  *          -d '{"inputs":"Lewis Hamilton wins another Grand Prix"}'
  *      Expect a JSON array of label/score objects (or 503 once → 200 twice
- *      while the model warms — our backoff handles that).
+ *      while the model warms · our backoff handles that).
  *
  * Endpoint shape:
  *   POST https://api-inference.huggingface.co/models/<model>
  *   Headers: Authorization: Bearer <token>, Content-Type: application/json
  *   Body:    { inputs: <string | object>, parameters?: object, options?: object }
- *   Body for image models returns binary (image/png), not JSON — see text2image.
+ *   Body for image models returns binary (image/png), not JSON · see text2image.
  */
 
 const ENDPOINT_BASE = 'https://api-inference.huggingface.co/models';
@@ -85,7 +85,7 @@ export interface HfInferenceInput<TInputs = unknown, TParams = unknown> {
   options?: {
     /**
      * When true, HF blocks the connection server-side until the model has
-     * loaded — eliminating 503 retries at the cost of a longer single
+     * loaded · eliminating 503 retries at the cost of a longer single
      * request. We default to true for batch jobs, false for hot paths.
      */
     wait_for_model?: boolean;
@@ -96,7 +96,7 @@ export interface HfInferenceInput<TInputs = unknown, TParams = unknown> {
   timeoutMs?: number;
   /**
    * When 'json' (default) we parse and return the JSON body.
-   * When 'binary' we return a Buffer — needed for image / audio models
+   * When 'binary' we return a Buffer · needed for image / audio models
    * that respond with raw bytes.
    */
   responseKind?: 'json' | 'binary';
@@ -106,13 +106,13 @@ export interface HfInferenceInput<TInputs = unknown, TParams = unknown> {
   token?: string;
 }
 
-/** Output union — binary path returns Buffer, json path returns generic T. */
+/** Output union · binary path returns Buffer, json path returns generic T. */
 export type HfInferenceResult<T> = T | Buffer;
 
 /**
  * Core call. Returns null whenever the token is absent, the request fails
  * after retries, or the model never warms up within the timeout window.
- * Callers MUST handle null — there is no synthetic fallback.
+ * Callers MUST handle null · there is no synthetic fallback.
  */
 export async function hfInference<T = unknown>(
   input: HfInferenceInput,
@@ -180,7 +180,7 @@ export async function hfInference<T = unknown>(
       clearTimeout(timer);
       return json;
     } catch {
-      // AbortError, network error, JSON parse failure — all collapse to null
+      // AbortError, network error, JSON parse failure · all collapse to null
       // for this attempt. If retries remain we loop; otherwise null bubbles.
       clearTimeout(timer);
       if (attempt >= MAX_RETRIES_503) return null;

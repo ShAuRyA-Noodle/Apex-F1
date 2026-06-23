@@ -13,21 +13,21 @@ import { getWikipediaSummaryByUrl } from '@apex/api-client/wikipedia';
  * Unified hero image helper.
  *
  * Priority order for a hero image, in order of preference:
- *   1. Wikidata image (driver only — actual portrait of the person).
+ *   1. Wikidata image (driver only · actual portrait of the person).
  *   2. Curated Unsplash query (circuit / driver-by-nationality / team).
  *   3. Abstract fallback Unsplash query.
  *   4. Hugging Face generated image (FLUX.1-schnell). Only fires when
  *      HUGGINGFACE_TOKEN is provisioned AND every Unsplash path returned
  *      null (no key, or no matching photo). Stub-mode noop otherwise.
  *
- * All paths can return `null` — callers (ParallaxHero, RaceHeroBackdrop)
+ * All paths can return `null` · callers (ParallaxHero, RaceHeroBackdrop)
  * must handle that gracefully by falling back to a flat color block.
  *
  * Why this lives in apps/web/lib rather than the api-client package:
  *   - It composes provider-specific logic (Wikidata + Unsplash) into a
  *     single product-level facade, which is the responsibility of the
  *     app, not the SDK.
- *   - It runs server-side only — `getUnsplashAndAck` reads
+ *   - It runs server-side only · `getUnsplashAndAck` reads
  *     `process.env.UNSPLASH_ACCESS_KEY`, so the entire facade must stay
  *     on the server. Do not import from a "use client" boundary.
  */
@@ -35,12 +35,12 @@ import { getWikipediaSummaryByUrl } from '@apex/api-client/wikipedia';
 /**
  * Shape returned to UI callers. We normalise around UnsplashImage even
  * when the source is Wikidata so the renderer (ParallaxHero) doesn't
- * have to branch — attribution fields just go null/empty for Wikimedia.
+ * have to branch · attribution fields just go null/empty for Wikimedia.
  */
 export interface HeroImageResult {
   /** Where the image actually came from. */
   source: 'wikidata' | 'unsplash-curated' | 'unsplash-fallback' | 'hf-generated';
-  /** Primary URL — 1080-ish on the long side. */
+  /** Primary URL · 1080-ish on the long side. */
   url: string;
   /** 400px placeholder. */
   urlSmall: string;
@@ -95,7 +95,7 @@ function fromUnsplash(
  * Why a data URL: this helper is consumed by RSC server components that
  * render full-bleed hero PNGs. Cycling through R2 here would require an
  * upload-on-demand round-trip inside the render path. For Phase B we
- * inline the bytes (~150-300KB) as a data URL — fine for first paint,
+ * inline the bytes (~150-300KB) as a data URL · fine for first paint,
  * and Next.js de-dupes identical hero markup across ISR slots. Phase C
  * swaps this for an R2 URL produced by /api/ai/generate-image, cached
  * by prompt hash.
@@ -142,11 +142,11 @@ function fromWikidata(commonsUrl: string, altName: string): HeroImageResult {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface DriverHeroInput {
-  /** Full name — used for alt only. */
+  /** Full name · used for alt only. */
   fullName: string;
-  /** Optional Wikidata Special:FilePath URL — pass null if absent. */
+  /** Optional Wikidata Special:FilePath URL · pass null if absent. */
   wikidataImage?: string | null;
-  /** Wikipedia page URL — every Jolpica driver has one. Used for fallback image. */
+  /** Wikipedia page URL · every Jolpica driver has one. Used for fallback image. */
   wikiUrl?: string | null;
   /** Used for the curated query when no Wikidata image. */
   nationality?: string | null;
@@ -181,10 +181,10 @@ export async function getDriverHeroImage(
 ): Promise<HeroImageResult | null> {
   const revalidate = input.revalidate ?? DEFAULT_REVALIDATE;
 
-  // Tier 1 — Wikipedia REST API summary. Every Jolpica driver has a wikiUrl
+  // Tier 1 · Wikipedia REST API summary. Every Jolpica driver has a wikiUrl
   // and the REST endpoint reliably returns originalimage/thumbnail for the
   // article. This is the primary source because:
-  //   - Always lookup-by-URL — no exact-label fuzz like Wikidata SPARQL
+  //   - Always lookup-by-URL · no exact-label fuzz like Wikidata SPARQL
   //   - Returns HTTPS upload.wikimedia.org URLs (Wikidata returns http://
   //     commons.wikimedia.org/wiki/Special:FilePath/ which Next.js sometimes
   //     refuses to optimise and SSR-render reliably)
@@ -199,7 +199,7 @@ export async function getDriverHeroImage(
     }
   }
 
-  // Tier 2 — Wikidata Commons Special:FilePath fallback. SPARQL exact-label
+  // Tier 2 · Wikidata Commons Special:FilePath fallback. SPARQL exact-label
   // match is flaky for drivers with special characters in their canonical
   // Wikidata label, so we accept this only as a fallback.
   if (input.wikidataImage) {
@@ -220,7 +220,7 @@ export async function getDriverHeroImage(
   });
   if (fallback) return fromUnsplash(fallback, 'unsplash-fallback');
 
-  // Tier 4 — HF generated. Null when token absent (stub-mode).
+  // Tier 4 · HF generated. Null when token absent (stub-mode).
   const generated = await tryHfGenerated(
     `Portrait of a Formula 1 racing driver of ${input.nationality ?? 'European'} nationality, full racing suit and helmet, paddock background, premium editorial sports photography`,
     `${input.fullName} portrait (generated)`,
@@ -231,7 +231,7 @@ export async function getDriverHeroImage(
 }
 
 export interface RaceHeroInput {
-  /** Jolpica circuitId / race slug — e.g. "monaco", "spa". */
+  /** Jolpica circuitId / race slug · e.g. "monaco", "spa". */
   circuitSlug: string;
   revalidate?: number;
 }
@@ -261,7 +261,7 @@ export async function getRaceHeroImage(
   });
   if (fallback) return fromUnsplash(fallback, 'unsplash-fallback');
 
-  // Tier 4 — HF generated. Null when token absent (stub-mode).
+  // Tier 4 · HF generated. Null when token absent (stub-mode).
   const generated = await tryHfGenerated(
     `Formula 1 race weekend at ${input.circuitSlug} circuit, cinematic wide shot, golden hour light hitting the start-finish straight, pit lane garages, dramatic motorsport photography`,
     `${input.circuitSlug} circuit (generated)`,
@@ -296,7 +296,7 @@ export async function getTeamHeroImage(
   });
   if (fallback) return fromUnsplash(fallback, 'unsplash-fallback');
 
-  // Tier 4 — HF generated. Null when token absent (stub-mode).
+  // Tier 4 · HF generated. Null when token absent (stub-mode).
   const generated = await tryHfGenerated(
     `Formula 1 team garage for ${input.teamSlug}, mechanics working on a car under pit lane lights, telemetry-red accents, cinematic editorial photography`,
     `${input.teamSlug} garage (generated)`,

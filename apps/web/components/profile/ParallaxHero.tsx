@@ -4,13 +4,13 @@ import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion
 import { useRef } from 'react';
 
 interface ParallaxHeroProps {
-  /** Background image URL — Wikidata Commons portrait, team livery, etc. */
+  /** Background image URL · Wikidata Commons portrait, team livery, etc. */
   imageUrl?: string;
   /** Image positioning (defaults to center top). */
   objectPosition?: string;
   /** A solid color used when no image is supplied or behind it. */
   baseColor?: string;
-  /** Height tier — `xl` = 100vh, `lg` = 80vh, `md` = 60vh. */
+  /** Height tier · `xl` = 100vh, `lg` = 80vh, `md` = 60vh. */
   height?: 'xl' | 'lg' | 'md';
   /** Children rendered above the image inside the safe area. */
   children: React.ReactNode;
@@ -127,13 +127,13 @@ export function ParallaxHero({
         />
       )}
 
-      {/* Children — slot inside hero. We deliberately do NOT constrain padding here;
+      {/* Children · slot inside hero. We deliberately do NOT constrain padding here;
          every page composes its own layout grid inside. */}
       <div className="relative z-0 flex h-full min-h-[inherit] w-full flex-col">
         {children}
       </div>
 
-      {/* Unsplash attribution — license-required when source is Unsplash.
+      {/* Unsplash attribution · license-required when source is Unsplash.
          Glass-subtle text bottom-right, never blocks interaction above it. */}
       {attribution && (
         <div className="pointer-events-none absolute bottom-3 right-3 z-20 md:bottom-4 md:right-4">

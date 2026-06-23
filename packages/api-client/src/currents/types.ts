@@ -12,7 +12,7 @@ export interface CurrentsNewsItem {
   image?: string;
   /** ISO 639-1 e.g. "en" / "it" / "es" / "de" / "fr" / "pt" */
   language: string;
-  /** Array of strings — F1 items typically include "sports" */
+  /** Array of strings · F1 items typically include "sports" */
   category: string[];
   /** Source domain key, e.g. "espn-com" */
   source_category?: string;
@@ -33,7 +33,7 @@ export interface CurrentsSearchParams {
   language?: string;
   /** ISO 3166 country code. */
   country?: string;
-  /** Category filter — Currents uses single string here, e.g. "sports". */
+  /** Category filter · Currents uses single string here, e.g. "sports". */
   category?: string;
   /** Domain filter. */
   domain?: string;

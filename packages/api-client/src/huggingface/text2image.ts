@@ -1,10 +1,10 @@
 /**
- * Hugging Face text-to-image — hero background fallback.
+ * Hugging Face text-to-image · hero background fallback.
  *
  * Use case (priority chain in apps/web/lib/heroImage.ts):
  *   1. Wikidata image (canonical, free, copyright-clean)
  *   2. Unsplash search (curated, license-clean, requires UNSPLASH_ACCESS_KEY)
- *   3. Generated (this module) — only when both above are absent AND
+ *   3. Generated (this module) · only when both above are absent AND
  *      HUGGINGFACE_TOKEN is present.
  *
  * Model choice:
@@ -20,11 +20,11 @@
  *     · In dev (NODE_ENV !== 'production') we write the PNG to /tmp and
  *       return a `file://` url so the renderer can pick it up locally.
  *     · In prod (Phase C) the route handler at /api/ai/generate-image
- *       uploads pngBuffer to R2 and returns the public URL — this module
+ *       uploads pngBuffer to R2 and returns the public URL · this module
  *       stays storage-agnostic.
  *
  * Stub-mode contract: returns null when token absent. Same as every other
- * HF module — CORE RULE #1, no synthetic fallback.
+ * HF module · CORE RULE #1, no synthetic fallback.
  */
 
 import { writeFile } from 'node:fs/promises';
@@ -96,7 +96,7 @@ export interface GenerateImageInput {
   /**
    * When true, also write the PNG to /tmp and return a `file://` url.
    * Defaults to true outside production so dev pages can render it
-   * without an R2 round-trip. In production this is forced to false —
+   * without an R2 round-trip. In production this is forced to false -
    * the API route handles upload.
    */
   writeToTmp?: boolean;
@@ -134,7 +134,7 @@ function buildParameters(
   const base: Record<string, unknown> = {
     width: dims.width,
     height: dims.height,
-    guidance_scale: 0, // FLUX-schnell — 0 is intentional; SDXL overrides below.
+    guidance_scale: 0, // FLUX-schnell · 0 is intentional; SDXL overrides below.
     negative_prompt: negativePrompt,
   };
   if (model === 'stabilityai/stable-diffusion-xl-base-1.0') {

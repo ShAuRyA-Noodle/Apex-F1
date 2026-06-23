@@ -63,7 +63,7 @@ async function main() {
     log(`seeding seasons ${seasons[0]} → ${seasons[seasons.length - 1]}`);
 
     for (const year of seasons) {
-      log(`season ${year} —`);
+      log(`season ${year} -`);
 
       const now = new Date().getUTCFullYear();
       const status: 'completed' | 'active' | 'upcoming' =

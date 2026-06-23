@@ -60,7 +60,7 @@ export default async function DriverProfilePage(props: {
   //   2. Use that Q-id to pull dob / place of birth / height from
   //      Wikidata via wbgetentities (id lookup, no SPARQL fuzz).
   // Fallback to the legacy SPARQL client only if BOTH steps return nothing
-  // (handles drivers without a Wikipedia article — e.g. very old grids).
+  // (handles drivers without a Wikipedia article · e.g. very old grids).
   // Parallelize the two independent fan-outs: the Wikipedia summary chain
   // (which then feeds Wikidata) and the Jolpica driver-results pull only
   // share the driver record above, so they can race instead of waterfall.
@@ -152,7 +152,7 @@ export default async function DriverProfilePage(props: {
       teamColor: e.teamColor,
       teamName: e.teamName,
       bestResult: e.bestPos === 1 ? 'WIN' : e.bestPos <= 3 ? 'PODIUM' : `P${e.bestPos}`,
-      // Champion detection requires a season-end standings query — left undefined here.
+      // Champion detection requires a season-end standings query · left undefined here.
       isChampion: false,
     };
   });
@@ -163,7 +163,7 @@ export default async function DriverProfilePage(props: {
     return Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 3600 * 1000));
   })();
 
-  // Apex AI scouting dossier — Groq (Llama 3.3 70B) turns the real career numbers
+  // Apex AI scouting dossier · Groq (Llama 3.3 70B) turns the real career numbers
   // + Wikipedia context into a 2-sentence editorial read. Cached 24h per driver
   // (~25 drivers => ~25 calls/day) so it never re-bills on render. Null on any
   // failure / missing key, in which case the section is simply omitted.
@@ -179,7 +179,7 @@ export default async function DriverProfilePage(props: {
         seasons: sortedYears.length,
         context: facts.extract ?? null,
       }),
-    ['driver-dossier-v2', slug],
+    ['driver-dossier-v3', slug],
     { revalidate: 86400 },
   )();
 
@@ -247,7 +247,7 @@ export default async function DriverProfilePage(props: {
           </span>
         </div>
 
-        {/* CENTER name block — breaks the grid */}
+        {/* CENTER name block · breaks the grid */}
         <div className="relative z-10 mx-auto mt-auto flex w-full max-w-[1700px] flex-col gap-10 px-4 pb-20 md:px-grid-margin md:pb-32">
           <div className="flex items-center gap-3">
             <span
@@ -271,7 +271,7 @@ export default async function DriverProfilePage(props: {
             <span className="-mt-2 block">{d.lastName}</span>
           </h1>
 
-          {/* Driver number — display-lg, telemetry-red, count-up */}
+          {/* Driver number · display-lg, telemetry-red, count-up */}
           {d.number !== null && (
             <div className="flex items-end gap-6">
               <span className="text-data text-on-surface-variant">CAR NO.</span>
@@ -289,7 +289,7 @@ export default async function DriverProfilePage(props: {
         </div>
       </ParallaxHero>
 
-      {/* STAT STRIP — 4 cards */}
+      {/* STAT STRIP · 4 cards */}
       <StatStrip
         items={[
           {
@@ -320,7 +320,7 @@ export default async function DriverProfilePage(props: {
         ]}
       />
 
-      {/* APEX AI — scouting dossier (Groq, real stats + Wikipedia grounded) */}
+      {/* APEX AI · scouting dossier (Groq, real stats + Wikipedia grounded) */}
       {dossier && (
         <section className="mx-auto w-full max-w-[1700px] px-4 pt-16 md:px-grid-margin md:pt-24">
           <div className="border-l-2 border-telemetry-red bg-surface-container-lowest/40 py-6 pl-6 md:pl-8">

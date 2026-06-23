@@ -85,7 +85,7 @@ export default async function TeamHistoryPage(props: {
 
   return (
     <article>
-      {/* HERO — same color treatment as team profile, tighter */}
+      {/* HERO · same color treatment as team profile, tighter */}
       <section
         className="relative isolate min-h-[60svh] w-full overflow-hidden"
         style={{

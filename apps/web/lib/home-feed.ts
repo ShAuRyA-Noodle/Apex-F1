@@ -6,7 +6,7 @@ import { getF1NewsFeed } from '@apex/api-client/rss';
  *
  * The hero (5 leads), the wire rail (5 items), and Editors' Picks all draw from
  * the same F1 news feed. Wrapping the fetch in React `cache()` collapses what
- * used to be three separate aggregations into ONE per request — every consumer
+ * used to be three separate aggregations into ONE per request · every consumer
  * awaits the same promise and slices what it needs. Combined with the Suspense
  * boundaries on the home page, the shell paints immediately and each section
  * streams in as its data resolves.
