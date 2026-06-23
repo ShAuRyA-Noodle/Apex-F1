@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { openf1 } from '@apex/api-client/openf1';
 import { countryNameToCode, flagEmoji } from '@/lib/format';
+import { TrackMap } from '@/components/live/TrackMap';
 
 export const revalidate = 30;
 
@@ -75,6 +76,14 @@ export default async function LiveTrackPage() {
           </h1>
         </div>
       </header>
+
+      <TrackMap
+        sessionKey={session.session_key}
+        dateStart={session.date_start}
+        dateEnd={session.date_end}
+        isLive={isLive}
+        drivers={drivers}
+      />
 
       <section className="border-b border-outline-variant/30">
         <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
@@ -155,8 +164,7 @@ export default async function LiveTrackPage() {
             })}
           </ul>
           <p className="mt-6 text-xs text-outline">
-            Source: OpenF1. SVG track map + per-driver position dots land in Phase C.
-            Free, no paywall · the platform stays free forever.
+            Source: OpenF1 live telemetry. Free, no paywall · the platform stays free forever.
           </p>
         </div>
       </section>

@@ -89,6 +89,15 @@ export interface OpenF1Position {
   date: string;
 }
 
+export interface OpenF1Location {
+  session_key: number;
+  driver_number: number;
+  x: number;
+  y: number;
+  z: number;
+  date: string;
+}
+
 export interface OpenF1Lap {
   session_key: number;
   driver_number: number;
@@ -173,6 +182,38 @@ export const openf1 = {
 
   async getPositions(sessionKey: number, opts: FetchOpts = {}) {
     return get<OpenF1Position[]>('position', { session_key: sessionKey }, { revalidate: 5, ...opts });
+  },
+
+  /**
+   * GPS location samples (x, y) for cars. Heavy endpoint, so always bound it with
+   * a date window. Used to trace the circuit outline (one driver, ~90s lap) and
+   * plot position dots (all drivers, last few seconds). Returns [] on error.
+   */
+  async getLocation(
+    sessionKey: number,
+    opts: {
+      driverNumber?: number;
+      dateGte?: string;
+      dateLte?: string;
+      revalidate?: number;
+      fetchImpl?: typeof fetch;
+    } = {},
+  ): Promise<OpenF1Location[]> {
+    const parts = [`session_key=${sessionKey}`];
+    if (opts.driverNumber != null) parts.push(`driver_number=${opts.driverNumber}`);
+    if (opts.dateGte) parts.push(`date>=${encodeURIComponent(opts.dateGte)}`);
+    if (opts.dateLte) parts.push(`date<=${encodeURIComponent(opts.dateLte)}`);
+    const url = `${BASE}/location?${parts.join('&')}`;
+    const fetchImpl = opts.fetchImpl ?? fetch;
+    try {
+      const res = await fetchImpl(url, {
+        next: opts.revalidate != null ? { revalidate: opts.revalidate } : undefined,
+      } as RequestInit);
+      if (!res.ok) return [];
+      return (await res.json()) as OpenF1Location[];
+    } catch {
+      return [];
+    }
   },
 
   async getLaps(sessionKey: number, opts: FetchOpts = {}) {
