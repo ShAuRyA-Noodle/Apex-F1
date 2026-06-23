@@ -40,6 +40,7 @@ import {
   type YTVideoDetail,
 } from '@apex/api-client/youtube';
 import { isAuthorizedCronRequest, logReport, retry } from '@/lib/cron-auth';
+import { persistVideos } from '@apex/db';
 
 // Force this route into the Node.js runtime · googleapis.com TLS + larger
 // payloads behave better on Node than Edge, and the route is cron-only so
@@ -171,10 +172,7 @@ export async function GET(req: Request) {
   // We import lazily so the route still builds before @apex/db ships.
   let persisted = 0;
   try {
-    const { persistVideos } = await tryLoadDb();
-    if (persistVideos) {
-      persisted = await persistVideos(allDetails);
-    }
+    persisted = await persistVideos(allDetails);
   } catch (err) {
     // Persistence failure must NOT poison the response · quota was already spent.
     // The next run will see the same rows and idempotently upsert.
@@ -210,31 +208,3 @@ export async function GET(req: Request) {
   return NextResponse.json(report, { status: 200 });
 }
 
-/**
- * Late-binding load of @apex/db. The package may not exist yet when this
- * cron route is first deployed; we tolerate that and persist nothing.
- *
- * Contract once @apex/db lands:
- *   export async function persistVideos(rows: YTVideoDetail[]): Promise<number>
- *   · idempotent upsert keyed on videoId, returns rows written.
- */
-async function tryLoadDb(): Promise<{
-  persistVideos?: (rows: YTVideoDetail[]) => Promise<number>;
-}> {
-  try {
-    // Optional dependency · @apex/db may not exist yet. Resolve by string to
-    // avoid TS module-not-found at build time. Returns {} when missing.
-    const dynamicImport = new Function('s', 'return import(s)') as (
-      s: string,
-    ) => Promise<unknown>;
-    const mod = (await dynamicImport('@apex/db').catch(() => null)) as
-      | { persistVideos?: (rows: YTVideoDetail[]) => Promise<number> }
-      | null;
-    if (mod && typeof mod.persistVideos === 'function') {
-      return { persistVideos: mod.persistVideos };
-    }
-    return {};
-  } catch {
-    return {};
-  }
-}
