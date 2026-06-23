@@ -58,6 +58,41 @@ export async function generateDriverDossier(input: DriverDossierInput): Promise<
   );
 }
 
+export interface RaceBriefInput {
+  raceName: string;
+  country: string;
+  circuit: string;
+  leaders: string[];
+}
+
+/**
+ * 3-sentence "what to watch" brief for the upcoming race from real standings.
+ * Returns null on failure. Cache per race so it is not re-billed.
+ */
+export async function generateRaceBrief(input: RaceBriefInput): Promise<string | null> {
+  const facts = [
+    `Upcoming race: ${input.raceName} (${input.country})`,
+    `Circuit: ${input.circuit}`,
+    `Championship leaders going in: ${input.leaders.join('; ')}`,
+  ].join('\n');
+
+  return groqChat(
+    [
+      {
+        role: 'system',
+        content:
+          'You are Apex, an elite Formula 1 writer. Write a sharp 3-sentence "what to watch" brief for ' +
+          'the upcoming race using ONLY the supplied facts (do not invent results, weather, or storylines ' +
+          'not implied by the standings). Modern, telemetry-grade voice. CRITICAL STYLE RULE: never use ' +
+          'em dashes or en dashes; use commas, periods, or a middle dot. No preamble, no markdown, no ' +
+          'quotes, just the three sentences.',
+      },
+      { role: 'user', content: facts },
+    ],
+    { model: GROQ_MODEL_QUALITY, temperature: 0.6, maxTokens: 220 },
+  );
+}
+
 export interface TeamDossierInput {
   name: string;
   nationality: string;

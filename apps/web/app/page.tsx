@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { HeroLeadStory } from '@/components/home/HeroLeadStory';
 import { HeroRail } from '@/components/home/HeroRail';
+import { RaceBrief } from '@/components/home/RaceBrief';
 import { QuickLinks } from '@/components/home/QuickLinks';
 import { FeaturedVideoRail } from '@/components/home/FeaturedVideoRail';
 import { EditorsPicks } from '@/components/home/EditorsPicks';
@@ -42,6 +43,10 @@ export default function HomePage() {
 
       <Suspense fallback={<RailFallback><NewsRailSkeleton count={5} /></RailFallback>}>
         <HeroRail />
+      </Suspense>
+
+      <Suspense fallback={<div className="shimmer h-40 w-full" aria-hidden />}>
+        <RaceBrief />
       </Suspense>
 
       <QuickLinks />
