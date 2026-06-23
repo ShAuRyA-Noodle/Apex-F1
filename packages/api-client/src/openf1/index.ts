@@ -199,10 +199,14 @@ export const openf1 = {
       fetchImpl?: typeof fetch;
     } = {},
   ): Promise<OpenF1Location[]> {
+    // OpenF1 wants a naive UTC datetime (YYYY-MM-DDTHH:MM:SS) and its date>= /
+    // date<= operators must stay literal — URL-encoding the colons silently
+    // drops the filter and returns the whole session.
+    const fmt = (d: string) => d.slice(0, 19);
     const parts = [`session_key=${sessionKey}`];
     if (opts.driverNumber != null) parts.push(`driver_number=${opts.driverNumber}`);
-    if (opts.dateGte) parts.push(`date>=${encodeURIComponent(opts.dateGte)}`);
-    if (opts.dateLte) parts.push(`date<=${encodeURIComponent(opts.dateLte)}`);
+    if (opts.dateGte) parts.push(`date>=${fmt(opts.dateGte)}`);
+    if (opts.dateLte) parts.push(`date<=${fmt(opts.dateLte)}`);
     const url = `${BASE}/location?${parts.join('&')}`;
     const fetchImpl = opts.fetchImpl ?? fetch;
     try {
