@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { captureClient } from '@/lib/analytics';
 
 export function NewsletterCTA() {
   const [email, setEmail] = useState('');
@@ -20,6 +21,7 @@ export function NewsletterCTA() {
         body: JSON.stringify({ email }),
       });
       if (res.ok) {
+        captureClient('newsletter_subscribe');
         setState('success');
         setEmail('');
         window.setTimeout(() => setState('idle'), 4000);

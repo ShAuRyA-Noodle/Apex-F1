@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { captureClient } from '@/lib/analytics';
 
 /**
  * In-page YouTube player. Click any video thumbnail anywhere in Apex,
@@ -49,6 +50,7 @@ export function VideoPlayerModal() {
       setTitle(trigger.getAttribute('data-apex-video-title') ?? '');
       setChannel(trigger.getAttribute('data-apex-video-channel') ?? '');
       setOpen(true);
+      captureClient('video_play', { videoId: id });
     }
     document.addEventListener('click', onClick, true);
     return () => document.removeEventListener('click', onClick, true);
