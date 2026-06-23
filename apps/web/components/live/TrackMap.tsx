@@ -32,8 +32,13 @@ export async function TrackMap({
   // Outline: a 95s window ~20 min into the session (settled green-flag running).
   const outlineGte = new Date(start + 20 * 60_000).toISOString();
   const outlineLte = new Date(start + 20 * 60_000 + 95_000).toISOString();
-  // Dots: last ~6s of telemetry (live = recent, past = final positions).
-  const dotsGte = new Date((isLive ? Date.now() : end) - 6000).toISOString();
+  // Dots: live = last few seconds (recent positions). Past = a known-good
+  // in-session 3s snapshot (~21 min in), because GPS telemetry stops before the
+  // official date_end, so an end-of-session window comes back empty.
+  const dotsGte = isLive
+    ? new Date(Date.now() - 6000).toISOString()
+    : new Date(start + 21 * 60_000).toISOString();
+  const dotsLte = isLive ? undefined : new Date(start + 21 * 60_000 + 3000).toISOString();
 
   const [outline, dotsRaw] = await Promise.all([
     refDriver != null
@@ -44,7 +49,11 @@ export async function TrackMap({
           revalidate: 600,
         })
       : Promise.resolve([]),
-    openf1.getLocation(sessionKey, { dateGte: dotsGte, revalidate: isLive ? 5 : 600 }),
+    openf1.getLocation(sessionKey, {
+      dateGte: dotsGte,
+      dateLte: dotsLte,
+      revalidate: isLive ? 5 : 600,
+    }),
   ]);
 
   if (outline.length < 20) return null;
@@ -85,7 +94,7 @@ export async function TrackMap({
     <section className="border-b border-outline-variant/30">
       <div className="mx-auto w-full max-w-[1600px] px-4 py-12 md:px-grid-margin">
         <h2 className="text-data text-telemetry-red">
-          TRACK MAP {isLive ? '· ● LIVE POSITIONS' : '· FINAL POSITIONS'}
+          TRACK MAP {isLive ? '· ● LIVE POSITIONS' : '· SESSION SNAPSHOT'}
         </h2>
         <div className="mx-auto mt-6 max-w-[760px]">
           <svg
@@ -138,7 +147,7 @@ export async function TrackMap({
         </div>
         <p className="mt-4 text-xs text-outline">
           Outline and dots traced from real OpenF1 car GPS telemetry.{' '}
-          {isLive ? 'Positions refresh through the session.' : 'Frozen at the last session end.'}
+          {isLive ? 'Positions refresh through the session.' : 'A snapshot from the last session.'}
         </p>
       </div>
     </section>
