@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@apex/api-client": "workspace:*",
+    "@apex/db": "workspace:*",
     "@apex/types": "workspace:*",
     "@apex/ui": "workspace:*",
     "clsx": "^2.1.1",

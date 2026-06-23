@@ -11,7 +11,7 @@ import path from 'node:path';
  */
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  transpilePackages: ['@apex/ui', '@apex/types', '@apex/api-client'],
+  transpilePackages: ['@apex/ui', '@apex/types', '@apex/api-client', '@apex/db'],
 
   // Hide the bottom-left "N" pill and the route-compilation spinner.
   devIndicators: false,
