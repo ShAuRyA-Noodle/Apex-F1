@@ -23,7 +23,8 @@
       "@apex/api-client/giphy": ["../../packages/api-client/src/giphy"],
       "@apex/api-client/huggingface": ["../../packages/api-client/src/huggingface"],
       "@apex/api-client/wikipedia": ["../../packages/api-client/src/wikipedia"],
-      "@apex/api-client/currents": ["../../packages/api-client/src/currents"]
+      "@apex/api-client/currents": ["../../packages/api-client/src/currents"],
+      "@apex/api-client/groq": ["../../packages/api-client/src/groq"]
     },
     "noEmit": true,
     "allowJs": true,

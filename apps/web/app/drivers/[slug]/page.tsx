@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import { jolpica, mapDriver, mapResult } from '@apex/api-client/jolpica';
+import { generateDriverDossier } from '@apex/api-client/groq';
 import { getDriverFactsFromWikidata } from '@apex/api-client/wikidata';
 import {
   getWikipediaSummaryByUrl,
@@ -161,6 +163,26 @@ export default async function DriverProfilePage(props: {
     return Math.floor((Date.now() - dob.getTime()) / (365.25 * 24 * 3600 * 1000));
   })();
 
+  // Apex AI scouting dossier — Groq (Llama 3.3 70B) turns the real career numbers
+  // + Wikipedia context into a 2-sentence editorial read. Cached 24h per driver
+  // (~25 drivers => ~25 calls/day) so it never re-bills on render. Null on any
+  // failure / missing key, in which case the section is simply omitted.
+  const dossier = await unstable_cache(
+    () =>
+      generateDriverDossier({
+        name: d.fullName,
+        nationality: d.nationality,
+        team: currentEntry?.teamName ?? null,
+        age,
+        wins: totalWins,
+        debutYear: debutYear ?? null,
+        seasons: sortedYears.length,
+        context: facts.extract ?? null,
+      }),
+    ['driver-dossier-v1', slug],
+    { revalidate: 86400 },
+  )();
+
   // Unified hero lookup: Wikidata portrait → curated Unsplash by nationality
   // → abstract fallback. Returns null only if every path fails.
   const hero = await getDriverHeroImage({
@@ -297,6 +319,23 @@ export default async function DriverProfilePage(props: {
           },
         ]}
       />
+
+      {/* APEX AI — scouting dossier (Groq, real stats + Wikipedia grounded) */}
+      {dossier && (
+        <section className="mx-auto w-full max-w-[1700px] px-4 pt-16 md:px-grid-margin md:pt-24">
+          <div className="border-l-2 border-telemetry-red bg-surface-container-lowest/40 py-6 pl-6 md:pl-8">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px] text-telemetry-red">
+                smart_toy
+              </span>
+              <span className="text-data text-telemetry-red">APEX AI · SCOUTING DOSSIER</span>
+            </div>
+            <p className="max-w-3xl font-editorial text-xl leading-[1.5] text-on-background md:text-2xl">
+              {dossier}
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* CAREER ARC */}
       <section className="mx-auto w-full max-w-[1700px] px-4 py-24 md:px-grid-margin md:py-32">
