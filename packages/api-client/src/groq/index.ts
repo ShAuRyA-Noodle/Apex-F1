@@ -27,7 +27,10 @@ export async function generateDriverDossier(input: DriverDossierInput): Promise<
     `Nationality: ${input.nationality}`,
     input.team ? `Current/last team: ${input.team}` : '',
     input.age ? `Age: ${input.age}` : '',
-    `Race wins: ${input.wins}`,
+    // Only surface the win count when it's positive — the upstream tally can be
+    // incomplete (paginated results miss recent seasons), so a misleading "0"
+    // is omitted and the Background carries achievements instead.
+    input.wins > 0 ? `Race wins (at least): ${input.wins}` : '',
     input.debutYear ? `Debut season: ${input.debutYear}` : '',
     `Seasons raced: ${input.seasons}`,
     input.context ? `Background: ${input.context}` : '',
@@ -42,11 +45,13 @@ export async function generateDriverDossier(input: DriverDossierInput): Promise<
         content:
           'You are Apex, an elite Formula 1 analyst. Write a punchy, factual 2-sentence scouting dossier ' +
           'for the given driver. Voice: sharp, modern, telemetry-grade — never flowery, never a Wikipedia ' +
-          'rehash. Use ONLY the supplied facts; never invent stats or results. No preamble, no markdown, ' +
-          'no surrounding quotes — output just the two sentences.',
+          'rehash. The Background is AUTHORITATIVE for career achievements; the numeric stats may be ' +
+          'incomplete, so if they conflict with the Background, trust the Background and NEVER understate ' +
+          'a driver (e.g. do not call a race-winner or champion winless). Use only the supplied facts; ' +
+          'never invent specifics. No preamble, no markdown, no surrounding quotes — just the two sentences.',
       },
       { role: 'user', content: facts },
     ],
-    { model: GROQ_MODEL_QUALITY, temperature: 0.55, maxTokens: 180 },
+    { model: GROQ_MODEL_QUALITY, temperature: 0.5, maxTokens: 180 },
   );
 }
