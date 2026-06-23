@@ -38,7 +38,8 @@ const groups: { title: string; links: { label: string; href: string }[] }[] = [
     links: [
       { label: 'About', href: '/about' },
       { label: 'Predict', href: '/predict' },
-      { label: 'Newsletter', href: '/newsletter' },
+      { label: 'Careers', href: '/careers' },
+      { label: 'Contact', href: '/contact' },
       { label: 'Support · tip jar', href: '/support' },
     ],
   },

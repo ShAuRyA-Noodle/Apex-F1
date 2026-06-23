@@ -1,0 +1,38 @@
+name: Refresh race weather
+
+# Repo-native hourly cron. Pings the Vercel weather-sync route so the next 3
+# races' Open-Meteo forecast cache stays warm (Vercel Hobby rejects sub-daily
+# Vercel crons, so this lives in GitHub Actions — free/unlimited on a public repo).
+# Open-Meteo has no key and no rate limit, so this is pure cache-priming.
+
+on:
+  schedule:
+    - cron: '17 * * * *' # hourly, offset 17min so it doesn't collide with the news ping
+  workflow_dispatch: {}
+
+concurrency:
+  group: refresh-weather
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - name: Ping weather-sync
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          code=$(curl -sS -m 60 -o /tmp/out.json -w '%{http_code}' \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "https://apex-f1-five.vercel.app/api/cron/weather-sync") || true
+          echo "weather-sync -> HTTP ${code}"
+          cat /tmp/out.json 2>/dev/null || true
+          echo
+          if [ "${code}" != "200" ]; then
+            echo "::error::weather-sync ping failed with HTTP ${code}"
+            exit 1
+          fi

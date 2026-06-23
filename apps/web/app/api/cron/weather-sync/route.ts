@@ -14,6 +14,7 @@
 
 import { NextResponse } from 'next/server';
 import { jolpica, mapRace } from '@apex/api-client/jolpica';
+import { openmeteo } from '@apex/api-client/openmeteo';
 import { revalidatePath } from 'next/cache';
 import { buildReport, isAuthorizedCronRequest, logReport, retry } from '@/lib/cron-auth';
 
@@ -21,47 +22,11 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-type RaceWeatherShape = unknown;
-type GetRaceWeatherFn = (args: {
-  lat: number;
-  lon: number;
-  dateStart: string;
-  dateEnd?: string;
-  revalidate?: number;
-}) => Promise<RaceWeatherShape | null>;
-
-async function tryLoadOpenMeteo(): Promise<{ getRaceWeather?: GetRaceWeatherFn }> {
-  try {
-    const dynamicImport = new Function('s', 'return import(s)') as (s: string) => Promise<unknown>;
-    const mod = (await dynamicImport('@apex/api-client/openmeteo').catch(() => null)) as
-      | { getRaceWeather?: GetRaceWeatherFn }
-      | null;
-    if (mod && typeof mod.getRaceWeather === 'function') {
-      return { getRaceWeather: mod.getRaceWeather };
-    }
-  } catch {
-    /* ignore */
-  }
-  return {};
-}
-
 export async function GET(req: Request) {
   const start = Date.now();
 
   if (!isAuthorizedCronRequest(req)) {
     return NextResponse.json({ ok: false, error: 'unauthorized' }, { status: 401 });
-  }
-
-  const { getRaceWeather } = await tryLoadOpenMeteo();
-  if (!getRaceWeather) {
-    const r = buildReport(start, {
-      ok: true,
-      route: 'weather-sync',
-      skipped: '@apex/api-client/openmeteo not available yet — cron exited.',
-      results: {},
-    });
-    logReport(r);
-    return NextResponse.json(r, { status: 200 });
   }
 
   let upcoming: Array<{ slug: string; lat: number; lon: number; date: string }> = [];
@@ -85,7 +50,10 @@ export async function GET(req: Request) {
   const reports: Array<{ slug: string; ok: boolean; error?: string }> = [];
   for (const r of upcoming) {
     try {
-      await retry(() => getRaceWeather({ lat: r.lat, lon: r.lon, dateStart: r.date }));
+      const day = r.date.slice(0, 10); // YYYY-MM-DD (race day)
+      await retry(() =>
+        openmeteo.getRaceWeather({ lat: r.lat, lon: r.lon, dateStart: day, dateEnd: day }),
+      );
       reports.push({ slug: r.slug, ok: true });
     } catch (err) {
       reports.push({

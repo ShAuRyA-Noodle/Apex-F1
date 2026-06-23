@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-const STORAGE_KEY = 'apex.newsletter.pending.v1';
-
 export function NewsletterForm() {
   const [email, setEmail] = useState('');
   const [state, setState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
@@ -27,14 +25,6 @@ export function NewsletterForm() {
         body: JSON.stringify({ email: trimmed }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      // also queue locally in case backend rejects later
-      try {
-        const queue: string[] = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]');
-        if (!queue.includes(trimmed)) queue.push(trimmed);
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
-      } catch {
-        /* no-op */
-      }
       setState('success');
       setEmail('');
     } catch (err) {
