@@ -70,6 +70,7 @@ export async function POST(req: Request) {
 
     if (r.ok) {
       const j = (await r.json()) as { id?: string };
+      await sendWelcomeEmail(email, RESEND_API_KEY);
       return NextResponse.json({ ok: true, mode: 'resend', id: j.id ?? null });
     }
 
@@ -95,6 +96,50 @@ export async function POST(req: Request) {
     );
   }
 }
+
+/**
+ * Welcome email on signup. Dormant until RESEND_FROM_EMAIL is set on a verified
+ * domain (mail.shauryapunj.com) · Resend will not deliver to arbitrary inboxes
+ * from the resend.dev sandbox sender. Never throws; signup succeeds either way.
+ */
+async function sendWelcomeEmail(email: string, apiKey: string): Promise<void> {
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!from) return;
+  const fromName = process.env.RESEND_FROM_NAME ?? 'Apex';
+  try {
+    await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: `${fromName} <${from}>`,
+        to: [email],
+        subject: "You're on the Apex pit wall",
+        html: WELCOME_HTML,
+      }),
+    });
+  } catch {
+    /* non-fatal */
+  }
+}
+
+const WELCOME_HTML = `
+<div style="background:#0f0f0f;color:#e9e9e9;font-family:Helvetica,Arial,sans-serif;padding:40px 24px;">
+  <div style="max-width:560px;margin:0 auto;">
+    <div style="color:#e10600;font-size:12px;letter-spacing:3px;font-weight:700;">APEX · RACE WEEK BRIEFING</div>
+    <h1 style="font-size:30px;line-height:1.1;margin:18px 0 0;color:#fff;">You're on the pit wall.</h1>
+    <p style="font-size:16px;line-height:1.6;color:#b8b8b8;margin-top:18px;">
+      Welcome to Apex. One concise edition every race week: strategy preview, tyre intel,
+      paddock corner, standings recap. No spam, no ads, ever.
+    </p>
+    <p style="font-size:16px;line-height:1.6;color:#b8b8b8;">
+      First briefing lands the next race week. Until then, the live ticker, the archive,
+      and the deep dives are all waiting at apex-f1-five.vercel.app.
+    </p>
+    <p style="font-size:13px;color:#777;margin-top:28px;">
+      Built by one person who watches every session. Unsubscribe anytime.
+    </p>
+  </div>
+</div>`;
 
 // Block other methods.
 export function GET() {
