@@ -179,7 +179,7 @@ export default async function DriverProfilePage(props: {
         seasons: sortedYears.length,
         context: facts.extract ?? null,
       }),
-    ['driver-dossier-v3', slug],
+    ['driver-dossier-v4', slug],
     { revalidate: 86400 },
   )();
 

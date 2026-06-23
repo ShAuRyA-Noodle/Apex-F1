@@ -191,12 +191,28 @@ export const jolpica = {
 
   /** All race results for a single driver across all seasons. */
   async getDriverResults(driverId: string, opts: FetchOpts = {}) {
-    const env = await get<JolpicaResultsEnvelope>(`drivers/${driverId}/results.json`, {
+    // Jolpica caps a page at 100 results. A long career (Hamilton ~360 races)
+    // would otherwise return only the oldest 100, dropping every recent win.
+    // Page through the lot so win/podium tallies are correct everywhere.
+    const PAGE = 100;
+    const first = await get<JolpicaResultsEnvelope>(`drivers/${driverId}/results.json`, {
       revalidate: 3600,
-      limit: 1000,
+      limit: PAGE,
+      offset: 0,
       ...opts,
     });
-    return env.MRData.RaceTable.Races;
+    const races = [...first.MRData.RaceTable.Races];
+    const total = Number((first.MRData as { total?: string }).total) || races.length;
+    for (let offset = PAGE; offset < total && offset < 1200; offset += PAGE) {
+      const env = await get<JolpicaResultsEnvelope>(`drivers/${driverId}/results.json`, {
+        revalidate: 3600,
+        limit: PAGE,
+        offset,
+        ...opts,
+      });
+      races.push(...env.MRData.RaceTable.Races);
+    }
+    return races;
   },
 
   /** All race results for a single driver in a single season. */
