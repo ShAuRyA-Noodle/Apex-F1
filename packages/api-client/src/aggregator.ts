@@ -17,6 +17,8 @@ import { getF1NewsFeed as getRssNewsFeed, type RssItem } from './rss';
 import { getGuardianF1News, mapGuardianItems } from './guardian';
 import { getGNewsF1News, mapGNewsArticles } from './gnews';
 import { getNewsDataF1News, mapNewsDataArticles } from './newsdata';
+import { getNewsAPIF1News, mapNewsAPIArticlesToUi } from './newsapi';
+import { uiToRssItems } from './rss';
 
 export interface AggregatedNewsOptions {
   /** Soft cap on the merged result. Default 80. */
@@ -29,6 +31,7 @@ export interface AggregatedNewsOptions {
     guardian?: boolean;
     gnews?: boolean;
     newsdata?: boolean;
+    newsapi?: boolean;
   };
 }
 
@@ -122,9 +125,10 @@ export async function getAggregatedF1News(
     guardian: opts.providers?.guardian !== false,
     gnews: opts.providers?.gnews !== false,
     newsdata: opts.providers?.newsdata !== false,
+    newsapi: opts.providers?.newsapi !== false,
   };
 
-  const [rssItems, guardianItems, gnewsItems, newsDataItems] = await Promise.all([
+  const [rssItems, guardianItems, gnewsItems, newsDataItems, newsApiItems] = await Promise.all([
     enabled.rss
       ? getRssNewsFeed({ revalidate }).catch(() => [] as RssItem[])
       : Promise.resolve([] as RssItem[]),
@@ -149,10 +153,16 @@ export async function getAggregatedF1News(
           .then((raw) => mapNewsDataArticles(raw) as unknown as RssItem[])
           .catch(() => [] as RssItem[])
       : Promise.resolve([] as RssItem[]),
+    enabled.newsapi
+      ? // NewsAPI: 100/day cap. Client floors revalidate to 1000s.
+        getNewsAPIF1News({ pageSize: 20, revalidate: Math.max(revalidate, 1000) })
+          .then((raw) => uiToRssItems(mapNewsAPIArticlesToUi(raw)))
+          .catch(() => [] as RssItem[])
+      : Promise.resolve([] as RssItem[]),
   ]);
 
   // Order matters for dedupe-collision tie-breaks: RSS (highest editorial
   // fidelity) wins over Guardian over NewsData over GNews (delayed).
-  const merged = mergeAndDedupe([rssItems, guardianItems, newsDataItems, gnewsItems]);
+  const merged = mergeAndDedupe([rssItems, guardianItems, newsApiItems, newsDataItems, gnewsItems]);
   return merged.slice(0, limit);
 }

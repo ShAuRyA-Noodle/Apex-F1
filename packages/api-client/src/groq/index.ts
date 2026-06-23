@@ -57,3 +57,46 @@ export async function generateDriverDossier(input: DriverDossierInput): Promise<
     { model: GROQ_MODEL_QUALITY, temperature: 0.5, maxTokens: 180 },
   );
 }
+
+export interface TeamDossierInput {
+  name: string;
+  nationality: string;
+  titles?: number | null;
+  currentPosition?: number | null;
+  currentPoints?: number | null;
+  drivers?: string[];
+}
+
+/**
+ * Sharp 2-sentence constructor dossier from verified facts only (name,
+ * nationality, WCC titles, current standing, lineup). Returns null on failure.
+ * Wrap in unstable_cache per team so it is not re-billed on render.
+ */
+export async function generateTeamDossier(input: TeamDossierInput): Promise<string | null> {
+  const facts = [
+    `Constructor: ${input.name}`,
+    `Nationality: ${input.nationality}`,
+    typeof input.titles === 'number' ? `Constructors' Championships: ${input.titles}` : '',
+    input.currentPosition ? `Current championship position: P${input.currentPosition}` : '',
+    typeof input.currentPoints === 'number' ? `Current points: ${input.currentPoints}` : '',
+    input.drivers && input.drivers.length ? `Recent drivers: ${input.drivers.join(', ')}` : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  return groqChat(
+    [
+      {
+        role: 'system',
+        content:
+          'You are Apex, an elite Formula 1 analyst. Write a punchy, factual 2-sentence dossier for the ' +
+          'given constructor. Voice: sharp, modern, telemetry-grade. Use ONLY the supplied facts; never ' +
+          'invent results, history, or stats not given. CRITICAL STYLE RULE: never use em dashes or en ' +
+          'dashes anywhere; use commas, periods, or a middle dot. No preamble, no markdown, no quotes, ' +
+          'just the two sentences.',
+      },
+      { role: 'user', content: facts },
+    ],
+    { model: GROQ_MODEL_QUALITY, temperature: 0.5, maxTokens: 180 },
+  );
+}

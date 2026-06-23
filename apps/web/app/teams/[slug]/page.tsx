@@ -1,12 +1,15 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { unstable_cache } from 'next/cache';
 import { jolpica, mapConstructor, mapResult } from '@apex/api-client/jolpica';
+import { generateTeamDossier } from '@apex/api-client/groq';
 import {
   nationalityToCountryCode,
   flagEmoji,
   teamColorBySlug,
 } from '@/lib/format';
+import { constructorTitles as titlesFor } from '@/lib/constructor-titles';
 import { StatStrip } from '@/components/profile/StatStrip';
 import { CountUpBadge } from '@/components/profile/CountUpBadge';
 import { MagneticButton } from '@/components/profile/MagneticButton';
@@ -81,9 +84,23 @@ export default async function TeamProfilePage(props: {
     .sort((a, b) => b.lastSeason - a.lastSeason)
     .slice(0, 8);
 
-  // Championships count is not directly exposed by Jolpica; surface as "championships data soon"
-  // when not derivable · total constructor titles requires historical aggregation done in Phase B.
-  const constructorTitles: number | null = null;
+  // Verified WCC count (historical fact, maintained map) — no 68-call live loop.
+  const constructorTitles = titlesFor(c.slug);
+
+  // Apex AI team dossier from verified facts only. Cached 24h per team.
+  const dossier = await unstable_cache(
+    () =>
+      generateTeamDossier({
+        name: c.name,
+        nationality: c.nationality,
+        titles: constructorTitles,
+        currentPosition: me ? Number(me.position) : null,
+        currentPoints: me ? Number(me.points) : null,
+        drivers: roster.slice(0, 4).map((r) => r.fullName),
+      }),
+    ['team-dossier-v1', c.slug],
+    { revalidate: 86400 },
+  )();
 
   return (
     <article>
@@ -209,6 +226,23 @@ export default async function TeamProfilePage(props: {
           },
         ]}
       />
+
+      {/* APEX AI · team dossier (Groq, verified facts) */}
+      {dossier && (
+        <section className="mx-auto w-full max-w-[1700px] px-4 pt-16 md:px-grid-margin md:pt-20">
+          <div className="border-l-2 border-telemetry-red bg-surface-container-lowest/40 py-6 pl-6 md:pl-8">
+            <div className="mb-3 flex items-center gap-2">
+              <span className="material-symbols-outlined text-[16px] text-telemetry-red">
+                smart_toy
+              </span>
+              <span className="text-data text-telemetry-red">APEX AI · TEAM DOSSIER</span>
+            </div>
+            <p className="max-w-3xl font-editorial text-xl leading-[1.5] text-on-background md:text-2xl">
+              {dossier}
+            </p>
+          </div>
+        </section>
+      )}
 
       {/* DRIVER ROSTER carousel-style */}
       {roster.length > 0 && (

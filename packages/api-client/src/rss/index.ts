@@ -181,7 +181,7 @@ function parseRss(xml: string, source: string): RssItem[] {
  * RssItem now carries an optional `provider` discriminator, so we keep it
  * intact · downstream UI (e.g. SentimentBadge gating) relies on it.
  */
-function uiToRssItems(items: UiNewsItem[]): RssItem[] {
+export function uiToRssItems(items: UiNewsItem[]): RssItem[] {
   return items.map((it) => ({ ...it }));
 }
 
