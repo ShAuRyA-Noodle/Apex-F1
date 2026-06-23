@@ -22,6 +22,7 @@ import {
   mapConstructorStanding,
 } from '@apex/api-client/jolpica';
 import { revalidatePath } from 'next/cache';
+import { persistCurrentSeason } from '@apex/db';
 import { buildReport, isAuthorizedCronRequest, logReport, retry, timed } from '@/lib/cron-auth';
 
 export const runtime = 'nodejs';
@@ -64,6 +65,38 @@ export async function GET(req: Request) {
     timings['constructorStandingsMs'] = teamRes.value[1];
   } else {
     errors.push(`constructors: ${String(teamRes.reason)}`);
+  }
+
+  // Persist the LIVE standings snapshot to Supabase (self-seeds drivers + teams
+  // from the same Jolpica data the site reads, so a lineup change auto-updates).
+  if (driverRes.status === 'fulfilled' && teamRes.status === 'fulfilled') {
+    try {
+      const persisted = await persistCurrentSeason(
+        new Date().getUTCFullYear(),
+        driverRes.value[0].map((s) => ({
+          slug: s.driver.slug,
+          code: s.driver.code,
+          number: s.driver.number,
+          firstName: s.driver.firstName,
+          lastName: s.driver.lastName,
+          fullName: s.driver.fullName,
+          nationality: s.driver.nationality,
+          position: s.position,
+          points: s.points,
+          wins: s.wins,
+        })),
+        teamRes.value[0].map((s) => ({
+          slug: s.constructor.slug,
+          name: s.constructor.name,
+          position: s.position,
+          points: s.points,
+        })),
+      );
+      counts['drivers_persisted'] = persisted.drivers;
+      counts['teams_persisted'] = persisted.teams;
+    } catch (err) {
+      errors.push(`persist: ${err instanceof Error ? err.message : String(err)}`);
+    }
   }
 
   // Bust path caches so first morning visitor gets fresh standings.
