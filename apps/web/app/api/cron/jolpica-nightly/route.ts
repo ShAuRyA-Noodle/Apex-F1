@@ -90,6 +90,7 @@ export async function GET(req: Request) {
           name: s.constructor.name,
           position: s.position,
           points: s.points,
+          wins: s.wins,
         })),
       );
       counts['drivers_persisted'] = persisted.drivers;

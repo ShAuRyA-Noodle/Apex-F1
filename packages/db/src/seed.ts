@@ -19,6 +19,7 @@ export interface TeamStandingSeed {
   name: string;
   position: number;
   points: number;
+  wins: number;
 }
 
 /**
@@ -92,10 +93,11 @@ export async function persistCurrentSeason(
           round: 0,
           position: t.position,
           points: t.points,
+          wins: t.wins,
         })
         .onConflictDoUpdate({
           target: [standingTeam.seasonYear, standingTeam.round, standingTeam.teamId],
-          set: { position: t.position, points: t.points },
+          set: { position: t.position, points: t.points, wins: t.wins },
         });
       tn++;
     }
