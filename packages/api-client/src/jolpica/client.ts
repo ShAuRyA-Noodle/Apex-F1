@@ -117,6 +117,17 @@ export const jolpica = {
     return env.MRData.DriverTable.Drivers;
   },
 
+  /** Every driver in F1 history (1950 - present) in a single call. limit 1000
+   *  covers the full ~860-name roster. Powers all-era search. */
+  async getAllDrivers(opts: FetchOpts = {}) {
+    const env = await get<JolpicaDriverListEnvelope>('drivers.json', {
+      revalidate: 86400,
+      limit: 1000,
+      ...opts,
+    });
+    return env.MRData.DriverTable.Drivers;
+  },
+
   /** Single driver (any era). */
   async getDriver(driverId: string, opts: FetchOpts = {}) {
     const env = await get<JolpicaDriverListEnvelope>(`drivers/${driverId}.json`, {

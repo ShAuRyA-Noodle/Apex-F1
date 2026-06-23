@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { jolpica, mapDriver, mapResult } from '@apex/api-client/jolpica';
 import { getDriverFactsFromWikidata } from '@apex/api-client/wikidata';
+import { getWikipediaSummaryByUrl, getDriverFactsByQid } from '@apex/api-client/wikipedia';
 import {
   nationalityToCountryCode,
   flagEmoji,
@@ -41,7 +42,25 @@ export default async function DriverCareerPage(props: {
   if (!raw) notFound();
   const d = mapDriver(raw);
   const cc = nationalityToCountryCode(d.nationality);
-  const facts = await getDriverFactsFromWikidata(d.fullName, { revalidate: 86400 });
+  // Robust portrait + facts chain (Wikipedia REST -> Q-id -> Wikidata) that wins
+  // where the old label-match SPARQL silently failed on accented / common names.
+  const wikiSummary = d.wikiUrl
+    ? await getWikipediaSummaryByUrl(d.wikiUrl, { revalidate: 86400 })
+    : null;
+  const wdFacts = wikiSummary?.wikidataId
+    ? await getDriverFactsByQid(wikiSummary.wikidataId, { revalidate: 86400 })
+    : null;
+  const legacyFacts =
+    !wdFacts && !wikiSummary
+      ? await getDriverFactsFromWikidata(d.fullName, { revalidate: 86400 })
+      : null;
+  const facts = {
+    qid: wdFacts?.qid ?? legacyFacts?.qid,
+    dob: wdFacts?.dob ?? legacyFacts?.dob,
+    pob: wdFacts?.placeOfBirth ?? legacyFacts?.pob,
+    height: wdFacts?.heightM ?? legacyFacts?.height,
+    image: wdFacts?.imageUrl ?? legacyFacts?.image,
+  } as const;
 
   const allResults = await jolpica.getDriverResults(slug, { revalidate: 86400 });
 

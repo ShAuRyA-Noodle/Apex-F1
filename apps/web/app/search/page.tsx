@@ -29,17 +29,21 @@ interface SearchPageProps {
 export default async function SearchPage({ searchParams }: SearchPageProps) {
   const { q } = await searchParams;
 
-  const [driverRaw, constructorRaw, scheduleRaw] = await Promise.all([
+  const [driverRaw, constructorRaw, scheduleRaw, allDrivers, seasons] = await Promise.all([
     jolpica.getDriverStandings('current', { revalidate: 1800 }),
     jolpica.getConstructorStandings('current', { revalidate: 1800 }),
     jolpica.getSchedule('current', { revalidate: 3600 }),
+    jolpica.getAllDrivers({ revalidate: 86400 }),
+    jolpica.getSeasons({ revalidate: 86400 }),
   ]);
 
   const drivers = driverRaw.map(mapDriverStanding);
   const constructors = constructorRaw.map(mapConstructorStanding);
   const races = scheduleRaw.map(mapRace);
+  const currentSlugs = new Set(drivers.map((d) => d.driver.slug));
 
   const items: SearchItem[] = [
+    // Current-season drivers carry the richest meta (team, position, points).
     ...drivers.map((d): SearchItem => ({
       kind: 'driver',
       slug: d.driver.slug,
@@ -47,6 +51,17 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       meta: `${d.driver.code} · ${d.constructorName} · P${d.position} · ${d.points} pts`,
       href: `/drivers/${d.driver.slug}`,
     })),
+    // Every other driver in F1 history (1950 -> present) so "Senna", "Prost",
+    // "Schumacher" all resolve.
+    ...allDrivers
+      .filter((d) => !currentSlugs.has(d.driverId))
+      .map((d): SearchItem => ({
+        kind: 'driver',
+        slug: d.driverId,
+        title: `${d.givenName} ${d.familyName}`,
+        meta: `${d.nationality} · F1 driver`,
+        href: `/drivers/${d.driverId}`,
+      })),
     ...constructors.map((c): SearchItem => ({
       kind: 'team',
       slug: c.constructor.slug,
@@ -61,6 +76,14 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
       meta: `R${r.round} · ${r.country} · ${r.circuitName}`,
       href: `/schedule/${r.season}/${r.slug}`,
     })),
+    // Every season year so "2004", "1988" jump to that season's standings.
+    ...seasons.map((s): SearchItem => ({
+      kind: 'race',
+      slug: `season-${s.season}`,
+      title: `${s.season} Season`,
+      meta: 'Standings · results',
+      href: `/results/${s.season}/drivers`,
+    })),
   ];
 
   return (
@@ -71,8 +94,8 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           Find anything
         </h1>
         <p className="mt-4 max-w-2xl font-editorial text-lg text-on-surface-variant md:text-2xl">
-          Drivers · constructors · races · current season. Archive search lands in Phase B
-          Wave 4 (Meilisearch over the 1950 to present DB).
+          Every driver since 1950, every constructor, every season, and this year&apos;s races.
+          Type a name, a year, or a circuit.
         </p>
       </header>
 
