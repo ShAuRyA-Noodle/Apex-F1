@@ -31,3 +31,10 @@ keys.txt
 # Keep design oracles
 !screen.png
 !code.html
+
+# never commit local secret backups
+APEX_SECRETS_BACKUP.txt
+*.secrets.txt
+
+# supabase CLI working state
+supabase/.temp/
